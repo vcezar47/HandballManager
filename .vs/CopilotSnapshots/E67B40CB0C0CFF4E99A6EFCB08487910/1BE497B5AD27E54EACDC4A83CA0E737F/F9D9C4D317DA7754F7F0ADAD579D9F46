@@ -1,0 +1,256 @@
+﻿<Window x:Class="HandballManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HandballManager.ViewModels"
+        xmlns:views="clr-namespace:HandballManager.Views"
+        Title="Handball Manager" Height="720" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="#1A1A2E">
+
+    <Window.Resources>
+        <!-- DataTemplate routing: which View to show for each ViewModel -->
+        <DataTemplate DataType="{x:Type vm:MainMenuViewModel}">
+            <views:MainMenuView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StartViewModel}">
+            <views:StartView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PlayerDetailViewModel}">
+            <views:PlayerDetailView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <views:HomeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RosterViewModel}">
+            <views:RosterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TeamRosterViewModel}">
+            <views:TeamRosterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LeagueTableViewModel}">
+            <views:LeagueTableView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScoutingViewModel}">
+            <views:ScoutingView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MatchDetailViewModel}">
+            <views:MatchDetailView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LeagueHistoryViewModel}">
+            <views:LeagueHistoryView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FinancesViewModel}">
+            <views:FinancesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TransferNegotiationViewModel}">
+            <views:TransferNegotiationView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ContractRenewalViewModel}">
+            <views:ContractRenewalView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ContractsViewModel}">
+            <views:ContractsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TransfersViewModel}">
+            <views:TransfersView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:NewsViewModel}">
+            <views:NewsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:YouthViewModel}">
+            <views:YouthView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:YouthSignViewModel}">
+            <views:YouthSignView />
+        </DataTemplate>
+
+        <!-- Nav button style -->
+        <Style x:Key="NavButton" TargetType="Button">
+            <Setter Property="Background"           Value="Transparent"/>
+            <Setter Property="Foreground"           Value="#A0A8C0"/>
+            <Setter Property="BorderThickness"      Value="0"/>
+            <Setter Property="FontSize"             Value="14"/>
+            <Setter Property="FontFamily"           Value="Segoe UI"/>
+            <Setter Property="FontWeight"           Value="SemiBold"/>
+            <Setter Property="Padding"              Value="16,12"/>
+            <Setter Property="Cursor"               Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A2A4A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Auto collapses to 0 when the sidebar's Visibility is Collapsed -->
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar – explicit Width="200" so the Auto column knows its size when visible -->
+        <Border Grid.Column="0" Width="200" Background="#16213E"
+                Visibility="{Binding IsGameStarted, Converter={StaticResource BoolToVis}}">
+            <DockPanel>
+                <!-- Logo + history area -->
+                <StackPanel DockPanel.Dock="Top" Margin="16,24,16,24">
+                    <TextBlock Text="🤾" FontSize="32" HorizontalAlignment="Center"/>
+                    <TextBlock Text="HANDBALL" FontSize="14" FontWeight="Bold" Foreground="White"
+                               HorizontalAlignment="Center" FontFamily="Segoe UI"/>
+                    <TextBlock Text="MANAGER" FontSize="14" FontWeight="Bold" Foreground="#E94560"
+                               HorizontalAlignment="Center" FontFamily="Segoe UI"/>
+
+                    <!-- Back / Forward controls -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                        <Button Content="←"
+                                Width="34" Height="28"
+                                Margin="0,0,4,0"
+                                Background="#111827" Foreground="#A0A8C0"
+                                BorderThickness="0" Cursor="Hand"
+                                Command="{Binding NavigateBackCommand}"
+                                IsEnabled="{Binding CanGoBack}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="0">
+                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="#0F1419"/>
+                                            <Setter Property="Foreground" Value="#3F4655"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#1E2936"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Content="→"
+                                Width="34" Height="28"
+                                Background="#111827" Foreground="#A0A8C0"
+                                BorderThickness="0" Cursor="Hand"
+                                Command="{Binding NavigateForwardCommand}"
+                                IsEnabled="{Binding CanGoForward}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="0">
+                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="#0F1419"/>
+                                            <Setter Property="Foreground" Value="#3F4655"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#1E2936"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Nav links -->
+                <StackPanel DockPanel.Dock="Top" Margin="8,0">
+                    <Button Content="🏠  Home"          Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToHomeCommand}"/>
+                    <Button Content="👥  Roster"        Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToRosterCommand}"/>
+                    <Button Content="📊  League Table"  Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToLeagueCommand}"/>
+                    <Button Content="🔍  Scouting"      Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToScoutingCommand}"/>
+                    <Button Content="💰  Finances"      Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToFinancesCommand}"/>
+                    <Button Content="📄  Contracts"    Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToContractsCommand}"/>
+                    <!-- Transfers button with pending offer badge -->
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToTransfersCommand}">
+                        <Grid>
+                            <TextBlock Text="⇌  Transfers" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Background="#E94560" CornerRadius="8" Padding="5,1"
+                                    Margin="0,-6,-23,0" MinWidth="18"
+                                    Visibility="{Binding HasPendingOffers, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding PendingOfferCount}"
+                                           Foreground="White" FontSize="10" FontWeight="Black"
+                                           FontFamily="Segoe UI" HorizontalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+                    <!-- News button with unread badge -->
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToNewsCommand}">
+                        <Grid>
+                            <TextBlock Text="📰  News" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Background="#E94560" CornerRadius="8" Padding="5,1"
+                                    Margin="0,-4,-23,0" MinWidth="18"
+                                    Visibility="{Binding HasUnreadNews, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding UnreadNewsCount}"
+                                           Foreground="White" FontSize="10" FontWeight="Black"
+                                           FontFamily="Segoe UI" HorizontalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+                    <!-- Youth button with golden glow during intake window (Mar 20-30) -->
+                    <Button Command="{Binding NavigateToYouthCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsYouthIntakeActive}" Value="True">
+                                        <Setter Property="Foreground" Value="#FFD700"/>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect Color="#FFD700" BlurRadius="12" ShadowDepth="0" Opacity="0.7"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="🌟  Youth" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsYouthIntakeActive}" Value="True">
+                                            <Setter Property="Foreground" Value="#FFD700"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+
+                <!-- Version footer -->
+                <TextBlock DockPanel.Dock="Bottom" Text="v0.1.0 Alpha"
+                           Foreground="#444466" FontSize="11" FontFamily="Segoe UI"
+                           HorizontalAlignment="Center" Margin="0,0,0,12"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Main content area -->
+        <Border Grid.Column="1" Background="#1A1A2E">
+            <ContentControl Content="{Binding CurrentViewModel}" Margin="0"/>
+        </Border>
+    </Grid>
+</Window>

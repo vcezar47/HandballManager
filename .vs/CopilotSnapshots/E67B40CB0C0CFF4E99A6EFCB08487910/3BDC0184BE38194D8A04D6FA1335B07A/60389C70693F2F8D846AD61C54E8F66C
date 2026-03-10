@@ -1,0 +1,28 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows;
+
+namespace HandballManager.ViewModels;
+
+public partial class MainMenuViewModel : BaseViewModel
+{
+    private readonly Action _onStartGame;
+
+    public MainMenuViewModel(Action onStartGame)
+    {
+        Title = "Main Menu";
+        _onStartGame = onStartGame;
+    }
+
+    [RelayCommand]
+    private void StartGame()
+    {
+        _onStartGame();
+    }
+
+    [RelayCommand]
+    private void QuitGame()
+    {
+        Application.Current.Shutdown();
+    }
+}

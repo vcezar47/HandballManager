@@ -1,0 +1,989 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\HM\\HandballManager\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\leaguetableview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\leaguetableview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\progressionphasetoiconconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\progressionphasetoiconconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\teamlogopathconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\teamlogopathconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\leagueselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\leagueselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\homeview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\homeview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\startview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\startview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\matchdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\matchdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\teamselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\teamselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\startviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\startviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\transferservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\transferservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\transfersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\transfersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\migrations\\20260306112136_addchampionrecords.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\migrations\\20260306112136_addchampionrecords.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\transfersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\transfersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\data\\handballdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\handballdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\simulationengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\simulationengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\scoutingview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\scoutingview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\contractsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\contractsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\contractrenewalview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\contractrenewalview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\rosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\rosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\mainmenuview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\mainmenuview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\HM\\HandballManager\\HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\mainmenuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\mainmenuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\youthintakeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\youthintakeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\newsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\newsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\models\\newsitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\newsitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\playerprogressionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\playerprogressionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\scoutingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\scoutingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\newsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\newsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\transfersview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\transfersview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\teamrosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\teamrosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\leaguehistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\leaguehistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\transfernegotiationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\transfernegotiationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\youthsignviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\youthsignviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\homeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\homeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\transfernegotiationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\transfernegotiationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\youthsignview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthsignview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\contractrenewalviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\contractrenewalviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\contractsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\contractsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\youthviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\youthviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\youthview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\youthdetailview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthdetailview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\youthdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\youthdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\youthdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\contracturgencyconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\contracturgencyconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\budgetconverters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\budgetconverters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\converters\\attributehighlightconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\attributehighlightconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\estimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\estimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\views\\playerdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\playerdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\models\\matchplayerstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\matchplayerstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\viewmodels\\matchdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\matchdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\models\\leagueentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\leagueentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|e:\\hm\\handballmanager\\handballmanager\\migrations\\20260309224011_maketeamidnullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\migrations\\20260309224011_maketeamidnullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ProgressionPhaseToIconConverter.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\ProgressionPhaseToIconConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\ProgressionPhaseToIconConverter.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\ProgressionPhaseToIconConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\ProgressionPhaseToIconConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T12:32:37.35Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TeamLogoPathConverter.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\TeamLogoPathConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\TeamLogoPathConverter.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\TeamLogoPathConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\TeamLogoPathConverter.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T12:32:34.493Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LeagueTableView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueTableView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\LeagueTableView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueTableView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\LeagueTableView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T21:48:37.78Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LeagueSelectionView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueSelectionView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\LeagueSelectionView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueSelectionView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\LeagueSelectionView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T22:18:51.793Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MatchDetailView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\MatchDetailView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\MatchDetailView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-22T19:04:42.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DatabaseSeeder.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Data\\DatabaseSeeder.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\DatabaseSeeder.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Data\\DatabaseSeeder.cs",
+              "RelativeToolTip": "HandballManager\\Data\\DatabaseSeeder.cs",
+              "ViewState": "AgIAAEgAAAAAAAAAAAArwEwAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-22T17:04:16.962Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StartView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\StartView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\StartView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\StartView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\StartView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T22:27:18.98Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "StartViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\StartViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\StartViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\StartViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\StartViewModel.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAywAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T18:31:59.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAAEoAAAAAAAAAAAArwFYAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:53:32.952Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TeamSelectionView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\TeamSelectionView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TeamSelectionView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\TeamSelectionView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\TeamSelectionView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T22:19:28.552Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "TransfersViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\TransfersViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\TransfersViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\TransfersViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\TransfersViewModel.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAgwDgAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:31:30.187Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TransfersView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransfersView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TransfersView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransfersView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\TransfersView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:14:26.894Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SimulationEngine.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\SimulationEngine.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\SimulationEngine.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\SimulationEngine.cs",
+              "RelativeToolTip": "HandballManager\\Services\\SimulationEngine.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAiwH0AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T16:22:09.136Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "TransferService.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\TransferService.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\TransferService.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\TransferService.cs",
+              "RelativeToolTip": "HandballManager\\Services\\TransferService.cs",
+              "ViewState": "AgIAAIQAAAAAAAAAAAAcwI4AAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:57:06.684Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "20260306112136_AddChampionRecords.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Migrations\\20260306112136_AddChampionRecords.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Migrations\\20260306112136_AddChampionRecords.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Migrations\\20260306112136_AddChampionRecords.cs",
+              "RelativeToolTip": "HandballManager\\Migrations\\20260306112136_AddChampionRecords.cs",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T09:03:32.525Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "HandballDbContext.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Data\\HandballDbContext.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\HandballDbContext.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Data\\HandballDbContext.cs",
+              "RelativeToolTip": "HandballManager\\Data\\HandballDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-21T15:59:59.292Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 60,
+              "Title": "20260309224011_MakeTeamIdNullable.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Migrations\\20260309224011_MakeTeamIdNullable.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Migrations\\20260309224011_MakeTeamIdNullable.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Migrations\\20260309224011_MakeTeamIdNullable.cs",
+              "RelativeToolTip": "HandballManager\\Migrations\\20260309224011_MakeTeamIdNullable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T22:40:11.402Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Player.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Models\\Player.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Models\\Player.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Models\\Player.cs",
+              "RelativeToolTip": "HandballManager\\Models\\Player.cs",
+              "ViewState": "AgIAAL4AAAAAAAAAAAAowMYAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-22T17:28:07.77Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ScoutingView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\ScoutingView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\ScoutingView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\ScoutingView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\ScoutingView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:19:39.882Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ContractRenewalView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\ContractRenewalView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\ContractRenewalView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\ContractRenewalView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\ContractRenewalView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:54:12.695Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "ContractsView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\ContractsView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\ContractsView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\ContractsView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\ContractsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:14:41.033Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "RosterView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\RosterView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\RosterView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\RosterView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\RosterView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:32:59.631Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "MainMenuView.xaml.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\MainMenuView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\MainMenuView.xaml.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\MainMenuView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\MainMenuView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T18:30:33.107Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "MainMenuView.g.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs",
+              "RelativeDocumentMoniker": "HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs",
+              "RelativeToolTip": "HandballManager\\obj\\Debug\\net10.0-windows\\Views\\MainMenuView.g.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAArwDEAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T18:57:04.9Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "MainMenuViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MainMenuViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\MainMenuViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MainMenuViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\MainMenuViewModel.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAjwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T18:31:12.603Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "YouthIntakeService.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\YouthIntakeService.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\YouthIntakeService.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\YouthIntakeService.cs",
+              "RelativeToolTip": "HandballManager\\Services\\YouthIntakeService.cs",
+              "ViewState": "AgIAAC8BAAAAAAAAAAAkwEUBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T19:09:03.411Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\MainWindow.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\MainWindow.xaml",
+              "RelativeToolTip": "HandballManager\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T15:45:05.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "NewsItem.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Models\\NewsItem.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Models\\NewsItem.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Models\\NewsItem.cs",
+              "RelativeToolTip": "HandballManager\\Models\\NewsItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:47:55.289Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "NewsView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\NewsView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\NewsView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\NewsView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\NewsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:44:42.46Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "PlayerProgressionService.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\PlayerProgressionService.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\PlayerProgressionService.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\PlayerProgressionService.cs",
+              "RelativeToolTip": "HandballManager\\Services\\PlayerProgressionService.cs",
+              "ViewState": "AgIAAIcBAAAAAAAAAAAkwJ4BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-06T15:27:49.501Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "NewsViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\NewsViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\NewsViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\NewsViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\NewsViewModel.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAnwCwAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:47:20.801Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ScoutingService.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\ScoutingService.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\ScoutingService.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\ScoutingService.cs",
+              "RelativeToolTip": "HandballManager\\Services\\ScoutingService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:59:00.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "App.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\App.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\App.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\App.xaml",
+              "RelativeToolTip": "HandballManager\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:18:58.203Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "HomeView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\HomeView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\HomeView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\HomeView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\HomeView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:33:20.497Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "TransfersView.xaml.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransfersView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TransfersView.xaml.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransfersView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\TransfersView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:33:29.909Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "TransferNegotiationViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\TransferNegotiationViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\TransferNegotiationViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\TransferNegotiationViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\TransferNegotiationViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T19:01:27.058Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "TeamRosterView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\TeamRosterView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TeamRosterView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\TeamRosterView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\TeamRosterView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:54:40.01Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "LeagueHistoryView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueHistoryView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\LeagueHistoryView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\LeagueHistoryView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\LeagueHistoryView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-09T17:19:53.158Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "YouthSignViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthSignViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\YouthSignViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthSignViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\YouthSignViewModel.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAqwFcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T17:18:21.643Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "YouthSignView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthSignView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthSignView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthSignView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\YouthSignView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:54:28.248Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "TransferNegotiationView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransferNegotiationView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TransferNegotiationView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\TransferNegotiationView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\TransferNegotiationView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T19:01:29.454Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "HomeViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\HomeViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\HomeViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\HomeViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\HomeViewModel.cs",
+              "ViewState": "AgIAAAQBAAAAAAAAAAAkwBoBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T19:01:49.974Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "ContractRenewalViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\ContractRenewalViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\ContractRenewalViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\ContractRenewalViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\ContractRenewalViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:54:08.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "ContractsViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\ContractsViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\ContractsViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\ContractsViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\ContractsViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:54:07.619Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "YouthViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\YouthViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\YouthViewModel.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAkwD4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:52:57.375Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "YouthView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\YouthView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:52:46.428Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "YouthDetailView.xaml.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthDetailView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthDetailView.xaml.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthDetailView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\YouthDetailView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:52:16.064Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "YouthDetailView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthDetailView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthDetailView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\YouthDetailView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\YouthDetailView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-08T18:52:00.284Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "YouthDetailViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthDetailViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\YouthDetailViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\YouthDetailViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\YouthDetailViewModel.cs",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAAAH8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:50:37.162Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "ContractUrgencyConverter.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\ContractUrgencyConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\ContractUrgencyConverter.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\ContractUrgencyConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\ContractUrgencyConverter.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAkwDYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:20:29.529Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "BudgetConverters.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\BudgetConverters.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\BudgetConverters.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\BudgetConverters.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\BudgetConverters.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:19:03.729Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "BoolToVisibilityConverter.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\BoolToVisibilityConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\BoolToVisibilityConverter.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\BoolToVisibilityConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\BoolToVisibilityConverter.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:19:01.301Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "AttributeHighlightConverter.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Converters\\AttributeHighlightConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\AttributeHighlightConverter.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Converters\\AttributeHighlightConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\AttributeHighlightConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:18:59.821Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "XamlReader.cs",
+              "DocumentMoniker": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs",
+              "ToolTip": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs [Read Only]",
+              "ViewState": "AgIAAKEBAAAAAAAAAAAUwKgBAAACAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T18:15:33.742Z",
+              "EditorCaption": " [Read Only]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "PlayerDetailView.xaml",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Views\\PlayerDetailView.xaml",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\PlayerDetailView.xaml",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Views\\PlayerDetailView.xaml",
+              "RelativeToolTip": "HandballManager\\Views\\PlayerDetailView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-21T21:48:40.278Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "Estimation.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\Estimation.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\Estimation.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\Estimation.cs",
+              "RelativeToolTip": "HandballManager\\Services\\Estimation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-03T13:06:06.272Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "MatchPlayerStat.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Models\\MatchPlayerStat.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Models\\MatchPlayerStat.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Models\\MatchPlayerStat.cs",
+              "RelativeToolTip": "HandballManager\\Models\\MatchPlayerStat.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T16:22:03.084Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "MatchDetailViewModel.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MatchDetailViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\MatchDetailViewModel.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\ViewModels\\MatchDetailViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\MatchDetailViewModel.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAwwD0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-22T19:07:04.16Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "LeagueService.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Services\\LeagueService.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Services\\LeagueService.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Services\\LeagueService.cs",
+              "RelativeToolTip": "HandballManager\\Services\\LeagueService.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAmwEUAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-21T22:26:09.154Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "LeagueEntry.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\Models\\LeagueEntry.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Models\\LeagueEntry.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\Models\\LeagueEntry.cs",
+              "RelativeToolTip": "HandballManager\\Models\\LeagueEntry.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-21T22:25:54.543Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 59,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "E:\\HM\\HandballManager\\HandballManager\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\MainWindow.xaml.cs",
+              "ToolTip": "E:\\HM\\HandballManager\\HandballManager\\MainWindow.xaml.cs",
+              "RelativeToolTip": "HandballManager\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-21T15:45:04.045Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

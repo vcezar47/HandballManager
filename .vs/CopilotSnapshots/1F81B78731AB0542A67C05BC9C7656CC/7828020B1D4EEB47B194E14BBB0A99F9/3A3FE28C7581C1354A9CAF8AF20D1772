@@ -1,0 +1,190 @@
+﻿<UserControl x:Class="HandballManager.Views.TeamSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             xmlns:converters="clr-namespace:HandballManager.Converters"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vm:StartViewModel}">
+    <!-- Margin trimmed to 40,10 so the card fits inside the * row; Height="700" removed from inner Grid -->
+    <Border MaxWidth="1200" Margin="40,10" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+            CornerRadius="20" Background="#16213E">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="40" Opacity="0.4" ShadowDepth="10"/>
+        </Border.Effect>
+        <!-- Height removed – Grid now stretches to fill whatever vertical space the * row provides -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Team List -->
+            <Border Grid.Column="0" Background="#1A2238" CornerRadius="20,0,0,20" Padding="25">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="AVAILABLE CLUBS" Foreground="#E94560" 
+                               FontWeight="ExtraBold" FontSize="11" Margin="10,0,0,25"/>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Teams}" SelectedItem="{Binding SelectedTeam}"
+                             Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="TeamBorder" BorderThickness="0,0,0,1" BorderBrush="#2A2A4A" Padding="15,12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="40" Height="40" CornerRadius="20" Background="#1E2A4A" Margin="0,0,15,0">
+                                            <Image Source="{Binding LogoPath, StringFormat='pack://application:,,,/Assets/teamlogo/Romania/{0}'}" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding City}" Foreground="#A0A8C0" FontSize="12" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="MainBd" Background="Transparent" CornerRadius="12" Margin="0,3">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="MainBd" Property="Background" Value="#2A3A6A"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="MainBd" Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#E94560" Offset="0"/>
+                                                                <GradientStop Color="#C73652" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Team Details Card -->
+            <Border Grid.Column="1" Padding="45,35,45,45">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0"
+                                Visibility="{Binding SelectedTeam, Converter={StaticResource NullToVis}}">
+                        <TextBlock Text="CLUB PROFILE" Foreground="#E94560" FontWeight="ExtraBold" FontSize="11" Margin="0,0,0,16"/>
+                        
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Border Grid.Column="0" Width="100" Height="100" CornerRadius="50" Background="#1A2238" BorderBrush="#E94560" BorderThickness="3" Margin="0,0,30,0">
+                                <Image Source="{Binding SelectedTeam.LogoPath, StringFormat='/Assets/teamlogo/Romania/{0}'}" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding SelectedTeam.Name}" Foreground="White" FontSize="34" FontWeight="Black" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding SelectedTeam.City}" Foreground="#A0A8C0" FontSize="18"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="FOUNDED" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,3"/>
+                                <TextBlock Text="{Binding SelectedTeam.FoundedYear}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="STADIUM" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,3"/>
+                                <TextBlock Text="{Binding SelectedTeam.StadiumName}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="ABOUT" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding SelectedTeam.Description}" Foreground="#A0A8C0" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontStyle="Italic"/>
+                    </StackPanel>
+
+                    <!-- Budget + action row pinned to bottom -->
+                    <Grid Grid.Row="1"
+                          Visibility="{Binding SelectedTeam, Converter={StaticResource NullToVis}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Separator Grid.ColumnSpan="2" Background="#2A2A4A" Height="1" VerticalAlignment="Top" Margin="0,0,0,20"/>
+
+                        <Grid Grid.Column="0" Margin="0,20,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                                <TextBlock Text="TRANSFER BUDGET" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,3"/>
+                                <TextBlock Text="{Binding SelectedTeam.TransferBudget, StringFormat='€{0:N0}'}" Foreground="#4ECDC4" FontSize="16" FontWeight="Bold"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Row="1">
+                                <TextBlock Text="WAGE BUDGET" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,3"/>
+                                <TextBlock Text="{Binding SelectedTeam.WageBudget, StringFormat='€{0:N0} / pw'}" Foreground="#E94560" FontSize="14" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button Grid.Column="1" Content="START CAREER" Command="{Binding StartCareerCommand}"
+                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,0,0"
+                                Width="180" Height="45" Background="#E94560" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="22">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#C73652"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+
+                    <Button Content="← BACK" Command="{Binding GoBackCommand}"
+                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                            Background="Transparent" Foreground="#666688" BorderThickness="0" Cursor="Hand" FontSize="12" FontWeight="Bold"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

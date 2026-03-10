@@ -1,0 +1,292 @@
+<UserControl x:Class="HandballManager.Views.TeamRosterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:TeamRosterViewModel}">
+    <Grid MaxWidth="1100" HorizontalAlignment="Center" Margin="40,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,32">
+            <TextBlock Text="TEAM ROSTER" FontSize="11" FontWeight="ExtraBold"
+                       Foreground="#E94560" FontFamily="Segoe UI" Margin="4,0,0,10"/>
+            <TextBlock Text="{Binding TeamName}" FontSize="36" FontWeight="Black"
+                       Foreground="White" FontFamily="Segoe UI"/>
+        </StackPanel>
+
+        <!-- Position filter -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,0,24">
+            <TextBlock Text="FILTER BY POSITION" Foreground="#666688" FontFamily="Segoe UI"
+                       FontSize="10" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+            <ComboBox ItemsSource="{Binding Positions}"
+                      SelectedItem="{Binding FilterPosition}"
+                      Width="160" Height="32" FontFamily="Segoe UI" FontSize="13" Foreground="White">
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Background" Value="#16213E"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Grid>
+                                        <ToggleButton x:Name="toggleButton" Background="#16213E" BorderBrush="#2A2A4A"
+                                                      BorderThickness="1" Foreground="White"
+                                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                      Focusable="False" ClickMode="Press">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="24"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <ContentPresenter Grid.Column="0" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="1" Text="▾" Foreground="#A0A8C0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                        <ContentPresenter x:Name="contentSite" IsHitTestVisible="False"
+                                                          Content="{TemplateBinding SelectionBoxItem}"
+                                                          Margin="10,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                            <ContentPresenter.Resources>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                                                    <Setter Property="FontSize" Value="13"/>
+                                                </Style>
+                                            </ContentPresenter.Resources>
+                                        </ContentPresenter>
+                                        <Popup x:Name="popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                               AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                            <Border Background="#16213E" BorderBrush="#2A2A4A" BorderThickness="1"
+                                                    CornerRadius="6" MinWidth="{TemplateBinding ActualWidth}" Margin="0,2,0,0">
+                                                <Border.Effect>
+                                                    <DropShadowEffect BlurRadius="16" Opacity="0.4" ShadowDepth="4"/>
+                                                </Border.Effect>
+                                                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.Style>
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontFamily" Value="Segoe UI"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter Property="Background" Value="#2A3A6A"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#1E3A5F"/>
+                                            <Setter Property="Foreground" Value="#38BDF8"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Table Container -->
+        <Border Grid.Row="2" CornerRadius="20" Background="#16213E" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="40" Opacity="0.2" ShadowDepth="10"/>
+            </Border.Effect>
+
+            <DataGrid ItemsSource="{Binding Players}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserReorderColumns="False"
+                      GridLinesVisibility="None"
+                      Background="Transparent"
+                      RowBackground="Transparent"
+                      BorderThickness="0"
+                      FontFamily="Segoe UI"
+                      FontSize="14"
+                      Foreground="White"
+                      ColumnHeaderHeight="45"
+                      RowHeight="48"
+                      SelectionMode="Single"
+                      HeadersVisibility="Column">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeadersPresenter">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background"      Value="Transparent"/>
+                        <Setter Property="Foreground"      Value="#A0A8C0"/>
+                        <Setter Property="FontWeight"      Value="ExtraBold"/>
+                        <Setter Property="FontSize"        Value="11"/>
+                        <Setter Property="Padding"         Value="15,0"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                        <Setter Property="BorderBrush"     Value="#2A2A4A"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#1E1E3A"/>
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="Scout Player"
+                                              Command="{Binding ScoutCommand}"
+                                              IsEnabled="{Binding CanScout}"/>
+                                    <MenuItem Header="Approach to sign"
+                                              Command="{Binding ApproachToSignCommand}"
+                                              IsEnabled="{Binding CanApproachToSign}"/>
+                                    <MenuItem Header="Make offer (buyout)"
+                                              Command="{Binding MakeOfferCommand}"
+                                              IsEnabled="{Binding CanMakeOffer}"/>
+                                    <Separator/>
+                                    <MenuItem Header="Add to Shortlist"
+                                              Command="{Binding AddToShortlistCommand}"
+                                              IsEnabled="{Binding IsShortlisted, Converter={StaticResource InverseBool}}"/>
+                                    <MenuItem Header="Remove from Shortlist"
+                                              Command="{Binding RemoveFromShortlistCommand}"
+                                              IsEnabled="{Binding IsShortlisted}"/>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1A2238"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#2A3A6A"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding"         Value="15,0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding ShirtNumber}" Width="50">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Black"/>
+                                <Setter Property="Foreground" Value="#A0A8C0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Header="NAME" Width="*" MinWidth="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="👤" Foreground="#666688" Margin="0,0,10,0" FontSize="16"/>
+                                                <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="NAT"  Binding="{Binding Nationality}" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="#666688"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="POS"  Binding="{Binding Position}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="#A0A8C0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="AGE"  Binding="{Binding Age}" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="#666688"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="OVR"  Binding="{Binding OverallDisplay}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Black"/>
+                                <Setter Property="Foreground" Value="#E94560"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>
+

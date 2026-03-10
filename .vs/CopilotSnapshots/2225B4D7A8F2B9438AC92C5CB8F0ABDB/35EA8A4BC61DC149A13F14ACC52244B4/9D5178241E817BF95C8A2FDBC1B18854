@@ -1,0 +1,19 @@
+﻿using System.Windows.Controls;
+
+namespace HandballManager.Views
+{
+    public partial class MainMenuView : UserControl
+    {
+        public MainMenuView()
+        {
+            InitializeComponent();
+        }
+
+        // Fallback InitializeComponent in case the generated method is not present
+        // Loads the XAML for this view as the generated partial class would.
+        private void InitializeComponent()
+        {
+            System.Windows.Application.LoadComponent(this, new System.Uri("/HandballManager;component/Views/MainMenuView.xaml", System.UriKind.Relative));
+        }
+    }
+}

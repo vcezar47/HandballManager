@@ -1,0 +1,88 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HandballManager.Data;
+using HandballManager.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace HandballManager.ViewModels;
+
+public class LeagueInfo
+{
+    public string Name { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
+    public string Logo { get; set; } = string.Empty;
+}
+
+public partial class StartViewModel : BaseViewModel
+{
+    private readonly HandballDbContext _db;
+    private readonly Action<Team> _onTeamSelected;
+
+    [ObservableProperty]
+    private int _currentStep = 1; // 1: League, 2: Team
+
+    [ObservableProperty]
+    private List<LeagueInfo> _leagues = [];
+
+    [ObservableProperty]
+    private LeagueInfo? _selectedLeague;
+
+    [ObservableProperty]
+    private List<Team> _teams = [];
+
+    [ObservableProperty]
+    private Team? _selectedTeam;
+
+    public StartViewModel(HandballDbContext db, Action<Team> onTeamSelected)
+    {
+        Title = "League Selection";
+        _db = db;
+        _onTeamSelected = onTeamSelected;
+
+        Leagues = new List<LeagueInfo>
+        {
+            new() { Name = "Liga Florilor", Country = "Romania", Logo = "/Assets/Leagues/liga_florilor.png" }
+        };
+        SelectedLeague = Leagues.First();
+    }
+
+    public async Task InitializeAsync()
+    {
+        Teams = await _db.Teams.ToListAsync();
+        SelectedTeam = Teams.FirstOrDefault();
+    }
+
+    [RelayCommand]
+    private void SelectLeague()
+    {
+        if (SelectedLeague != null)
+        {
+            CurrentStep = 2;
+            Title = "Select Your Team";
+        }
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        if (CurrentStep > 1)
+        {
+            CurrentStep--;
+            Title = "League Selection";
+        }
+    }
+
+    [RelayCommand]
+    private void StartCareer()
+    {
+        if (SelectedTeam != null)
+        {
+            // Mark the selected team as the player's team
+            foreach (var t in _db.Teams) t.IsPlayerTeam = false;
+            SelectedTeam.IsPlayerTeam = true;
+            _db.SaveChanges();
+
+            _onTeamSelected(SelectedTeam);
+        }
+    }
+}

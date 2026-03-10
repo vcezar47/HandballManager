@@ -1,0 +1,165 @@
+<UserControl x:Class="HandballManager.Views.NewsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             d:DataContext="{d:DesignInstance vm:NewsViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid MaxWidth="900" HorizontalAlignment="Center" Margin="40,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="NEWS" FontSize="11" FontWeight="ExtraBold"
+                       Foreground="#E94560" FontFamily="Segoe UI" Margin="4,0,0,10"/>
+            <TextBlock Text="Information Board" FontSize="36" FontWeight="Black"
+                       Foreground="White" FontFamily="Segoe UI"/>
+        </StackPanel>
+
+        <!-- Tab bar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <StackPanel.Resources>
+                <!-- Base tab button template shared via BasedOn -->
+                <Style x:Key="TabBtn" TargetType="Button">
+                    <Setter Property="FontFamily"      Value="Segoe UI"/>
+                    <Setter Property="FontSize"        Value="13"/>
+                    <Setter Property="FontWeight"      Value="Bold"/>
+                    <Setter Property="Padding"         Value="18,8"/>
+                    <Setter Property="Cursor"          Value="Hand"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Background"      Value="#2A2A4A"/>
+                    <Setter Property="Foreground"      Value="#A0A8C0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+
+                <Style x:Key="TabBtnAll" TargetType="Button" BasedOn="{StaticResource TabBtn}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActiveTab}" Value="All">
+                            <Setter Property="Background" Value="#E94560"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+
+                <Style x:Key="TabBtnTransfers" TargetType="Button" BasedOn="{StaticResource TabBtn}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActiveTab}" Value="Transfers">
+                            <Setter Property="Background" Value="#E94560"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+
+                <Style x:Key="TabBtnRetirements" TargetType="Button" BasedOn="{StaticResource TabBtn}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActiveTab}" Value="Retirements">
+                            <Setter Property="Background" Value="#E94560"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Content="All"
+                    Style="{StaticResource TabBtnAll}"
+                    Margin="0,0,8,0"
+                    Command="{Binding SetTabCommand}"
+                    CommandParameter="All"/>
+
+            <Button Content="⇌  Transfers"
+                    Style="{StaticResource TabBtnTransfers}"
+                    Margin="0,0,8,0"
+                    Command="{Binding SetTabCommand}"
+                    CommandParameter="Transfers"/>
+
+            <Button Content="🏁  Retirements"
+                    Style="{StaticResource TabBtnRetirements}"
+                    Command="{Binding SetTabCommand}"
+                    CommandParameter="Retirements"/>
+        </StackPanel>
+
+        <!-- News feed -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding FilteredItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#16213E" CornerRadius="14" Padding="20" Margin="0,0,0,10">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="20" Opacity="0.15" ShadowDepth="4"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="44"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon badge -->
+                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10"
+                                        VerticalAlignment="Top" HorizontalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#1A2238"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding NewsType}" Value="Transfer">
+                                                    <Setter Property="Background" Value="#0f3460"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding NewsType}" Value="RetirementAnnouncement">
+                                                    <Setter Property="Background" Value="#2d1b4e"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="📋"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding NewsType}" Value="Transfer">
+                                                        <Setter Property="Text" Value="⇌"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding NewsType}" Value="RetirementAnnouncement">
+                                                        <Setter Property="Text" Value="🏁"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <!-- Content -->
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="15"
+                                                   Foreground="White" FontFamily="Segoe UI"
+                                                   TextWrapping="Wrap" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="{Binding PublishedAt, StringFormat={}{0:dd MMM yyyy}}"
+                                                   Foreground="#444466" FontSize="11" FontFamily="Segoe UI"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                    </Grid>
+                                    <TextBlock Text="{Binding Body}" Foreground="#A0A8C0"
+                                               FontFamily="Segoe UI" TextWrapping="Wrap"
+                                               Margin="0,6,0,0" FontSize="13" LineHeight="20"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+

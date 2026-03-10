@@ -1,0 +1,211 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.IO;
+using HandballManager.Data;
+using HandballManager.Models;
+
+namespace HandballManager.Data;
+
+public static class DatabaseSeeder
+{
+    private static readonly Random Rng = new();
+    public static void Seed(HandballDbContext db)
+    {
+        var logPath = Path.Combine(Path.GetDirectoryName(db.DbPath) ?? "", "seeding_log.txt");
+        File.WriteAllText(logPath, $"--- Seeding Log {DateTime.Now} ---\n");
+
+        void Log(string msg)
+        {
+            Console.WriteLine(msg);
+            File.AppendAllText(logPath, msg + "\n");
+        }
+
+        if (db.Teams.Any())
+        {
+            Log($"Database already contains {db.Teams.Count()} teams. Skipping initial seed.");
+            return;
+        }
+
+        var jsonPath = "";
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/InitialData"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../Data/InitialData"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/InitialData"),
+            Path.Combine(Directory.GetCurrentDirectory(), "HandballManager/Data/InitialData")
+        };
+
+        foreach (var p in possiblePaths)
+        {
+            if (Directory.Exists(p))
+            {
+                jsonPath = p;
+                break;
+            }
+        }
+
+        if (string.IsNullOrEmpty(jsonPath))
+        {
+            Log("CRITICAL: Could not find Data/InitialData directory in any expected location.");
+            return;
+        }
+
+        Log($"Found data directory at: {jsonPath}");
+        var files = Directory.GetFiles(jsonPath, "*.json", SearchOption.AllDirectories);
+        Log($"Found {files.Length} JSON files to process.");
+
+        foreach (var file in files)
+        {
+            var fileName = Path.GetFileName(file);
+            try
+            {
+                var json = File.ReadAllText(file);
+                var teamData = JsonSerializer.Deserialize<Team>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (teamData != null && !string.IsNullOrEmpty(teamData.Name))
+                {
+                    Log($"Seeding team: {teamData.Name} from {fileName}...");
+
+                    var players = teamData.Players;
+
+                    // Assign LogoPath based on fileName
+                    teamData.LogoPath = fileName.ToLower() switch
+                    {
+                        "baia_mare.json" => "baiamare.png",
+                        "brasov.json" => "coronabrasov.png",
+                        "craiova.json" => "craiova.png",
+                        "csm_bucuresti.json" => "csmbucuresti.png",
+                        "csm_galati.json" => "csmgalati.png",
+                        "dunarea_braila.json" => "braila.png",
+                        "gloria_bistrita.json" => "bistrita.png",
+                        "ramnicu_valcea.json" => "valcea.png",
+                        "rapid_bucuresti.json" => "rapidbucuresti.png",
+                        "slatina.json" => "slatina.png",
+                        "targu_jiu.json" => "targujiu.png",
+                        "zalau.json" => "zalau.png",
+                        _ => string.Empty
+                    };
+
+                    // Calculate expected wages
+                    decimal yearlyWage = players.Sum(p => (decimal)p.MonthlyWage * 12);
+                    decimal weeklyWage = yearlyWage / 52m;
+
+                    // Wage budget matches total wages exactly from the start
+                    teamData.WageBudget = Math.Round(weeklyWage, 0);
+
+                    // The total available budget for the club
+                    teamData.ClubBalance = teamData.Budget;
+
+                    // Transfer budget is the rest of the club balance after securing a year's worth of wages
+                    teamData.TransferBudget = Math.Max(0, teamData.ClubBalance - (teamData.WageBudget * 52m));
+
+                    // If the pre-defined budget couldn't even cover the wages, boost the club balance to prevent immediate bankruptcy
+                    if (teamData.TransferBudget == 0)
+                    {
+                        teamData.ClubBalance = teamData.WageBudget * 52m;
+                    }
+
+                    teamData.Players = new List<Player>();
+
+                    db.Teams.Add(teamData);
+                    db.SaveChanges();
+
+                    foreach (var player in players)
+                    {
+                        player.TeamId = teamData.Id;
+                        if (player.Height == 0) player.Height = Rng.Next(170, 195);
+                        if (player.Weight == 0) player.Weight = Rng.Next(65, 95);
+
+                        // Default Game Start Year for this setup
+                        int currentYear = 2025;
+
+                        // Assign random contract lengths based on age
+                        int addedYears;
+                        if (player.Age < 25)
+                        {
+                            addedYears = Rng.Next(2, 6); // 2 to 5 years
+                        }
+                        else if (player.Age <= 30)
+                        {
+                            addedYears = Rng.Next(2, 4); // 2 to 3 years
+                        }
+                        else
+                        {
+                            addedYears = Rng.Next(1, 3); // 1 to 2 years
+                        }
+
+                        // Contracts expire on June 30 of the expiring year
+                        player.ContractEndDate = new DateTime(currentYear + addedYears, 6, 30);
+
+                        db.Players.Add(player);
+                    }
+
+                    db.LeagueEntries.Add(new LeagueEntry { TeamId = teamData.Id });
+                    db.SaveChanges();
+                    Log($"Successfully seeded {teamData.Name} with {players.Count} players.");
+                }
+                else
+                {
+                    Log($"Warning: {fileName} deserialized to null or empty team name.");
+                }
+            }
+            catch (JsonException jex)
+            {
+                Log($"JSON Error in {fileName}: {jex.Message}");
+                if (jex.InnerException != null) Log($"  Inner: {jex.InnerException.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error seeding from {fileName}: {ex.GetType().Name} - {ex.Message}");
+            }
+        }
+
+        // Seed Champions
+        string champsFile = "";
+        var possibleChampsPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Liga Florilor/champions.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Liga Florilor/champions.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Liga Florilor/champions.json")
+        };
+
+        foreach (var p in possibleChampsPaths)
+        {
+            if (File.Exists(p))
+            {
+                champsFile = p;
+                break;
+            }
+        }
+
+        if (!db.ChampionRecords.Any() && !string.IsNullOrEmpty(champsFile))
+        {
+            try
+            {
+                var champsJson = File.ReadAllText(champsFile);
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (champsList != null)
+                {
+                    db.ChampionRecords.AddRange(champsList);
+                    Log($"Successfully seeded {champsList.Count} historical champions.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error seeding champions: {ex.Message}");
+            }
+        }
+
+        db.SaveChanges();
+        Log("--- Seeding Complete ---");
+    }
+}

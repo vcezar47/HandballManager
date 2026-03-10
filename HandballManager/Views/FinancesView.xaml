@@ -1,0 +1,117 @@
+<UserControl x:Class="HandballManager.Views.FinancesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vm:FinancesViewModel}">
+    
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="CLUB FINANCES" Foreground="White" FontSize="32" FontWeight="Black" Margin="0,0,0,30"/>
+
+        <!-- Main Content Grid -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Dashboard Left Column -->
+            <StackPanel Grid.Column="0" Margin="0,0,30,0">
+                
+                <!-- Current Budgets Overview -->
+                <Border Background="#16213E" CornerRadius="12" Padding="25" Margin="0,0,0,25">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="TRANSFER BUDGET" Foreground="#A0A8C0" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding TransferBudget, StringFormat='€{0:N0}'}" Foreground="#4ECDC4" FontSize="36" FontWeight="Black"/>
+                            <TextBlock Text="Available for permanent transfers" Foreground="#666688" FontSize="12" Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="WAGE BUDGET" Foreground="#A0A8C0" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding WageBudget, StringFormat='€{0:N0} / p.w.'}" Foreground="#E94560" FontSize="36" FontWeight="Black"/>
+                            <TextBlock Text="Available for player contracts" Foreground="#666688" FontSize="12" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Budget Adjustment Tool -->
+                <Border Background="#16213E" CornerRadius="12" Padding="25">
+                    <StackPanel>
+                        <TextBlock Text="ADJUST BUDGETS" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+                        <TextBlock Text="Use the slider to shift funds between your Transfer Budget and Wage Budget." Foreground="#A0A8C0" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,25"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Column="0" Text="← Move to Wage Budget" Foreground="#E94560" FontSize="12" FontWeight="Bold" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="Move to Transfer Budget →" Foreground="#4ECDC4" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <Slider Value="{Binding BudgetSliderValue}" Minimum="{Binding MinSliderValue}" Maximum="{Binding MaxSliderValue}" 
+                                TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,30" AutoToolTipPlacement="TopLeft"/>
+
+                        <Button Content="CONFIRM CHANGES" Command="{Binding ConfirmBudgetsCommand}"
+                                Width="200" Height="45" Background="#E94560" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Right">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#C73652"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Financial Summary Right Column -->
+            <Border Grid.Column="1" Background="#16213E" CornerRadius="12" Padding="25" VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="FINANCIAL SUMMARY" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+                    
+                    <TextBlock Text="Total Club Balance" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding ClubBalance, StringFormat='€{0:N0}'}" Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                    
+                    <Separator Background="#2A2A4A" Margin="0,5,0,15"/>
+                    
+                    <TextBlock Text="Season Projection" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="N/A" Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15"/>
+
+                    <Separator Background="#2A2A4A" Margin="0,5,0,15"/>
+
+                    <TextBlock Text="Sponsorship Income" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="N/A" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
