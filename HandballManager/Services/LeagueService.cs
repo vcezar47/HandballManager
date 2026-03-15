@@ -77,7 +77,7 @@ public class LeagueService
     {
         // Season runs Sep -> late May, with a winter break (no league matches).
         var seasonStart = FirstSaturdayOnOrAfter(new DateTime(seasonYear, 9, 1));
-        var seasonEnd = LastSaturdayOnOrBefore(new DateTime(seasonYear + 1, 5, 31));
+        var seasonEnd = LastSaturdayOnOrBefore(new DateTime(seasonYear + 1, 5, 25));
 
         var breakStart = new DateTime(seasonYear, 12, 15);
         var breakEnd = new DateTime(seasonYear + 1, 1, 15);
@@ -187,7 +187,7 @@ public class LeagueService
     public async Task<(int homeTeamId, int awayTeamId, int matchweek)> GetNextFixtureAsync(int playerTeamId)
     {
         int played = await _db.MatchRecords
-            .Where(m => m.HomeTeamId == playerTeamId || m.AwayTeamId == playerTeamId)
+            .Where(m => (m.HomeTeamId == playerTeamId || m.AwayTeamId == playerTeamId) && !m.IsCupMatch)
             .CountAsync();
 
         int nextMatchweek = played + 1;

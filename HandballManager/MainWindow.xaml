@@ -30,6 +30,12 @@
         <DataTemplate DataType="{x:Type vm:LeagueTableViewModel}">
             <views:LeagueTableView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CompetitionsViewModel}">
+            <views:CompetitionsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CupDetailViewModel}">
+            <views:CupDetailView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ScoutingViewModel}">
             <views:ScoutingView />
         </DataTemplate>
@@ -38,6 +44,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LeagueHistoryViewModel}">
             <views:LeagueHistoryView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CupHistoryViewModel}">
+            <views:CupHistoryView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:FinancesViewModel}">
             <views:FinancesView />
@@ -62,6 +71,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:YouthSignViewModel}">
             <views:YouthSignView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:YouthDetailViewModel}">
+            <views:YouthDetailView />
         </DataTemplate>
 
         <!-- Nav button style -->
@@ -172,8 +184,8 @@
                             Command="{Binding NavigateToHomeCommand}"/>
                     <Button Content="👥  Roster"        Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToRosterCommand}"/>
-                    <Button Content="📊  League Table"  Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToLeagueCommand}"/>
+                    <Button Content="📊  Competitions"  Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToCompetitionsCommand}"/>
                     <Button Content="🔍  Scouting"      Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToScoutingCommand}"/>
                     <Button Content="💰  Finances"      Style="{StaticResource NavButton}"

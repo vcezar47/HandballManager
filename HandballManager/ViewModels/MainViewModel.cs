@@ -16,6 +16,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly ScoutingService _scouting;
     private readonly TransferService _transferService;
     private readonly YouthIntakeService _youthIntakeService;
+    private readonly CupService _cupService;
 
     private readonly Stack<BaseViewModel> _backStack = new();
     private readonly Stack<BaseViewModel> _forwardStack = new();
@@ -52,8 +53,11 @@ public partial class MainViewModel : BaseViewModel
     public HomeViewModel HomeVM { get; }
     public RosterViewModel RosterVM { get; }
     public LeagueTableViewModel LeagueTableVM { get; }
+    public CompetitionsViewModel CompetitionsVM { get; }
+    public CupDetailViewModel CupDetailVM { get; }
     public ScoutingViewModel ScoutingVM { get; }
     public LeagueHistoryViewModel LeagueHistoryVM { get; }
+    public CupHistoryViewModel CupHistoryVM { get; }
     public FinancesViewModel FinancesVM { get; }
     public ContractsViewModel ContractsVM { get; }
     public TransfersViewModel TransfersVM { get; }
@@ -61,7 +65,7 @@ public partial class MainViewModel : BaseViewModel
     public YouthViewModel YouthVM { get; }
     public StartViewModel StartVM { get; }
 
-    public MainViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine, GameClock clock, ScoutingService scouting, TransferService transferService, YouthIntakeService youthIntakeService)
+    public MainViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine, GameClock clock, ScoutingService scouting, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService)
     {
         _db = db;
         _leagueService = leagueService;
@@ -70,6 +74,7 @@ public partial class MainViewModel : BaseViewModel
         _scouting = scouting;
         _transferService = transferService;
         _youthIntakeService = youthIntakeService;
+        _cupService = cupService;
 
         StartVM = new StartViewModel(db, OnTeamSelected);
         MainMenuVM = new MainMenuViewModel(async () =>
@@ -77,20 +82,24 @@ public partial class MainViewModel : BaseViewModel
             NavigateTo(StartVM);
             await StartVM.InitializeAsync();
         });
-        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, clock, NavigateToMatchDetail);
+        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, clock, NavigateToMatchDetail);
         RosterVM = new RosterViewModel(db, NavigateToPlayerDetail, OpenContractRenewal);
         LeagueTableVM = new LeagueTableViewModel(leagueService, NavigateToTeamRoster, async () => await NavigateToLeagueHistoryAsync());
+        CompetitionsVM = new CompetitionsViewModel(leagueService, cupService, NavigateToTeamRoster,
+            async () => await NavigateToLeagueDetailAsync(),
+            async () => await NavigateToCupDetailAsync());
+        CupDetailVM = new CupDetailViewModel(cupService, NavigateToTeamRoster, async () => await NavigateToCupHistoryAsync());
         ScoutingVM = new ScoutingViewModel(db, clock, scouting, NavigateToPlayerDetail, _transferService, OpenTransferNegotiation);
         LeagueHistoryVM = new LeagueHistoryViewModel(db);
+        CupHistoryVM = new CupHistoryViewModel(db);
         FinancesVM = new FinancesViewModel(db);
         ContractsVM = new ContractsViewModel(db, clock);
         TransfersVM = new TransfersViewModel(db, transferService, clock, RefreshPendingOfferCountAsync, OpenTransferNegotiation); 
         NewsVM = new NewsViewModel(db, RefreshUnreadNewsCountAsync);
-        YouthVM = new YouthViewModel(db, clock, youthIntakeService, transferService, OpenYouthSign);
+        YouthVM = new YouthViewModel(db, clock, youthIntakeService, transferService, OpenYouthSign, OpenYouthDetail);
 
         _currentViewModel = MainMenuVM;
 
-        // Refresh badges whenever the game date advances
         _clock.PropertyChanged += async (_, e) =>
         {
             if (e.PropertyName == nameof(GameClock.CurrentDate) && IsGameStarted)
@@ -111,7 +120,6 @@ public partial class MainViewModel : BaseViewModel
     {
         IsGameStarted = true;
 
-        // Clear navigation history so back/forward arrows are disabled until you navigate in-game
         _backStack.Clear();
         _forwardStack.Clear();
         CanGoBack = false;
@@ -122,7 +130,6 @@ public partial class MainViewModel : BaseViewModel
         await RefreshUnreadNewsCountAsync();
         await RefreshYouthIntakeActiveAsync();
 
-        // Navigate directly without adding to history
         CurrentViewModel = HomeVM;
     }
 
@@ -202,6 +209,13 @@ public partial class MainViewModel : BaseViewModel
         NavigateTo(vm);
     }
 
+    private async void OpenYouthDetail(int youthId)
+    {
+        var vm = new YouthDetailViewModel(_db, youthId, () => OpenYouthSign(youthId), DoNavigateBack);
+        await vm.LoadAsync();
+        NavigateTo(vm);
+    }
+
     private async void OpenTransferNegotiation(int playerId, string mode)
     {
         var player = await _db.Players
@@ -245,10 +259,24 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToLeagueAsync()
+    private async Task NavigateToCompetitionsAsync()
+    {
+        await CompetitionsVM.InitializeAsync();
+        NavigateTo(CompetitionsVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToLeagueDetailAsync()
     {
         await LeagueTableVM.InitializeAsync();
         NavigateTo(LeagueTableVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToCupDetailAsync()
+    {
+        await CupDetailVM.InitializeAsync();
+        NavigateTo(CupDetailVM);
     }
 
     [RelayCommand]
@@ -263,6 +291,13 @@ public partial class MainViewModel : BaseViewModel
     {
         await LeagueHistoryVM.InitializeAsync();
         NavigateTo(LeagueHistoryVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToCupHistoryAsync()
+    {
+        await CupHistoryVM.InitializeAsync();
+        NavigateTo(CupHistoryVM);
     }
 
     [RelayCommand]

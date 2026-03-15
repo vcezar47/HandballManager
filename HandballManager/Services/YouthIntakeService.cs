@@ -323,4 +323,21 @@ public class YouthIntakeService
             return p;
         }
     }
+
+    /// <summary>
+    /// Removes unsigned youth candidates after March 30 or at season end.
+    /// </summary>
+    public async Task RemoveStaleIntakeAsync(DateTime date)
+    {
+        int year = date.Month < 6 ? date.Year : date.Year + 1; // logical season end is June
+        var stale = await _db.YouthIntakePlayers
+            .Where(y => y.IntakeYear < year || (y.IntakeYear == date.Year && date.Month == 3 && date.Day > 30) || (y.IntakeYear == date.Year && date.Month > 3))
+            .ToListAsync();
+        
+        if (stale.Any())
+        {
+            _db.YouthIntakePlayers.RemoveRange(stale);
+            await _db.SaveChangesAsync();
+        }
+    }
 }

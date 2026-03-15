@@ -10,17 +10,19 @@ public class SimulationEngine
     private readonly PlayerProgressionService _progression;
     private readonly TransferService _transferService;
     private readonly YouthIntakeService _youthIntakeService;
+    private readonly CupService _cupService;
     private readonly Random _rng = new();
     private const int PossessionsPerTeam = 55;
     private DateTime _lastDailyProgressionDate;
     private DateTime _lastWeeklyWageDate;
 
-    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService)
+    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService)
     {
         _db = db;
         _progression = progression;
         _transferService = transferService;
         _youthIntakeService = youthIntakeService;
+        _cupService = cupService;
         _lastDailyProgressionDate = LeagueService.GameSeasonStartDate;
         _lastWeeklyWageDate = LeagueService.GameSeasonStartDate;
     }
@@ -62,6 +64,7 @@ public class SimulationEngine
         await _transferService.ExpireStaleOffersAsync(currentDate);
         await _youthIntakeService.GenerateIntakeForDateIfNeededAsync(currentDate);
         await _youthIntakeService.SignAiYouthPlayersAsync(currentDate);
+        await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
         await _transferService.TryGenerateAiOfferAsync(currentDate);
         await _transferService.TryGenerateAiToAiTransfersAsync(currentDate);
 
@@ -101,7 +104,62 @@ public class SimulationEngine
         }
     }
 
-    private async Task<MatchRecord> SimulateMatchInternalAsync(int homeTeamId, int awayTeamId, int matchweek)
+    /// <summary>
+    /// Simulates all cup fixtures for a given date.
+    /// </summary>
+    public async Task<List<MatchRecord>> SimulateCupFixturesAsync(DateTime date)
+    {
+        await ProcessDailyProgressionAsync(date);
+
+        var fixtures = await _cupService.GetFixturesForDateAsync(date);
+        var results = new List<MatchRecord>();
+
+        foreach (var fixture in fixtures.Where(f => !f.IsPlayed))
+        {
+            var cupRoundLabel = fixture.Round switch
+            {
+                "Group" => $"Group {fixture.CupGroup?.GroupName}",
+                "QuarterFinal" => "Quarter-Final",
+                "SemiFinal" => "Semi-Final",
+                "ThirdPlace" => "3rd Place",
+                "Final" => "Final",
+                _ => fixture.Round
+            };
+
+            var record = await SimulateMatchInternalAsync(
+                fixture.HomeTeamId, fixture.AwayTeamId, 0,
+                isCupMatch: true, cupRound: cupRoundLabel,
+                playedOnOverride: date, isNeutralVenue: fixture.VenueName != null);
+
+            fixture.HomeGoals = record.HomeGoals;
+            fixture.AwayGoals = record.AwayGoals;
+            fixture.IsPlayed = true;
+            fixture.MatchRecord = record;
+
+            // Update group standings if this is a group match
+            if (fixture.Round == "Group" && fixture.CupGroupId.HasValue)
+            {
+                await _cupService.UpdateGroupEntryAsync(fixture.CupGroupId.Value, fixture.HomeTeamId, record.HomeGoals, record.AwayGoals);
+                await _cupService.UpdateGroupEntryAsync(fixture.CupGroupId.Value, fixture.AwayTeamId, record.AwayGoals, record.HomeGoals);
+            }
+
+            results.Add(record);
+        }
+
+        await _db.SaveChangesAsync();
+
+        // Try to advance the bracket after simulating
+        await _cupService.TryGenerateQuarterFinalsAsync();
+        await _cupService.TryGenerateFinalFourAsync();
+        await _cupService.TryGenerateFinalsAsync();
+
+        return results;
+    }
+
+    private async Task<MatchRecord> SimulateMatchInternalAsync(
+        int homeTeamId, int awayTeamId, int matchweek,
+        bool isCupMatch = false, string? cupRound = null,
+        DateTime? playedOnOverride = null, bool isNeutralVenue = false)
     {
         var homeTeam = await _db.Teams.Include(t => t.Players).FirstAsync(t => t.Id == homeTeamId);
         var awayTeam = await _db.Teams.Include(t => t.Players).FirstAsync(t => t.Id == awayTeamId);
@@ -114,8 +172,10 @@ public class SimulationEngine
             AwayTeamName = awayTeam.Name,
             HomeTeamLogo = homeTeam.LogoPath,
             AwayTeamLogo = awayTeam.LogoPath,
-            PlayedOn = LeagueService.GetMatchweekDate(matchweek),
+            PlayedOn = playedOnOverride ?? LeagueService.GetMatchweekDate(matchweek),
             MatchweekNumber = matchweek,
+            IsCupMatch = isCupMatch,
+            CupRound = cupRound
         };
 
         var playerStats = new Dictionary<int, MatchPlayerStat>();
@@ -130,8 +190,8 @@ public class SimulationEngine
             };
         }
 
-        // Simulating second half logic roughly
-        SimulatePossessions(record, homeTeam, awayTeam, playerStats, true);
+        // Simulating both halves
+        SimulatePossessions(record, homeTeam, awayTeam, playerStats, !isNeutralVenue);
         SimulatePossessions(record, awayTeam, homeTeam, playerStats, false);
 
         // Finalize stats and ratings
@@ -140,12 +200,28 @@ public class SimulationEngine
         record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
         record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
 
+        // Cup knockout matches can't end in a draw — simulate extra possessions until a winner
+        if (isCupMatch && cupRound != null && cupRound != "Group" && !cupRound.StartsWith("Group")
+            && record.HomeGoals == record.AwayGoals)
+        {
+            while (record.HomeGoals == record.AwayGoals)
+            {
+                SimulatePossessions(record, homeTeam, awayTeam, playerStats, false, possessionCount: 10);
+                SimulatePossessions(record, awayTeam, homeTeam, playerStats, false, possessionCount: 10);
+                record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
+                record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
+            }
+        }
+
         _db.MatchRecords.Add(record);
         record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Rating > 0));
 
-        // Update league standings
-        await UpdateLeagueEntryAsync(homeTeamId, record.HomeGoals, record.AwayGoals);
-        await UpdateLeagueEntryAsync(awayTeamId, record.AwayGoals, record.HomeGoals);
+        // Only update league standings for league matches
+        if (!isCupMatch)
+        {
+            await UpdateLeagueEntryAsync(homeTeamId, record.HomeGoals, record.AwayGoals);
+            await UpdateLeagueEntryAsync(awayTeamId, record.AwayGoals, record.HomeGoals);
+        }
 
         // Update player seasonal stats and apply progression
         foreach (var player in homeTeam.Players.Concat(awayTeam.Players))
@@ -158,7 +234,6 @@ public class SimulationEngine
                 player.MatchesPlayed++;
                 player.SeasonRatingSum += stat.Rating;
 
-                // Apply progression/regression based on match performance
                 _progression.ProcessMatchProgression(player, stat, matchweek);
             }
         }
@@ -166,7 +241,7 @@ public class SimulationEngine
         return record;
     }
 
-    private void SimulatePossessions(MatchRecord record, Team attackers, Team defenders, Dictionary<int, MatchPlayerStat> stats, bool isAttackerHome)
+    private void SimulatePossessions(MatchRecord record, Team attackers, Team defenders, Dictionary<int, MatchPlayerStat> stats, bool isAttackerHome, int possessionCount = PossessionsPerTeam)
     {
         var attackRating = CalculateAttackRating(attackers);
         var defenseRating = CalculateDefenseRating(defenders);
@@ -175,7 +250,7 @@ public class SimulationEngine
 
         double homeBonus = isAttackerHome ? 1.05 : 1.0;
 
-        for (int i = 0; i < PossessionsPerTeam; i++)
+        for (int i = 0; i < possessionCount; i++)
         {
             double diff = (attackRating * homeBonus) - defenseRating;
             double shotChance = Math.Clamp(0.6 + (diff / 40.0), 0.3, 0.9);
@@ -373,7 +448,7 @@ public class SimulationEngine
             entry.GoalsAgainst = 0;
         }
 
-        // Wipe records for the new season
+        // Wipe match records for the new season
         var allMatchRecords = await _db.MatchRecords.ToListAsync();
         var allMatchEvents = await _db.MatchEvents.ToListAsync();
         var allMatchStats = await _db.MatchPlayerStats.ToListAsync();
@@ -382,12 +457,40 @@ public class SimulationEngine
         _db.MatchEvents.RemoveRange(allMatchEvents);
         _db.MatchRecords.RemoveRange(allMatchRecords);
 
+        // Record Cup winner
+        var cupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam)
+            .Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed);
+
+        if (cupFinal != null)
+        {
+            var cupWinner = cupFinal.HomeGoals > cupFinal.AwayGoals ? cupFinal.HomeTeam : cupFinal.AwayTeam;
+            if (cupWinner != null)
+            {
+                var cupRecord = new CupWinnerRecord
+                {
+                    Season = currentDate.Year.ToString(),
+                    TeamName = cupWinner.Name
+                };
+                _db.CupWinnerRecords.Add(cupRecord);
+            }
+        }
+
+        // Wipe cup data
+        await _cupService.ClearSeasonDataAsync();
+
+        // Wipe stale youth
+        await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
+
         LeagueService.AdvanceToNextSeason();
-        // Continue daily / weekly progression seamlessly from the current in-game date
         _lastDailyProgressionDate = currentDate.Date;
         _lastWeeklyWageDate = currentDate.Date;
 
         await _db.SaveChangesAsync();
+
+        // Generate new cup for the next season
+        await _cupService.GenerateCupAsync();
 
         var activePlayers = await _db.Players.IgnoreQueryFilters().Where(p => !p.IsRetired).ToListAsync();
         foreach (var p in activePlayers)

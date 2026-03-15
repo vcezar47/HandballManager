@@ -18,6 +18,10 @@ public class HandballDbContext : DbContext
     public DbSet<PendingTransfer> PendingTransfers { get; set; }
     public DbSet<NewsItem> NewsItems { get; set; }
     public DbSet<YouthIntakePlayer> YouthIntakePlayers { get; set; }
+    public DbSet<CupGroup> CupGroups { get; set; }
+    public DbSet<CupGroupEntry> CupGroupEntries { get; set; }
+    public DbSet<CupFixture> CupFixtures { get; set; }
+    public DbSet<CupWinnerRecord> CupWinnerRecords { get; set; }
 
     private readonly string _dbPath;
 
@@ -55,5 +59,10 @@ public class HandballDbContext : DbContext
 
         modelBuilder.Entity<YouthIntakePlayer>()
             .Ignore(y => y.Name);
+
+        modelBuilder.Entity<CupGroupEntry>()
+            .Ignore(e => e.Points)
+            .Ignore(e => e.GoalDifference)
+            .Ignore(e => e.Rank);
     }
 }

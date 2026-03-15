@@ -29,12 +29,16 @@ public partial class App : Application
             var progressionService = new PlayerProgressionService();
             var transferService = new TransferService(db);
             var youthIntakeService = new YouthIntakeService(db);
-            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService);
+            var cupService = new CupService(db);
+            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService);
             var clock = new GameClock(LeagueService.GameSeasonStartDate);
             var scoutingService = new ScoutingService(clock);
 
+            // Generate initial cup draw
+            await cupService.GenerateCupAsync();
+
             // Build main VM and window
-            var mainVm = new MainViewModel(db, leagueService, simulationEngine, clock, scoutingService, transferService, youthIntakeService);
+            var mainVm = new MainViewModel(db, leagueService, simulationEngine, clock, scoutingService, transferService, youthIntakeService, cupService);
             await mainVm.InitializeAsync();
 
             var mainWindow = new MainWindow { DataContext = mainVm };

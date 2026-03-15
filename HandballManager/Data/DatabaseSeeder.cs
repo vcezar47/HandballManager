@@ -205,6 +205,46 @@ public static class DatabaseSeeder
             }
         }
 
+        // Seed Cup Winners
+        string cupWinnersFile = "";
+        var possibleCupPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Cupa Romaniei/cup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Cupa Romaniei/cup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Cupa Romaniei/cup_winners.json")
+        };
+
+        foreach (var p in possibleCupPaths)
+        {
+            if (File.Exists(p))
+            {
+                cupWinnersFile = p;
+                break;
+            }
+        }
+
+        if (!db.CupWinnerRecords.Any() && !string.IsNullOrEmpty(cupWinnersFile))
+        {
+            try
+            {
+                var cupJson = File.ReadAllText(cupWinnersFile);
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (cupList != null)
+                {
+                    db.CupWinnerRecords.AddRange(cupList);
+                    Log($"Successfully seeded {cupList.Count} historical cup winners.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error seeding cup winners: {ex.Message}");
+            }
+        }
+
         db.SaveChanges();
         Log("--- Seeding Complete ---");
     }

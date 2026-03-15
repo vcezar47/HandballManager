@@ -16,11 +16,19 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 
 ## Current In-game Competitions
 
-*   **Romanian Women's Handball League (Liga Florilor)**
+*   **Romania Women's Handball League (Liga Florilor)**
+*   **Romania Women's Handball Cup (Cupa Romaniei)**
 
 ## Upcoming Competitions
 
-*   **Romanian Women's Handball Cup (Cupa Romaniei)**
+*   **Romania Women's Handball Supercup (Supercupa Romaniei)**
+*   **Hungary Women's Handball League (NB I)**
+*   **Hungary Women's Handball Cup (Magyar Kupa)**
+
+## Upcoming Features
+
+*   **Detailed information tab for each club (trophies, description, squad integration etc.)**
+*   **Managers**
 
 ## Copyright
 
