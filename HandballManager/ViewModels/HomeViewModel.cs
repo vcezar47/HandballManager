@@ -12,6 +12,7 @@ public partial class HomeViewModel : BaseViewModel
     private readonly LeagueService _leagueService;
     private readonly SimulationEngine _simulationEngine;
     private readonly CupService _cupService;
+    private readonly SupercupService _supercupService;
     private readonly HandballDbContext _db;
     private readonly Func<int, Task> _onNavigateToMatchDetail;
     private readonly Func<Task>? _onDayAdvanced;
@@ -72,21 +73,25 @@ public partial class HomeViewModel : BaseViewModel
     private int _nextAwayTeamId;
     private int _nextMatchweek;
     private DateTime? _nextCupDate;
+    private DateTime? _nextSupercupDate;
     private bool _playerHasCupFixturePending;
+    private bool _playerHasSupercupFixturePending;
     private DateTime? _nextCupDateForTeam;
+    private DateTime? _nextSupercupDateForTeam;
 
     // Total "event slots" for the matchweek browser: league matchweeks + cup dates
     private List<DateTime> _allEventDates = [];
     private int _viewedEventIndex;
 
     public HomeViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine,
-        CupService cupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Func<Task>? onDayAdvanced = null)
+        CupService cupService, SupercupService supercupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Func<Task>? onDayAdvanced = null)
     {
         Title = "Home";
         _db = db;
         _leagueService = leagueService;
         _simulationEngine = simulationEngine;
         _cupService = cupService;
+        _supercupService = supercupService;
         _clock = clock;
         _onNavigateToMatchDetail = onNavigateToMatchDetail;
         _onDayAdvanced = onDayAdvanced;
@@ -112,10 +117,13 @@ public partial class HomeViewModel : BaseViewModel
     {
         var leagueDates = LeagueService.MatchweekDates.ToList();
         var cupDates = await _cupService.GetAllCupDatesAsync();
+        var supercupDates = await _supercupService.GetAllDatesAsync();
 
         var allDates = new HashSet<DateTime>(leagueDates);
         foreach (var cd in cupDates)
             allDates.Add(cd.Date);
+        foreach (var sd in supercupDates)
+            allDates.Add(sd.Date);
 
         _allEventDates = allDates.OrderBy(d => d).ToList();
     }
@@ -159,6 +167,26 @@ public partial class HomeViewModel : BaseViewModel
                 PlayedOn = f.ScheduledDate
             });
         }
+        
+        var unplayedSupercupFixtures = await _supercupService.GetFixturesForDateAsync(date);
+        foreach (var f in unplayedSupercupFixtures.Where(f => !f.IsPlayed))
+        {
+            cupResults.Add(new MatchRecord
+            {
+                Id = -1,
+                HomeTeamId = f.HomeTeamId,
+                AwayTeamId = f.AwayTeamId,
+                HomeTeamName = f.HomeTeam?.Name ?? "TBD",
+                AwayTeamName = f.AwayTeam?.Name ?? "TBD",
+                HomeTeamLogo = f.HomeTeam?.LogoPath ?? "",
+                AwayTeamLogo = f.AwayTeam?.LogoPath ?? "",
+                HomeGoals = 0,
+                AwayGoals = 0,
+                IsCupMatch = true,
+                CupRound = f.Round == "SemiFinal" ? "Supercup Semi-Final" : (f.Round == "Final" ? "Supercup Final" : "Supercup 3rd Place"),
+                PlayedOn = f.ScheduledDate
+            });
+        }
 
         MatchweekResults = leagueResults.Concat(cupResults).ToList();
 
@@ -191,18 +219,37 @@ public partial class HomeViewModel : BaseViewModel
             ? await _cupService.GetFixtureForTeamOnDateAsync(playerTeam.Id, _nextCupDateForTeam.Value)
             : null;
 
-        // Has the player a pending cup fixture (today or in the past)?
-        _playerHasCupFixturePending = _nextCupDateForTeam.HasValue && _nextCupDateForTeam.Value.Date <= CurrentDate.Date;
+        _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync();
+        _nextSupercupDateForTeam = await _supercupService.GetNextSupercupDateForTeamAsync(playerTeam.Id);
+        
+        var supercupFixtureForTeam = _nextSupercupDateForTeam.HasValue
+            ? await _supercupService.GetFixtureForTeamOnDateAsync(playerTeam.Id, _nextSupercupDateForTeam.Value)
+            : null;
 
-        // Determine which comes first
+        // Has the player a pending fixture (today or in the past)?
+        _playerHasCupFixturePending = _nextCupDateForTeam.HasValue && _nextCupDateForTeam.Value.Date <= CurrentDate.Date;
+        _playerHasSupercupFixturePending = _nextSupercupDateForTeam.HasValue && _nextSupercupDateForTeam.Value.Date <= CurrentDate.Date;
+
         DateTime? nextLeagueDate = matchweek > 0 ? LeagueService.GetMatchweekDate(matchweek) : null;
 
-        bool leagueFirst = nextLeagueDate.HasValue &&
-            (!_nextCupDateForTeam.HasValue || nextLeagueDate.Value <= _nextCupDateForTeam.Value);
-        bool cupFirst = _nextCupDateForTeam.HasValue &&
-            (!nextLeagueDate.HasValue || _nextCupDateForTeam.Value < nextLeagueDate.Value);
+        DateTime? minCupDate = _nextCupDate;
+        if (_nextSupercupDate.HasValue && (!minCupDate.HasValue || _nextSupercupDate.Value < minCupDate.Value)) 
+            minCupDate = _nextSupercupDate;
+            
+        DateTime? minCupDateForTeam = _nextCupDateForTeam;
+        bool isSupercupNextForTeam = false;
+        if (_nextSupercupDateForTeam.HasValue && (!minCupDateForTeam.HasValue || _nextSupercupDateForTeam.Value < minCupDateForTeam.Value))
+        {
+            minCupDateForTeam = _nextSupercupDateForTeam;
+            isSupercupNextForTeam = true;
+        }
 
-        if (matchweek == -1 && !_nextCupDateForTeam.HasValue)
+        bool leagueFirst = nextLeagueDate.HasValue &&
+            (!minCupDateForTeam.HasValue || nextLeagueDate.Value <= minCupDateForTeam.Value);
+        bool cupFirst = minCupDateForTeam.HasValue &&
+            (!nextLeagueDate.HasValue || minCupDateForTeam.Value < nextLeagueDate.Value);
+
+        if (matchweek == -1 && !minCupDateForTeam.HasValue)
         {
             IsSeasonOver = true;
             NextMatchInfo = "Season Completed!";
@@ -227,7 +274,14 @@ public partial class HomeViewModel : BaseViewModel
             NextMatchInfo = $"Next: {homeTeam?.Name} vs {awayTeam?.Name}";
             NextMatchDateText = nextLeagueDate!.Value.ToString("dddd, MMM d, yyyy");
         }
-        else if (cupFirst && cupFixtureForTeam != null)
+        else if (cupFirst && isSupercupNextForTeam && supercupFixtureForTeam != null)
+        {
+            var homeTeam = _db.Teams.Find(supercupFixtureForTeam.HomeTeamId);
+            var awayTeam = _db.Teams.Find(supercupFixtureForTeam.AwayTeamId);
+            NextMatchInfo = $"🏆 Supercup: {homeTeam?.Name} vs {awayTeam?.Name}";
+            NextMatchDateText = _nextSupercupDateForTeam!.Value.ToString("dddd, MMM d, yyyy");
+        }
+        else if (cupFirst && !isSupercupNextForTeam && cupFixtureForTeam != null)
         {
             var homeTeam = _db.Teams.Find(cupFixtureForTeam.HomeTeamId);
             var awayTeam = _db.Teams.Find(cupFixtureForTeam.AwayTeamId);
@@ -236,7 +290,6 @@ public partial class HomeViewModel : BaseViewModel
         }
         else if (cupFirst)
         {
-            // Should theoretically not happen now with nextCupDateForTeam
             NextMatchInfo = matchweek > 0
                 ? $"Next: {_db.Teams.Find(homeId)?.Name} vs {_db.Teams.Find(awayId)?.Name}"
                 : "Season Completed!";
@@ -245,8 +298,14 @@ public partial class HomeViewModel : BaseViewModel
                 : string.Empty;
         }
 
-        // Cup match info (secondary) - always show player's next cup game
-        if (cupFixtureForTeam != null && _nextCupDateForTeam.HasValue)
+        // Cup match info (secondary) - always show player's next cup or supercup game
+        if (isSupercupNextForTeam && supercupFixtureForTeam != null && _nextSupercupDateForTeam.HasValue)
+        {
+            var ch = _db.Teams.Find(supercupFixtureForTeam.HomeTeamId);
+            var ca = _db.Teams.Find(supercupFixtureForTeam.AwayTeamId);
+            NextCupMatchInfo = $"🏆 {ch?.Name} vs {ca?.Name} • {_nextSupercupDateForTeam.Value:MMM d}";
+        }
+        else if (!isSupercupNextForTeam && cupFixtureForTeam != null && _nextCupDateForTeam.HasValue)
         {
             var ch = _db.Teams.Find(cupFixtureForTeam.HomeTeamId);
             var ca = _db.Teams.Find(cupFixtureForTeam.AwayTeamId);
@@ -261,7 +320,7 @@ public partial class HomeViewModel : BaseViewModel
         {
             // Jump to the event closest to the next fixture
             var targetDate = leagueFirst && nextLeagueDate.HasValue ? nextLeagueDate.Value.Date
-                : _nextCupDate?.Date ?? _allEventDates[0];
+                : minCupDate?.Date ?? _allEventDates[0];
             _viewedEventIndex = _allEventDates.FindIndex(d => d.Date >= targetDate);
             if (_viewedEventIndex < 0) _viewedEventIndex = _allEventDates.Count - 1;
         }
@@ -273,7 +332,7 @@ public partial class HomeViewModel : BaseViewModel
     {
         CurrentDateText = CurrentDate.ToString("dddd, MMM d, yyyy");
 
-        if (IsSeasonOver || (_nextMatchweek <= 0 && !_nextCupDate.HasValue))
+        if (IsSeasonOver || (_nextMatchweek <= 0 && !_nextCupDate.HasValue && !_nextSupercupDate.HasValue))
         {
             IsMatchdayToday = false;
             IsCupMatchday = false;
@@ -281,9 +340,8 @@ public partial class HomeViewModel : BaseViewModel
         else
         {
             DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek);
-            // Must simulate if match date is today OR in the past
             bool leaguePending = _nextMatchweek > 0 && CurrentDate.Date >= leagueDate.Date;
-            bool cupPending = _playerHasCupFixturePending;
+            bool cupPending = _playerHasCupFixturePending || _playerHasSupercupFixturePending;
 
             IsMatchdayToday = leaguePending || cupPending;
             IsCupMatchday = cupPending;
@@ -333,29 +391,29 @@ public partial class HomeViewModel : BaseViewModel
         {
             DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek);
             bool isLeagueDay = _nextMatchweek > 0 && CurrentDate.Date >= leagueDate.Date;
-            bool isCupDay = _playerHasCupFixturePending;
 
-            // Simulate league matches if it's a league matchday (Today or in the past)
+            // Simulate league matches if it's a league matchday
             if (isLeagueDay)
             {
                 int simulatedWeek = _nextMatchweek;
                 await _simulationEngine.SimulateMatchweekAsync(simulatedWeek);
                 LastResultText = $"Matchweek {simulatedWeek} Completed";
             }
-            else if (isCupDay && _nextCupDateForTeam.HasValue)
+            else if (_playerHasSupercupFixturePending && _nextSupercupDateForTeam.HasValue)
             {
-                // Only simulate Cup if we aren't also simulating a League match this click
-                // (Though the UI prioritizes Cup first if it's earlier, so we usually hit this first)
+                await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDateForTeam.Value);
+                LastResultText = "Supercup Matchday Completed";
+            }
+            else if (_playerHasCupFixturePending && _nextCupDateForTeam.HasValue)
+            {
                 await _simulationEngine.SimulateCupFixturesAsync(_nextCupDateForTeam.Value);
                 LastResultText = "Cup Matchday Completed";
             }
 
             MatchSimulated = true;
 
-            // Rebuild event dates (new knockout fixtures might have been generated)
             await BuildAllEventDatesAsync();
 
-            // Jump to the date just simulated
             var simulatedDate = CurrentDate.Date;
             _viewedEventIndex = _allEventDates.FindIndex(d => d.Date == simulatedDate);
             if (_viewedEventIndex < 0) _viewedEventIndex = Math.Max(0, _allEventDates.Count - 1);
@@ -382,29 +440,34 @@ public partial class HomeViewModel : BaseViewModel
         {
             while (!IsSeasonOver)
             {
-                // Determine if the next event is league or cup
                 DateTime? nextLeagueDate = _nextMatchweek > 0
                     ? LeagueService.GetMatchweekDate(_nextMatchweek)
                     : null;
 
+                DateTime? minCupDate = _nextCupDate;
+                if (_nextSupercupDate.HasValue && (!minCupDate.HasValue || _nextSupercupDate.Value < minCupDate.Value)) 
+                    minCupDate = _nextSupercupDate;
+
                 DateTime? nextEvent = null;
-                if (nextLeagueDate.HasValue && _nextCupDate.HasValue)
-                    nextEvent = nextLeagueDate.Value <= _nextCupDate.Value ? nextLeagueDate : _nextCupDate;
+                if (nextLeagueDate.HasValue && minCupDate.HasValue)
+                    nextEvent = nextLeagueDate.Value <= minCupDate.Value ? nextLeagueDate : minCupDate;
                 else
-                    nextEvent = nextLeagueDate ?? _nextCupDate;
+                    nextEvent = nextLeagueDate ?? minCupDate;
 
                 if (nextEvent == null) break;
 
-                // Advance clock to the event date
                 while (_clock.CurrentDate.Date < nextEvent.Value.Date)
                     _clock.AdvanceDay();
                 CurrentDate = _clock.CurrentDate;
 
                 bool isLeague = nextLeagueDate.HasValue && CurrentDate.Date == nextLeagueDate.Value.Date;
                 bool isCup = _nextCupDate.HasValue && CurrentDate.Date == _nextCupDate.Value.Date;
+                bool isSupercup = _nextSupercupDate.HasValue && CurrentDate.Date == _nextSupercupDate.Value.Date;
 
                 if (isLeague)
                     await _simulationEngine.SimulateMatchweekAsync(_nextMatchweek);
+                if (isSupercup)
+                    await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate!.Value);
                 if (isCup)
                     await _simulationEngine.SimulateCupFixturesAsync(_nextCupDate!.Value);
 
@@ -416,7 +479,6 @@ public partial class HomeViewModel : BaseViewModel
                 if (IsSeasonOver) break;
             }
 
-            // Show final event results
             if (_allEventDates.Count > 0)
                 _viewedEventIndex = _allEventDates.Count - 1;
             await LoadMatchweekResultsAsync();
@@ -438,7 +500,19 @@ public partial class HomeViewModel : BaseViewModel
         {
             MatchSimulated = false;
 
-            // Auto-simulate any unplayed Cup fixtures that don't involve the player and are on or before Today
+            while (_nextSupercupDate.HasValue && _nextSupercupDate.Value.Date <= CurrentDate.Date)
+            {
+                var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+                var playerFixture = await _supercupService.GetFixtureForTeamOnDateAsync(playerTeam!.Id, _nextSupercupDate.Value);
+                
+                if (playerFixture == null)
+                {
+                    await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate.Value.Date);
+                    _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync();
+                }
+                else break;
+            }
+
             while (_nextCupDate.HasValue && _nextCupDate.Value.Date <= CurrentDate.Date)
             {
                 var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
@@ -446,24 +520,17 @@ public partial class HomeViewModel : BaseViewModel
                 
                 if (playerFixture == null)
                 {
-                    // Player not involved, auto-simulate
                     await _simulationEngine.SimulateCupFixturesAsync(_nextCupDate.Value.Date);
-                    // Refresh next cup date for the loop
                     _nextCupDate = await _cupService.GetNextCupDateAsync();
                 }
-                else
-                {
-                    // Player IS involved. Stop auto-simulation.
-                    break;
-                }
+                else break;
             }
 
             _clock.AdvanceDay();
-            CurrentDate = _clock.CurrentDate; // This triggers OnCurrentDateChanged -> UpdateCalendarState (partial)
+            CurrentDate = _clock.CurrentDate;
             await _simulationEngine.ProcessDailyProgressionAsync(CurrentDate);
             if (_onDayAdvanced != null) await _onDayAdvanced();
 
-            // Refresh data - UpdateNextFixtureAsync calls UpdateCalendarState at its end
             await BuildAllEventDatesAsync();
             await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
         }

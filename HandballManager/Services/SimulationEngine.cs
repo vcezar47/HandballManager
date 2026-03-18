@@ -11,18 +11,20 @@ public class SimulationEngine
     private readonly TransferService _transferService;
     private readonly YouthIntakeService _youthIntakeService;
     private readonly CupService _cupService;
+    private readonly SupercupService _supercupService;
     private readonly Random _rng = new();
     private const int PossessionsPerTeam = 55;
     private DateTime _lastDailyProgressionDate;
     private DateTime _lastWeeklyWageDate;
 
-    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService)
+    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService)
     {
         _db = db;
         _progression = progression;
         _transferService = transferService;
         _youthIntakeService = youthIntakeService;
         _cupService = cupService;
+        _supercupService = supercupService;
         _lastDailyProgressionDate = LeagueService.GameSeasonStartDate;
         _lastWeeklyWageDate = LeagueService.GameSeasonStartDate;
     }
@@ -152,6 +154,59 @@ public class SimulationEngine
         await _cupService.TryGenerateQuarterFinalsAsync();
         await _cupService.TryGenerateFinalFourAsync();
         await _cupService.TryGenerateFinalsAsync();
+
+        return results;
+    }
+
+    /// <summary>
+    /// Simulates all supercup fixtures for a given date.
+    /// </summary>
+    public async Task<List<MatchRecord>> SimulateSupercupFixturesAsync(DateTime date)
+    {
+        await ProcessDailyProgressionAsync(date);
+
+        var fixtures = await _supercupService.GetFixturesForDateAsync(date);
+        var results = new List<MatchRecord>();
+
+        foreach (var fixture in fixtures.Where(f => !f.IsPlayed))
+        {
+            var cupRoundLabel = fixture.Round switch
+            {
+                "SemiFinal" => "Supercup Semi-Final",
+                "ThirdPlace" => "Supercup 3rd Place",
+                "Final" => "Supercup Final",
+                _ => fixture.Round
+            };
+
+            var record = await SimulateMatchInternalAsync(
+                fixture.HomeTeamId, fixture.AwayTeamId, 0,
+                isCupMatch: true, cupRound: cupRoundLabel,
+                playedOnOverride: date, isNeutralVenue: true);
+
+            fixture.HomeGoals = record.HomeGoals;
+            fixture.AwayGoals = record.AwayGoals;
+            fixture.IsPlayed = true;
+            fixture.MatchRecord = record;
+
+            results.Add(record);
+            
+            if (fixture.Round == "Final")
+            {
+                var winner = fixture.HomeGoals > fixture.AwayGoals ? fixture.HomeTeam : fixture.AwayTeam;
+                if (winner != null)
+                {
+                    _db.SupercupWinnerRecords.Add(new SupercupWinnerRecord
+                    {
+                        Season = fixture.Season,
+                        TeamName = winner.Name
+                    });
+                }
+            }
+        }
+
+        await _db.SaveChangesAsync();
+
+        await _supercupService.TryGenerateFinalsAsync();
 
         return results;
     }
@@ -428,6 +483,41 @@ public class SimulationEngine
             .ThenByDescending(e => e.GoalsFor)
             .FirstOrDefault();
 
+        // Prepare Supercup participants while standings are still intact
+        var sortedLeagueTeams = allEntries.OrderByDescending(e => e.Points)
+            .ThenByDescending(e => e.GoalDifference)
+            .ThenByDescending(e => e.GoalsFor)
+            .Where(e => e.Team != null)
+            .Select(e => e.Team!).ToList();
+
+        // Record Cup winner and prepare finalists
+        string currentSeasonStr = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        var cupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam)
+            .Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr);
+
+        var cupFinalists = new List<Team>();
+        if (cupFinal != null)
+        {
+            var cupWinner = cupFinal.HomeGoals > cupFinal.AwayGoals ? cupFinal.HomeTeam : cupFinal.AwayTeam;
+            if (cupWinner != null)
+            {
+                var cupRecord = new CupWinnerRecord
+                {
+                    Season = currentDate.Year.ToString(),
+                    TeamName = cupWinner.Name
+                };
+                _db.CupWinnerRecords.Add(cupRecord);
+            }
+
+            if (cupFinal.HomeTeam != null) cupFinalists.Add(cupFinal.HomeTeam);
+            if (cupFinal.AwayTeam != null) cupFinalists.Add(cupFinal.AwayTeam);
+        }
+
+        await _supercupService.GenerateNextSupercupAsync(sortedLeagueTeams, cupFinalists);
+        await _cupService.ClearSeasonDataAsync();
+
         if (winnerEntry?.Team != null)
         {
             var champRecord = new ChampionRecord
@@ -457,30 +547,7 @@ public class SimulationEngine
         _db.MatchEvents.RemoveRange(allMatchEvents);
         _db.MatchRecords.RemoveRange(allMatchRecords);
 
-        // Record Cup winner
-        var cupFinal = await _db.CupFixtures
-            .Include(f => f.HomeTeam)
-            .Include(f => f.AwayTeam)
-            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed);
-
-        if (cupFinal != null)
-        {
-            var cupWinner = cupFinal.HomeGoals > cupFinal.AwayGoals ? cupFinal.HomeTeam : cupFinal.AwayTeam;
-            if (cupWinner != null)
-            {
-                var cupRecord = new CupWinnerRecord
-                {
-                    Season = currentDate.Year.ToString(),
-                    TeamName = cupWinner.Name
-                };
-                _db.CupWinnerRecords.Add(cupRecord);
-            }
-        }
-
-        // Wipe cup data
-        await _cupService.ClearSeasonDataAsync();
-
-        // Wipe stale youth
+        // Stale youth and other cleanups
         await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
 
         LeagueService.AdvanceToNextSeason();

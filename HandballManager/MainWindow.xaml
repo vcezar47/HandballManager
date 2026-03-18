@@ -75,6 +75,12 @@
         <DataTemplate DataType="{x:Type vm:YouthDetailViewModel}">
             <views:YouthDetailView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SupercupDetailViewModel}">
+            <views:SupercupDetailView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SupercupHistoryViewModel}">
+            <views:SupercupHistoryView />
+        </DataTemplate>
 
         <!-- Nav button style -->
         <Style x:Key="NavButton" TargetType="Button">

@@ -17,6 +17,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly TransferService _transferService;
     private readonly YouthIntakeService _youthIntakeService;
     private readonly CupService _cupService;
+    private readonly SupercupService _supercupService;
 
     private readonly Stack<BaseViewModel> _backStack = new();
     private readonly Stack<BaseViewModel> _forwardStack = new();
@@ -58,6 +59,8 @@ public partial class MainViewModel : BaseViewModel
     public ScoutingViewModel ScoutingVM { get; }
     public LeagueHistoryViewModel LeagueHistoryVM { get; }
     public CupHistoryViewModel CupHistoryVM { get; }
+    public SupercupDetailViewModel SupercupDetailVM { get; }
+    public SupercupHistoryViewModel SupercupHistoryVM { get; }
     public FinancesViewModel FinancesVM { get; }
     public ContractsViewModel ContractsVM { get; }
     public TransfersViewModel TransfersVM { get; }
@@ -65,7 +68,7 @@ public partial class MainViewModel : BaseViewModel
     public YouthViewModel YouthVM { get; }
     public StartViewModel StartVM { get; }
 
-    public MainViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine, GameClock clock, ScoutingService scouting, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService)
+    public MainViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine, GameClock clock, ScoutingService scouting, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService)
     {
         _db = db;
         _leagueService = leagueService;
@@ -75,6 +78,7 @@ public partial class MainViewModel : BaseViewModel
         _transferService = transferService;
         _youthIntakeService = youthIntakeService;
         _cupService = cupService;
+        _supercupService = supercupService;
 
         StartVM = new StartViewModel(db, OnTeamSelected);
         MainMenuVM = new MainMenuViewModel(async () =>
@@ -82,16 +86,19 @@ public partial class MainViewModel : BaseViewModel
             NavigateTo(StartVM);
             await StartVM.InitializeAsync();
         });
-        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, clock, NavigateToMatchDetail);
+        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, supercupService, clock, NavigateToMatchDetail);
         RosterVM = new RosterViewModel(db, NavigateToPlayerDetail, OpenContractRenewal);
         LeagueTableVM = new LeagueTableViewModel(leagueService, NavigateToTeamRoster, async () => await NavigateToLeagueHistoryAsync());
-        CompetitionsVM = new CompetitionsViewModel(leagueService, cupService, NavigateToTeamRoster,
+        CompetitionsVM = new CompetitionsViewModel(leagueService, cupService, supercupService, NavigateToTeamRoster,
             async () => await NavigateToLeagueDetailAsync(),
-            async () => await NavigateToCupDetailAsync());
+            async () => await NavigateToCupDetailAsync(),
+            async () => await NavigateToSupercupDetailAsync());
         CupDetailVM = new CupDetailViewModel(cupService, NavigateToTeamRoster, async () => await NavigateToCupHistoryAsync());
         ScoutingVM = new ScoutingViewModel(db, clock, scouting, NavigateToPlayerDetail, _transferService, OpenTransferNegotiation);
         LeagueHistoryVM = new LeagueHistoryViewModel(db);
         CupHistoryVM = new CupHistoryViewModel(db);
+        SupercupDetailVM = new SupercupDetailViewModel(supercupService, NavigateToTeamRoster, async () => await NavigateToSupercupHistoryAsync());
+        SupercupHistoryVM = new SupercupHistoryViewModel(db);
         FinancesVM = new FinancesViewModel(db);
         ContractsVM = new ContractsViewModel(db, clock);
         TransfersVM = new TransfersViewModel(db, transferService, clock, RefreshPendingOfferCountAsync, OpenTransferNegotiation); 
@@ -298,6 +305,20 @@ public partial class MainViewModel : BaseViewModel
     {
         await CupHistoryVM.InitializeAsync();
         NavigateTo(CupHistoryVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToSupercupDetailAsync()
+    {
+        await SupercupDetailVM.InitializeAsync();
+        NavigateTo(SupercupDetailVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToSupercupHistoryAsync()
+    {
+        await SupercupHistoryVM.InitializeAsync();
+        NavigateTo(SupercupHistoryVM);
     }
 
     [RelayCommand]

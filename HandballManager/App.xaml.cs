@@ -30,15 +30,18 @@ public partial class App : Application
             var transferService = new TransferService(db);
             var youthIntakeService = new YouthIntakeService(db);
             var cupService = new CupService(db);
-            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService);
+            var supercupService = new SupercupService(db);
+            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService, supercupService);
             var clock = new GameClock(LeagueService.GameSeasonStartDate);
             var scoutingService = new ScoutingService(clock);
 
-            // Generate initial cup draw
+            // Seed historical winners and generate initial supercup and cup draw
+            supercupService.SeedHistoricalWinners();
+            await supercupService.InitializeInitialSupercupAsync();
             await cupService.GenerateCupAsync();
 
             // Build main VM and window
-            var mainVm = new MainViewModel(db, leagueService, simulationEngine, clock, scoutingService, transferService, youthIntakeService, cupService);
+            var mainVm = new MainViewModel(db, leagueService, simulationEngine, clock, scoutingService, transferService, youthIntakeService, cupService, supercupService);
             await mainVm.InitializeAsync();
 
             var mainWindow = new MainWindow { DataContext = mainVm };

@@ -22,6 +22,8 @@ public class HandballDbContext : DbContext
     public DbSet<CupGroupEntry> CupGroupEntries { get; set; }
     public DbSet<CupFixture> CupFixtures { get; set; }
     public DbSet<CupWinnerRecord> CupWinnerRecords { get; set; }
+    public DbSet<SupercupFixture> SupercupFixtures { get; set; }
+    public DbSet<SupercupWinnerRecord> SupercupWinnerRecords { get; set; }
 
     private readonly string _dbPath;
 
