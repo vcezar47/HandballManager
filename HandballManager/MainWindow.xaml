@@ -81,6 +81,9 @@
         <DataTemplate DataType="{x:Type vm:SupercupHistoryViewModel}">
             <views:SupercupHistoryView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClubInfoViewModel}">
+            <views:ClubInfoView />
+        </DataTemplate>
 
         <!-- Nav button style -->
         <Style x:Key="NavButton" TargetType="Button">
@@ -188,6 +191,8 @@
                 <StackPanel DockPanel.Dock="Top" Margin="8,0">
                     <Button Content="🏠  Home"          Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToHomeCommand}"/>
+                    <Button Content="🛡️  Club Info"      Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToClubInfoCommand}"/>
                     <Button Content="👥  Roster"        Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToRosterCommand}"/>
                     <Button Content="📊  Competitions"  Style="{StaticResource NavButton}"

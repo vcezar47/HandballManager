@@ -25,9 +25,12 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 *   **Hungary Women's Handball League (NB I)**
 *   **Hungary Women's Handball Cup (Magyar Kupa)**
 
-## Upcoming Features
+## Recently added Features
 
 *   **Detailed information tab for each club (trophies, description, squad integration etc.)**
+
+## Upcoming Features
+
 *   **Managers**
 
 ## Copyright

@@ -165,6 +165,28 @@ public static class DatabaseSeeder
             }
         }
 
+        db.SaveChanges();
+        Log($"Successfully seeded {db.Teams.Count()} teams and players.");
+
+        var allTeams = db.Teams.ToList();
+        int GetTeamId(string historicalName)
+        {
+            // Direct match
+            var t = allTeams.FirstOrDefault(x => x.Name.Equals(historicalName, StringComparison.OrdinalIgnoreCase));
+            if (t != null) return t.Id;
+
+            // Mapping for historical names
+            return historicalName switch
+            {
+                "Rulmentul Brașov" => allTeams.FirstOrDefault(x => x.Name.Contains("Brașov"))?.Id ?? 0,
+                "HCM Baia Mare" => allTeams.FirstOrDefault(x => x.Name.Contains("Baia Mare"))?.Id ?? 0,
+                "Chimistul Râmnicu Vâlcea" or "Oltchim Râmnicu Vâlcea" => allTeams.FirstOrDefault(x => x.Name.Contains("Vâlcea"))?.Id ?? 0,
+                "Silcotub Zalău" => allTeams.FirstOrDefault(x => x.Name.Contains("Zalău"))?.Id ?? 0,
+                "IEFS București" or "Cetatea Bucur București" or "Știința București" or "Universitatea București" => allTeams.FirstOrDefault(x => x.Name == "CSM București")?.Id ?? 0,
+                _ => 0
+            };
+        }
+
         // Seed Champions
         string champsFile = "";
         var possibleChampsPaths = new[]
@@ -176,11 +198,7 @@ public static class DatabaseSeeder
 
         foreach (var p in possibleChampsPaths)
         {
-            if (File.Exists(p))
-            {
-                champsFile = p;
-                break;
-            }
+            if (File.Exists(p)) { champsFile = p; break; }
         }
 
         if (!db.ChampionRecords.Any() && !string.IsNullOrEmpty(champsFile))
@@ -188,21 +206,15 @@ public static class DatabaseSeeder
             try
             {
                 var champsJson = File.ReadAllText(champsFile);
-                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (champsList != null)
                 {
+                    foreach (var r in champsList) r.TeamId = GetTeamId(r.TeamName);
                     db.ChampionRecords.AddRange(champsList);
                     Log($"Successfully seeded {champsList.Count} historical champions.");
                 }
             }
-            catch (Exception ex)
-            {
-                Log($"Error seeding champions: {ex.Message}");
-            }
+            catch (Exception ex) { Log($"Error seeding champions: {ex.Message}"); }
         }
 
         // Seed Cup Winners
@@ -216,11 +228,7 @@ public static class DatabaseSeeder
 
         foreach (var p in possibleCupPaths)
         {
-            if (File.Exists(p))
-            {
-                cupWinnersFile = p;
-                break;
-            }
+            if (File.Exists(p)) { cupWinnersFile = p; break; }
         }
 
         if (!db.CupWinnerRecords.Any() && !string.IsNullOrEmpty(cupWinnersFile))
@@ -228,21 +236,15 @@ public static class DatabaseSeeder
             try
             {
                 var cupJson = File.ReadAllText(cupWinnersFile);
-                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (cupList != null)
                 {
+                    foreach (var r in cupList) r.TeamId = GetTeamId(r.TeamName);
                     db.CupWinnerRecords.AddRange(cupList);
                     Log($"Successfully seeded {cupList.Count} historical cup winners.");
                 }
             }
-            catch (Exception ex)
-            {
-                Log($"Error seeding cup winners: {ex.Message}");
-            }
+            catch (Exception ex) { Log($"Error seeding cup winners: {ex.Message}"); }
         }
 
         db.SaveChanges();

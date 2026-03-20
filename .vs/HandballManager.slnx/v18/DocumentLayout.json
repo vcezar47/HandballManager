@@ -3,16 +3,28 @@
   "WorkspaceRootPath": "D:\\Github Desktop\\HandballManager\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\matchdetailview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\matchdetailview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\clubinfoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\clubinfoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\cuphistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\cuphistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\cuphistoryview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\cuphistoryview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,6 +43,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ClubInfoViewModel.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ClubInfoViewModel.cs",
+              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\ClubInfoViewModel.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ClubInfoViewModel.cs",
+              "RelativeToolTip": "HandballManager\\ViewModels\\ClubInfoViewModel.cs",
+              "ViewState": "AgIAAE4AAAAAAAAAAAArwFoAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T10:59:51.565Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MatchDetailView.xaml.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\MatchDetailView.xaml.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\MatchDetailView.xaml.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAewBYAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T10:59:39.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "brasov.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-20T10:58:40.859Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "CupHistoryView.xaml.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\CupHistoryView.xaml.cs",
               "RelativeDocumentMoniker": "HandballManager\\Views\\CupHistoryView.xaml.cs",
@@ -42,7 +93,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "CupHistoryView.xaml",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\CupHistoryView.xaml",
               "RelativeDocumentMoniker": "HandballManager\\Views\\CupHistoryView.xaml",
@@ -54,15 +105,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "DatabaseSeeder.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\DatabaseSeeder.cs",
               "RelativeDocumentMoniker": "HandballManager\\Data\\DatabaseSeeder.cs",
               "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\DatabaseSeeder.cs",
               "RelativeToolTip": "HandballManager\\Data\\DatabaseSeeder.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAQwGUAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-15T18:30:06.019Z"
+              "WhenOpened": "2026-03-15T18:30:06.019Z",
+              "EditorCaption": ""
             }
           ]
         }

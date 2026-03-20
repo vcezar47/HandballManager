@@ -8,6 +8,7 @@ namespace HandballManager.ViewModels;
 public partial class MatchDetailViewModel : BaseViewModel
 {
     private readonly HandballDbContext _db;
+    private readonly Action<int> _onNavigateToTeam;
 
     [ObservableProperty]
     private MatchRecord? _match;
@@ -27,10 +28,21 @@ public partial class MatchDetailViewModel : BaseViewModel
     [ObservableProperty]
     private List<MatchPlayerStat> _awayPlayerStats = [];
 
-    public MatchDetailViewModel(HandballDbContext db)
+    public MatchDetailViewModel(HandballDbContext db, Action<int> onNavigateToTeam)
     {
         _db = db;
+        _onNavigateToTeam = onNavigateToTeam;
         Title = "Match Details";
+    }
+
+    public void NavigateToHomeTeam()
+    {
+        if (Match != null) _onNavigateToTeam(Match.HomeTeamId);
+    }
+
+    public void NavigateToAwayTeam()
+    {
+        if (Match != null) _onNavigateToTeam(Match.AwayTeamId);
     }
 
     public async Task InitializeAsync(int matchId)

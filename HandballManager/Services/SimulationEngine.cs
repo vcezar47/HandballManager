@@ -198,7 +198,8 @@ public class SimulationEngine
                     _db.SupercupWinnerRecords.Add(new SupercupWinnerRecord
                     {
                         Season = fixture.Season,
-                        TeamName = winner.Name
+                        TeamName = winner.Name,
+                        TeamId = winner.Id
                     });
                 }
             }
@@ -506,7 +507,8 @@ public class SimulationEngine
                 var cupRecord = new CupWinnerRecord
                 {
                     Season = currentDate.Year.ToString(),
-                    TeamName = cupWinner.Name
+                    TeamName = cupWinner.Name,
+                    TeamId = cupWinner.Id
                 };
                 _db.CupWinnerRecords.Add(cupRecord);
             }
@@ -523,7 +525,8 @@ public class SimulationEngine
             var champRecord = new ChampionRecord
             {
                 Season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}",
-                TeamName = winnerEntry.Team.Name
+                TeamName = winnerEntry.Team.Name,
+                TeamId = winnerEntry.Team.Id
             };
             _db.ChampionRecords.Add(champRecord);
         }

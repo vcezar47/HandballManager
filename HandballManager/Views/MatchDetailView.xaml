@@ -56,11 +56,15 @@
                         </StackPanel.Effect>
                     </StackPanel>
                     
-                    <TextBlock FontSize="18" FontWeight="Black" Foreground="White" HorizontalAlignment="Center" Margin="0,-5,0,0">
-                        <Run Text="{Binding Match.HomeTeamName}"/>
-                        <Run Text=" vs " Foreground="#94A3B8" FontWeight="Normal"/>
-                        <Run Text="{Binding Match.AwayTeamName}"/>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-5,0,0">
+                        <Button Content="{Binding Match.HomeTeamName}" 
+                                Click="HomeTeam_Click"
+                                Foreground="White" FontSize="18" FontWeight="Black" Cursor="Hand" Background="Transparent" BorderThickness="0" Padding="0"/>
+                        <TextBlock Text=" vs " Foreground="#94A3B8" FontSize="18" FontWeight="Normal" VerticalAlignment="Center" Margin="10,0"/>
+                        <Button Content="{Binding Match.AwayTeamName}" 
+                                Click="AwayTeam_Click"
+                                Foreground="White" FontSize="18" FontWeight="Black" Cursor="Hand" Background="Transparent" BorderThickness="0" Padding="0"/>
+                    </StackPanel>
                     <TextBlock Text="{Binding Match.PlayedOn, StringFormat='{}{0:dd MMM yyyy}'}" Foreground="#94A3B8" FontSize="12" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                 </StackPanel>
 

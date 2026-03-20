@@ -193,8 +193,8 @@ public partial class MainViewModel : BaseViewModel
 
     public async void NavigateToTeamRoster(Team team)
     {
-        var vm = new TeamRosterViewModel(_db, team.Id, _scouting, NavigateToPlayerDetail, _transferService, _clock, OpenTransferNegotiation);
-        await vm.InitializeAsync();
+        var vm = new ClubInfoViewModel(_db, _scouting, _transferService, _clock, NavigateToPlayerDetail, OpenTransferNegotiation);
+        await vm.InitializeAsync(team.Id);
         NavigateTo(vm);
     }
 
@@ -246,7 +246,11 @@ public partial class MainViewModel : BaseViewModel
 
     public async Task NavigateToMatchDetail(int matchId)
     {
-        var vm = new MatchDetailViewModel(_db);
+        var vm = new MatchDetailViewModel(_db, (teamId) => 
+        {
+            var team = _db.Teams.Find(teamId);
+            if (team != null) NavigateToTeamRoster(team);
+        });
         await vm.InitializeAsync(matchId);
         NavigateTo(vm);
     }
@@ -359,6 +363,16 @@ public partial class MainViewModel : BaseViewModel
         await YouthVM.InitializeAsync();
         await RefreshYouthIntakeActiveAsync();
         NavigateTo(YouthVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToClubInfoAsync()
+    {
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        if (playerTeam != null)
+        {
+            NavigateToTeamRoster(playerTeam);
+        }
     }
 
     [RelayCommand]

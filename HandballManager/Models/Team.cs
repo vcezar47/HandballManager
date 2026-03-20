@@ -14,6 +14,7 @@ public class Team
     public string Description { get; set; } = string.Empty;
     public bool IsPlayerTeam { get; set; }
     public string LogoPath { get; set; } = string.Empty;
+    public string Nation { get; set; } = string.Empty;
 
     public List<Player> Players { get; set; } = [];
     public LeagueEntry? LeagueEntry { get; set; }
