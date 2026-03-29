@@ -5,8 +5,24 @@
     "Budget": 1500000,
     "FoundedYear": 1960,
     "StadiumName": "Sala Sporturilor Dumitru Popescu Coliba\u0219i",
+    "StadiumCapacity": 1570,
+    "StadiumImage": "dumitrupopescucolibasi.jpg",
     "Description": "With deep roots in Bra\u0219ov sport, Corona is a classic club focused on developing talent and competing at the highest level.",
     "IsPlayerTeam": false,
+    "ClubReputation": "National",
+    "Manager": {
+        "FirstName": "Bogdan",
+        "LastName": "Burcea",
+        "Birthdate": "1972-05-08",
+        "Nationality": "ROU",
+        "License": 4,
+        "Reputation": 3,
+        "Motivation": 16,
+        "YouthDevelopment": 12,
+        "Discipline": 12,
+        "Adaptability": 14,
+        "TimeoutTalks": 15
+    },
     "Players": [
         {
             "FirstName": "Anica",

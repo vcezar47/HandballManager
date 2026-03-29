@@ -55,6 +55,20 @@
                             <DropShadowEffect BlurRadius="15" Opacity="0.6" Color="#38BDF8"/>
                         </StackPanel.Effect>
                     </StackPanel>
+
+                    <!-- Penalty Score Display -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-10,0,5" Visibility="{Binding Match.WasDecidedByShootout, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="PENALTIES: " FontSize="14" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Match.HomePenaltyGoals}" FontSize="18" FontWeight="Black" Foreground="#E94560"/>
+                        <TextBlock Text=" – " FontSize="18" FontWeight="Black" Foreground="#94A3B8"/>
+                        <TextBlock Text="{Binding Match.AwayPenaltyGoals}" FontSize="18" FontWeight="Black" Foreground="#E94560"/>
+                    </StackPanel>
+
+                    <!-- AET Status -->
+                    <Border Background="#1E293B" HorizontalAlignment="Center" Padding="8,2" CornerRadius="4" Margin="0,0,0,10"
+                            Visibility="{Binding Match.WasDecidedByOvertime, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="AFTER EXTRA TIME" Foreground="#64748B" FontSize="10" FontWeight="Black"/>
+                    </Border>
                     
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-5,0,0">
                         <Button Content="{Binding Match.HomeTeamName}" 
@@ -65,7 +79,13 @@
                                 Click="AwayTeam_Click"
                                 Foreground="White" FontSize="18" FontWeight="Black" Cursor="Hand" Background="Transparent" BorderThickness="0" Padding="0"/>
                     </StackPanel>
-                    <TextBlock Text="{Binding Match.PlayedOn, StringFormat='{}{0:dd MMM yyyy}'}" Foreground="#94A3B8" FontSize="12" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                    <TextBlock Text="{Binding Match.PlayedOn, StringFormat='{}{0:dd MMMM yyyy}'}" Foreground="#94A3B8" FontSize="12" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                        <TextBlock Text="VENUE: " Foreground="#64748B" FontSize="11" FontWeight="ExtraBold"/>
+                        <TextBlock Text="{Binding Match.VenueName}" Foreground="#94A3B8" FontSize="11" FontWeight="Bold" Margin="0,0,15,0"/>
+                        <TextBlock Text="ATTENDANCE: " Foreground="#64748B" FontSize="11" FontWeight="ExtraBold"/>
+                        <TextBlock Text="{Binding Match.Attendance, StringFormat={}{0:N0}}" Foreground="#38BDF8" FontSize="11" FontWeight="Black"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Away Logo Placeholder -->

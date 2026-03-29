@@ -84,6 +84,9 @@
         <DataTemplate DataType="{x:Type vm:ClubInfoViewModel}">
             <views:ClubInfoView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ManagerDetailViewModel}">
+            <views:ManagerDetailView />
+        </DataTemplate>
 
         <!-- Nav button style -->
         <Style x:Key="NavButton" TargetType="Button">
@@ -191,6 +194,8 @@
                 <StackPanel DockPanel.Dock="Top" Margin="8,0">
                     <Button Content="🏠  Home"          Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToHomeCommand}"/>
+                    <Button Content="👤  Profile"       Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToProfileCommand}"/>
                     <Button Content="🛡️  Club Info"      Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToClubInfoCommand}"/>
                     <Button Content="👥  Roster"        Style="{StaticResource NavButton}"

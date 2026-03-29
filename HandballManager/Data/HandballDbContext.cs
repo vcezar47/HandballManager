@@ -10,6 +10,7 @@ public class HandballDbContext : DbContext
     public DbSet<Player> Players { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<LeagueEntry> LeagueEntries { get; set; }
+    public DbSet<LeagueFixture> LeagueFixtures { get; set; }
     public DbSet<MatchRecord> MatchRecords { get; set; }
     public DbSet<MatchEvent> MatchEvents { get; set; }
     public DbSet<MatchPlayerStat> MatchPlayerStats { get; set; }
@@ -24,6 +25,7 @@ public class HandballDbContext : DbContext
     public DbSet<CupWinnerRecord> CupWinnerRecords { get; set; }
     public DbSet<SupercupFixture> SupercupFixtures { get; set; }
     public DbSet<SupercupWinnerRecord> SupercupWinnerRecords { get; set; }
+    public DbSet<Manager> Managers { get; set; }
 
     private readonly string _dbPath;
 
@@ -66,5 +68,16 @@ public class HandballDbContext : DbContext
             .Ignore(e => e.Points)
             .Ignore(e => e.GoalDifference)
             .Ignore(e => e.Rank);
+
+        modelBuilder.Entity<Manager>()
+            .Ignore(m => m.Name)
+            .Ignore(m => m.Age)
+            .Ignore(m => m.ClubHistory);
+
+        modelBuilder.Entity<Team>()
+            .HasOne(t => t.Manager)
+            .WithOne(m => m.Team)
+            .HasForeignKey<Manager>(m => m.TeamId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

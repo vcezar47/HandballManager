@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 using HandballManager.Data;
 using HandballManager.Models;
 
@@ -64,7 +65,8 @@ public static class DatabaseSeeder
                 var json = File.ReadAllText(file);
                 var teamData = JsonSerializer.Deserialize<Team>(json, new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
                 });
 
                 if (teamData != null && !string.IsNullOrEmpty(teamData.Name))
@@ -167,6 +169,126 @@ public static class DatabaseSeeder
 
         db.SaveChanges();
         Log($"Successfully seeded {db.Teams.Count()} teams and players.");
+
+        // Assign Club Reputations, Stadium Capacities, and AI Managers
+        var seededTeams = db.Teams.Include(t => t.Manager).ToList();
+        var managerFirstNames = new[] { "Elena", "Maria", "Ioana", "Cristina", "Ana", "Mihaela", "Daniela", "Adriana", "Laura", "Simona", "Alina", "Carmen" };
+        var managerLastNames = new[] { "Popescu", "Ionescu", "Popa", "Dumitrescu", "Stan", "Stoica", "Gheorghe", "Matei", "Ciobanu", "Rusu", "Moldovan", "Dinu" };
+        var managerCities = new[] { "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova", "Brașov", "Galați", "Oradea", "Arad", "Sibiu", "Pitești" };
+
+        foreach (var team in seededTeams)
+        {
+            // Assign Club Reputation and Stadium Capacity
+            var nameLower = team.Name.ToLower();
+            if (team.ClubReputation == Models.ReputationLevel.Local && (nameLower.Contains("csm bucureşti") || nameLower.Contains("csm bucurești")))
+            {
+                team.ClubReputation = Models.ReputationLevel.International;
+            }
+            else if (team.ClubReputation == Models.ReputationLevel.Local && (nameLower.Contains("rapid") || nameLower.Contains("brașov") || nameLower.Contains("brasov") || nameLower.Contains("vâlcea") || nameLower.Contains("valcea") || nameLower.Contains("bistrița") || nameLower.Contains("bistrita")))
+            {
+                team.ClubReputation = Models.ReputationLevel.National;
+            }
+            else if (team.ClubReputation == Models.ReputationLevel.Local && (nameLower.Contains("craiova") || nameLower.Contains("zalău") || nameLower.Contains("zalau") || nameLower.Contains("brăila") || nameLower.Contains("braila") || nameLower.Contains("baia mare")))
+            {
+                team.ClubReputation = Models.ReputationLevel.Regional;
+            }
+
+            // Stadium Capacity Fallbacks (if still at default value)
+            if (team.StadiumCapacity == 2000)
+            {
+                if (team.ClubReputation == Models.ReputationLevel.International) team.StadiumCapacity = 5300;
+                else if (team.ClubReputation == Models.ReputationLevel.National) team.StadiumCapacity = nameLower.Contains("rapid") ? 1500 : Rng.Next(2500, 4000);
+                else if (team.ClubReputation == Models.ReputationLevel.Regional) team.StadiumCapacity = Rng.Next(1800, 3000);
+                else team.StadiumCapacity = Rng.Next(1200, 2200);
+            }
+
+            // If we have a StadiumImage but no StadiumName from JSON (unlikely but safe), we could do something here.
+            // But actually we have both. The above block just ensures we have fallback values.
+
+            // Create AI Manager if one doesn't already exist
+            if (team.Manager != null)
+            {
+                var mgr = team.Manager;
+                mgr.TeamId = team.Id;
+                mgr.IsPlayerManager = false;
+                
+                // Set default history if none provided
+                if (string.IsNullOrEmpty(mgr.ClubHistoryJson) || mgr.ClubHistoryJson == "[]")
+                {
+                    mgr.ClubHistoryJson = System.Text.Json.JsonSerializer.Serialize(new[]
+                    {
+                        new Models.ManagerClubHistory
+                        {
+                            ClubName = team.Name,
+                            StartDate = "2023",
+                            EndDate = ""
+                        }
+                    });
+                }
+            }
+            else
+            {
+                var mgr = new Models.Manager
+                {
+                    FirstName = managerFirstNames[Rng.Next(managerFirstNames.Length)],
+                    LastName = managerLastNames[Rng.Next(managerLastNames.Length)],
+                    Birthdate = new DateTime(Rng.Next(1965, 1990), Rng.Next(1, 13), Rng.Next(1, 28)),
+                    PlaceOfBirth = managerCities[Rng.Next(managerCities.Length)],
+                    Nationality = "ROU",
+                    License = Models.CoachLicense.Level3,
+                    Reputation = team.ClubReputation switch
+                    {
+                        Models.ReputationLevel.International => Models.ReputationLevel.National,
+                        Models.ReputationLevel.National => Models.ReputationLevel.National,
+                        Models.ReputationLevel.Regional => (Models.ReputationLevel)Rng.Next(1, 3), // Regional or National
+                        _ => (Models.ReputationLevel)Rng.Next(0, 2) // Local or Regional
+                    },
+                    Motivation = Rng.Next(8, 17),
+                    YouthDevelopment = Rng.Next(8, 17),
+                    Discipline = Rng.Next(8, 17),
+                    Adaptability = Rng.Next(8, 17),
+                    TimeoutTalks = Rng.Next(8, 17),
+                    TeamId = team.Id,
+                    IsPlayerManager = false,
+                    ClubHistoryJson = System.Text.Json.JsonSerializer.Serialize(new[]
+                    {
+                        new Models.ManagerClubHistory
+                        {
+                            ClubName = team.Name,
+                            StartDate = "2023",
+                            EndDate = ""
+                        }
+                    })
+                };
+                db.Managers.Add(mgr);
+            }
+        }
+
+        try
+        {
+            db.SaveChanges();
+            Log("Successfully seeded AI managers and club reputations.");
+        }
+        catch (DbUpdateException due)
+        {
+            Log($"--- CRITICAL DB SAVE ERROR ---");
+            Log($"Message: {due.Message}");
+            if (due.InnerException != null)
+            {
+                Log($"Inner Exception: {due.InnerException.Message}");
+            }
+            
+            // Try to find which entities are causing the trouble
+            foreach (var entry in due.Entries)
+            {
+                Log($"Entity: {entry.Entity.GetType().Name}, State: {entry.State}");
+                if (entry.Entity is Models.Manager mgr)
+                {
+                    Log($"Manager: {mgr.FirstName} {mgr.LastName}, TeamId: {mgr.TeamId}");
+                }
+            }
+            throw;
+        }
 
         var allTeams = db.Teams.ToList();
         int GetTeamId(string historicalName)

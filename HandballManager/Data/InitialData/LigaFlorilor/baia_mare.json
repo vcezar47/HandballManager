@@ -5,8 +5,24 @@
     "Budget": 1400000,
     "FoundedYear": 2015,
     "StadiumName": "Sala Sporturilor Lasc\u0103r Pan\u0103",
+    "StadiumCapacity": 2218,
+    "StadiumImage": "lascarpana.jpg",
     "Description": "Continuing the legendary Baia Mare handball tradition, Minaur is a team with heart and a formidable home atmosphere.",
     "IsPlayerTeam": false,
+    "ClubReputation": "Regional",
+    "Manager": {
+        "FirstName": "Joao Alexandre",
+        "LastName": "Ferreira",
+        "Birthdate": "1981-10-14",
+        "Nationality": "POR",
+        "License": 4,
+        "Reputation": 3,
+        "Motivation": 15,
+        "YouthDevelopment": 13,
+        "Discipline": 14,
+        "Adaptability": 13,
+        "TimeoutTalks": 15
+    },
     "Players": [
         {
             "FirstName": "Yuliya",

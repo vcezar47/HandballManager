@@ -12,12 +12,13 @@ public class SimulationEngine
     private readonly YouthIntakeService _youthIntakeService;
     private readonly CupService _cupService;
     private readonly SupercupService _supercupService;
+    private readonly LeagueService _leagueService;
     private readonly Random _rng = new();
     private const int PossessionsPerTeam = 55;
     private DateTime _lastDailyProgressionDate;
     private DateTime _lastWeeklyWageDate;
 
-    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService)
+    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService, LeagueService leagueService)
     {
         _db = db;
         _progression = progression;
@@ -25,6 +26,7 @@ public class SimulationEngine
         _youthIntakeService = youthIntakeService;
         _cupService = cupService;
         _supercupService = supercupService;
+        _leagueService = leagueService;
         _lastDailyProgressionDate = LeagueService.GameSeasonStartDate;
         _lastWeeklyWageDate = LeagueService.GameSeasonStartDate;
     }
@@ -34,18 +36,25 @@ public class SimulationEngine
     /// </summary>
     public async Task<List<MatchRecord>> SimulateMatchweekAsync(int matchweek)
     {
+        // Ensure fixtures exist for the current season
+        await _leagueService.GenerateSeasonFixturesAsync();
+
         // Process daily progression for all elapsed days since last processing
         var matchDate = LeagueService.GetMatchweekDate(matchweek);
         await ProcessDailyProgressionAsync(matchDate);
 
-        var teams = await _db.Teams.Select(t => t.Id).ToListAsync();
-        var pairings = LeagueService.GetPairingsForMatchweek(teams, matchweek);
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        var fixtures = await _db.LeagueFixtures
+            .Where(f => f.Season == season && f.Round == matchweek && !f.IsPlayed)
+            .ToListAsync();
 
         var results = new List<MatchRecord>();
-        foreach (var (homeId, awayId) in pairings)
+        foreach (var fixture in fixtures)
         {
-            var result = await SimulateMatchInternalAsync(homeId, awayId, matchweek);
+            var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, matchweek);
             results.Add(result);
+            fixture.IsPlayed = true;
+            fixture.MatchRecord = result;
         }
 
         await _db.SaveChangesAsync();
@@ -70,10 +79,17 @@ public class SimulationEngine
         await _transferService.TryGenerateAiOfferAsync(currentDate);
         await _transferService.TryGenerateAiToAiTransfersAsync(currentDate);
 
-        var allPlayers = await _db.Players.ToListAsync();
+        var allPlayers = await _db.Players.Include(p => p.Team).ThenInclude(t => t!.Manager).ToListAsync();
         foreach (var player in allPlayers)
         {
-            _progression.ProcessDailyProgression(player, daysSinceLast);
+            double youthFactor = 1.0;
+            if (player.Age <= 20 && player.Team?.Manager != null)
+            {
+                // Range: 0.7 (attribute 0) to 1.3 (attribute 20)
+                youthFactor = 0.7 + (player.Team.Manager.YouthDevelopment / 20.0) * 0.6;
+            }
+
+            _progression.ProcessDailyProgression(player, daysSinceLast, youthFactor);
         }
 
         // Check if a week has passed for wage deductions
@@ -131,7 +147,8 @@ public class SimulationEngine
             var record = await SimulateMatchInternalAsync(
                 fixture.HomeTeamId, fixture.AwayTeamId, 0,
                 isCupMatch: true, cupRound: cupRoundLabel,
-                playedOnOverride: date, isNeutralVenue: fixture.VenueName != null);
+                playedOnOverride: date, isNeutralVenue: fixture.VenueName != null,
+                venueName: fixture.VenueName);
 
             fixture.HomeGoals = record.HomeGoals;
             fixture.AwayGoals = record.AwayGoals;
@@ -181,7 +198,8 @@ public class SimulationEngine
             var record = await SimulateMatchInternalAsync(
                 fixture.HomeTeamId, fixture.AwayTeamId, 0,
                 isCupMatch: true, cupRound: cupRoundLabel,
-                playedOnOverride: date, isNeutralVenue: true);
+                playedOnOverride: date, isNeutralVenue: true,
+                venueName: fixture.VenueName);
 
             fixture.HomeGoals = record.HomeGoals;
             fixture.AwayGoals = record.AwayGoals;
@@ -215,10 +233,11 @@ public class SimulationEngine
     private async Task<MatchRecord> SimulateMatchInternalAsync(
         int homeTeamId, int awayTeamId, int matchweek,
         bool isCupMatch = false, string? cupRound = null,
-        DateTime? playedOnOverride = null, bool isNeutralVenue = false)
+        DateTime? playedOnOverride = null, bool isNeutralVenue = false,
+        string? venueName = null)
     {
-        var homeTeam = await _db.Teams.Include(t => t.Players).FirstAsync(t => t.Id == homeTeamId);
-        var awayTeam = await _db.Teams.Include(t => t.Players).FirstAsync(t => t.Id == awayTeamId);
+        var homeTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == homeTeamId);
+        var awayTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == awayTeamId);
 
         var record = new MatchRecord
         {
@@ -231,7 +250,8 @@ public class SimulationEngine
             PlayedOn = playedOnOverride ?? LeagueService.GetMatchweekDate(matchweek),
             MatchweekNumber = matchweek,
             IsCupMatch = isCupMatch,
-            CupRound = cupRound
+            CupRound = cupRound,
+            VenueName = venueName ?? homeTeam.StadiumName
         };
 
         var playerStats = new Dictionary<int, MatchPlayerStat>();
@@ -246,26 +266,75 @@ public class SimulationEngine
             };
         }
 
-        // Simulating both halves
-        SimulatePossessions(record, homeTeam, awayTeam, playerStats, !isNeutralVenue);
-        SimulatePossessions(record, awayTeam, homeTeam, playerStats, false);
+        // Calculate Form for both teams
+        double homeForm = await GetTeamFormAsync(homeTeamId, record.PlayedOn);
+        double awayForm = await GetTeamFormAsync(awayTeamId, record.PlayedOn);
 
-        // Finalize stats and ratings
-        CalculateMatchRatings(record, homeTeam, awayTeam, playerStats);
+        // Find capacity for venue (either home team's or neutral venue's)
+        int effectiveCapacity = homeTeam.StadiumCapacity;
+        if (isNeutralVenue && venueName != null)
+        {
+            var venueTeam = await _db.Teams.FirstOrDefaultAsync(t => venueName.Contains(t.StadiumName));
+            if (venueTeam != null) effectiveCapacity = venueTeam.StadiumCapacity;
+        }
 
+        // Calculate Attendance
+        record.Attendance = CalculateAttendance(homeTeam.ClubReputation, homeForm, awayForm, effectiveCapacity, isNeutralVenue);
+
+        // Simulating both halves with dynamic home advantage
+        double homeAdvantage = CalculateHomeAdvantage(homeTeam, record.Attendance, effectiveCapacity, isNeutralVenue);
+        
+        // First half
+        SimulatePossessions(record, homeTeam, awayTeam, playerStats, true, homeAdvantage);
+        // Second half
+        SimulatePossessions(record, awayTeam, homeTeam, playerStats, false, homeAdvantage);
+
+
+
+        // Update Goals for record
         record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
         record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
 
-        // Cup knockout matches can't end in a draw — simulate extra possessions until a winner
+        // Cup knockout matches (Supercup, Cup Final 4, etc.) can't end in a draw
         if (isCupMatch && cupRound != null && cupRound != "Group" && !cupRound.StartsWith("Group")
             && record.HomeGoals == record.AwayGoals)
         {
-            while (record.HomeGoals == record.AwayGoals)
+            // --- Phase 1: Overtime (2 x 5 minutes) ---
+            record.WasDecidedByOvertime = true;
+            // Overtime is roughly 1/6th of a full match (60 min vs 10 min)
+            int otPossessions = 10; 
+            
+            SimulatePossessions(record, homeTeam, awayTeam, playerStats, true, homeAdvantage, possessionCount: otPossessions);
+            SimulatePossessions(record, awayTeam, homeTeam, playerStats, false, homeAdvantage, possessionCount: otPossessions);
+            
+            record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
+            record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
+
+            // --- Phase 2: Penalty Shootout (if still a draw) ---
+            if (record.HomeGoals == record.AwayGoals)
             {
-                SimulatePossessions(record, homeTeam, awayTeam, playerStats, false, possessionCount: 10);
-                SimulatePossessions(record, awayTeam, homeTeam, playerStats, false, possessionCount: 10);
-                record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
-                record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
+                record.WasDecidedByShootout = true;
+                SimulateShootout(record, homeTeam, awayTeam);
+            }
+        }
+
+        // Update Manager Stats
+        if (homeTeam.Manager != null && awayTeam.Manager != null)
+        {
+            if (record.HomeGoals > record.AwayGoals)
+            {
+                homeTeam.Manager.GamesWon++;
+                awayTeam.Manager.GamesLost++;
+            }
+            else if (record.HomeGoals < record.AwayGoals)
+            {
+                homeTeam.Manager.GamesLost++;
+                awayTeam.Manager.GamesWon++;
+            }
+            else
+            {
+                homeTeam.Manager.GamesDrawn++;
+                awayTeam.Manager.GamesDrawn++;
             }
         }
 
@@ -297,18 +366,78 @@ public class SimulationEngine
         return record;
     }
 
-    private void SimulatePossessions(MatchRecord record, Team attackers, Team defenders, Dictionary<int, MatchPlayerStat> stats, bool isAttackerHome, int possessionCount = PossessionsPerTeam)
+    private void SimulateShootout(MatchRecord record, Team homeTeam, Team awayTeam)
+    {
+        // Pick 5 shooters per team, prioritizing SevenMeterTaking then Finishing
+        var homeShooters = homeTeam.Players.Where(p => p.Position != "GK")
+            .OrderByDescending(p => p.SevenMeterTaking)
+            .ThenByDescending(p => p.Finishing)
+            .Take(5).ToList();
+        
+        var awayShooters = awayTeam.Players.Where(p => p.Position != "GK")
+            .OrderByDescending(p => p.SevenMeterTaking)
+            .ThenByDescending(p => p.Finishing)
+            .Take(5).ToList();
+
+        // Best GK for each team
+        var homeGK = homeTeam.Players.FirstOrDefault(p => p.Position == "GK") ?? homeTeam.Players.OrderByDescending(p => p.Reflexes).First();
+        var awayGK = awayTeam.Players.FirstOrDefault(p => p.Position == "GK") ?? awayTeam.Players.OrderByDescending(p => p.Reflexes).First();
+
+        int homeScore = 0;
+        int awayScore = 0;
+
+        // Standard 5 rounds
+        for (int i = 0; i < 5; i++)
+        {
+            // Home shooter vs Away GK
+            if (SimulateSevenMeter(homeShooters[i % homeShooters.Count], awayGK)) homeScore++;
+            // Away shooter vs Home GK
+            if (SimulateSevenMeter(awayShooters[i % awayShooters.Count], homeGK)) awayScore++;
+        }
+
+        // Sudden death if still draw
+        int roundCount = 5;
+        while (homeScore == awayScore && roundCount < 20)
+        {
+            if (SimulateSevenMeter(homeShooters[roundCount % homeShooters.Count], awayGK)) homeScore++;
+            if (SimulateSevenMeter(awayShooters[roundCount % awayShooters.Count], homeGK)) awayScore++;
+            roundCount++;
+        }
+
+        record.HomePenaltyGoals = homeScore;
+        record.AwayPenaltyGoals = awayScore;
+
+        // Log an event for the shootout results
+        record.MatchEvents.Add(new MatchEvent
+        {
+            MatchRecord = record,
+            EventType = "Shootout",
+            PlayerName = "Penalty Shootout",
+            Minute = 70 // Indicative after OT
+        });
+    }
+
+    private bool SimulateSevenMeter(Player shooter, Player gk)
+    {
+        // 7-meter taking (0-20) vs Reflexes (0-20)
+        double baseChance = 0.75; // Average 7m conversion is high in handball
+        double diff = (shooter.SevenMeterTaking - gk.Reflexes) / 20.0;
+        double goalChance = Math.Clamp(baseChance + (diff * 0.2), 0.5, 0.95);
+        return _rng.NextDouble() < goalChance;
+    }
+
+    private void SimulatePossessions(MatchRecord record, Team attackers, Team defenders, Dictionary<int, MatchPlayerStat> stats, bool isAttackerHome, double homeAdvantage, int possessionCount = PossessionsPerTeam)
     {
         var attackRating = CalculateAttackRating(attackers);
         var defenseRating = CalculateDefenseRating(defenders);
         var gk = defenders.Players.FirstOrDefault(p => p.Position == "GK") ?? defenders.Players.First();
         var gkRating = (gk.Reflexes * 2.5 + gk.OneOnOnes * 2.0 + gk.Handling + gk.Positioning * 1.5 + gk.Anticipation) / 8.0;
 
-        double homeBonus = isAttackerHome ? 1.05 : 1.0;
+        double currentBonus = (isAttackerHome) ? homeAdvantage : 1.0;
 
         for (int i = 0; i < possessionCount; i++)
         {
-            double diff = (attackRating * homeBonus) - defenseRating;
+            double diff = (attackRating * currentBonus) - defenseRating;
             double shotChance = Math.Clamp(0.6 + (diff / 40.0), 0.3, 0.9);
 
             if (_rng.NextDouble() > shotChance) continue;
@@ -554,6 +683,7 @@ public class SimulationEngine
         await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
 
         LeagueService.AdvanceToNextSeason();
+        await _leagueService.GenerateSeasonFixturesAsync();
         _lastDailyProgressionDate = currentDate.Date;
         _lastWeeklyWageDate = currentDate.Date;
 
@@ -583,6 +713,101 @@ public class SimulationEngine
             }
         }
         await _db.SaveChangesAsync();
+    }
+
+    private async Task<double> GetTeamFormAsync(int teamId, DateTime beforeDate)
+    {
+        var recentMatches = await _db.MatchRecords
+            .Where(m => (m.HomeTeamId == teamId || m.AwayTeamId == teamId) && m.PlayedOn < beforeDate.Date)
+            .OrderByDescending(m => m.PlayedOn)
+            .Take(5)
+            .ToListAsync();
+
+        if (recentMatches.Count == 0) return 0.5; // Neutral form for start of season
+
+        double totalPoints = 0;
+        foreach (var m in recentMatches)
+        {
+            bool isHome = m.HomeTeamId == teamId;
+            int myGoals = isHome ? m.HomeGoals : m.AwayGoals;
+            int oppGoals = isHome ? m.AwayGoals : m.HomeGoals;
+
+            if (myGoals > oppGoals) totalPoints += 1.0;
+            else if (myGoals == oppGoals) totalPoints += 0.5;
+        }
+
+        return totalPoints / recentMatches.Count;
+    }
+
+    private double CalculateHomeAdvantage(Team homeTeam, int attendance, int capacity, bool isNeutralVenue)
+    {
+        if (isNeutralVenue) return 1.0;
+
+        double advantage = 1.02; // Base
+
+        // Reputation bonus
+        advantage += homeTeam.ClubReputation switch
+        {
+            ReputationLevel.Local => 0.01,
+            ReputationLevel.Regional => 0.02,
+            ReputationLevel.National => 0.03,
+            ReputationLevel.European => 0.04,
+            ReputationLevel.International => 0.045,
+            ReputationLevel.Global => 0.05,
+            _ => 0.01
+        };
+
+        // Manager Timeout Talks bonus
+        if (homeTeam.Manager != null)
+        {
+            advantage += (homeTeam.Manager.TimeoutTalks / 20.0) * 0.01;
+        }
+
+        // Crowd Pressure Factor (Attendance / Capacity)
+        if (capacity > 0)
+        {
+            double fillRate = (double)attendance / capacity;
+            advantage += (fillRate * 0.04); // Up to +0.04 for full stadium
+        }
+        
+        // Large Arena "Atmosphere" Factor
+        if (capacity > 3000)
+        {
+            advantage += 0.01;
+        }
+
+        return Math.Min(advantage, 1.15); // Hard cap at 1.15
+    }
+
+    private int CalculateAttendance(ReputationLevel clubReputation, double homeForm, double awayForm, int capacity, bool isNeutralVenue)
+    {
+        if (isNeutralVenue) return (int)(capacity * 0.5); // Neutral venues get 50% base fill
+
+        double fillRate = 0.35; // Base
+
+        // Reputation influence
+        fillRate += clubReputation switch
+        {
+            ReputationLevel.Local => 0.05,
+            ReputationLevel.Regional => 0.15,
+            ReputationLevel.National => 0.3,
+            ReputationLevel.European => 0.4,
+            ReputationLevel.International => 0.45,
+            ReputationLevel.Global => 0.5,
+            _ => 0.1
+        };
+
+        // Performance (Form) influence
+        fillRate += (homeForm - 0.5) * 0.3; // Up to +/- 0.15 based on form
+
+        // Opponent quality (awayForm)
+        fillRate += (awayForm - 0.5) * 0.1;
+
+        // Random variance
+        fillRate += (_rng.NextDouble() * 0.15) - 0.05;
+
+        int attendance = (int)(capacity * Math.Clamp(fillRate, 0.1, 1.0));
+        return attendance;
     }
 }
 

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using HandballManager.Data;
 using HandballManager.Models;
 using HandballManager.Services;
@@ -22,6 +23,7 @@ public partial class ClubInfoViewModel : BaseViewModel
     private readonly GameClock _clock;
     private readonly Action<Player> _onPlayerSelected;
     private readonly Action<int, string> _onNegotiateTransfer;
+    private readonly MainViewModel _mainVm;
 
     [ObservableProperty]
     private Team? _team;
@@ -29,9 +31,15 @@ public partial class ClubInfoViewModel : BaseViewModel
     [ObservableProperty]
     private TeamRosterViewModel? _squadVM;
 
+    [ObservableProperty]
+    private Manager? _manager; // Added Manager property
+
+
+
     public ObservableCollection<TrophyViewModel> Trophies { get; } = new();
 
-    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer)
+    // Modified constructor to include MainViewModel
+    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer, MainViewModel mainVm)
     {
         _db = db;
         _scouting = scouting;
@@ -39,6 +47,16 @@ public partial class ClubInfoViewModel : BaseViewModel
         _clock = clock;
         _onPlayerSelected = onPlayerSelected;
         _onNegotiateTransfer = onNegotiateTransfer;
+        _mainVm = mainVm; 
+    }
+
+    [RelayCommand]
+    private void NavigateToManagerDetail()
+    {
+        if (Manager != null)
+        {
+            _mainVm.NavigateToManagerDetail(Manager);
+        }
     }
 
     public async Task InitializeAsync(int teamId)
@@ -48,6 +66,12 @@ public partial class ClubInfoViewModel : BaseViewModel
             .FirstOrDefaultAsync(t => t.Id == teamId);
 
         if (Team == null) return;
+
+        // Load Manager
+        await _db.Entry(Team).Reference(t => t.Manager).LoadAsync();
+        Manager = Team.Manager;
+
+
 
         // Initialize Squad VM
         SquadVM = new TeamRosterViewModel(_db, teamId, _scouting, _onPlayerSelected, _transferService, _clock, _onNegotiateTransfer);

@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>
     <RootNamespace>HandballManager</RootNamespace>
+    <ApplicationIcon>HandballManager.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +33,7 @@
     <Resource Include="Assets\gamelogo\**\*" />
     <Resource Include="Assets\leaguelogo\**\*" />
     <Resource Include="Assets\teamlogo\**\*" />
+    <Resource Include="Assets\stadiums\**\*" />
     <Resource Include="Assets\trophies\**\*" />
   </ItemGroup>
 

@@ -31,7 +31,7 @@ public partial class App : Application
             var youthIntakeService = new YouthIntakeService(db);
             var cupService = new CupService(db);
             var supercupService = new SupercupService(db);
-            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService, supercupService);
+            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService, supercupService, leagueService);
             var clock = new GameClock(LeagueService.GameSeasonStartDate);
             var scoutingService = new ScoutingService(clock);
 
@@ -49,7 +49,10 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Startup Error: {ex.Message}\n\n{ex.StackTrace}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var msg = ex.Message;
+            if (ex.InnerException != null) msg += $"\n\nInner: {ex.InnerException.Message}";
+            
+            MessageBox.Show($"Startup Error: {msg}\n\n{ex.StackTrace}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown();
         }
     }

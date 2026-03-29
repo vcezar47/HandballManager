@@ -5,8 +5,24 @@
     "Budget": 4000000,
     "FoundedYear": 2007,
     "StadiumName": "Sala Polivalent\u0103",
+    "StadiumCapacity": 5300,
+    "StadiumImage": "polivalentabucuresti.jpg",
     "Description": "A dominant force in Romanian and European handball, CSM Bucure\u0219ti is a star-studded team known for its consistent excellence.",
     "IsPlayerTeam": false,
+    "ClubReputation": "International",
+    "Manager": {
+      "FirstName": "Bojana",
+      "LastName": "Popović",
+      "Birthdate": "1979-11-20",
+      "Nationality": "MNE",
+      "License": 5,
+      "Reputation": 4,
+      "Motivation": 16,
+      "YouthDevelopment": 15,
+      "Discipline": 15,
+      "Adaptability": 14,
+      "TimeoutTalks": 17
+    },
     "Players": [
         {
             "FirstName": "Gabriela",

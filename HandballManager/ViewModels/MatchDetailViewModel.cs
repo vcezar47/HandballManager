@@ -62,24 +62,38 @@ public partial class MatchDetailViewModel : BaseViewModel
             HomeGoals = goals.Where(e => e.TeamId == Match.HomeTeamId).ToList();
             AwayGoals = goals.Where(e => e.TeamId == Match.AwayTeamId).ToList();
 
-            // Calculate score history
             var history = new List<ScoreHistoryItem>();
             int homeScore = 0;
             int awayScore = 0;
 
-            foreach (var goal in goals)
+            foreach (var evt in Match.MatchEvents.OrderBy(e => e.Minute))
             {
-                if (goal.TeamId == Match.HomeTeamId) homeScore++;
-                else awayScore++;
-
-                history.Add(new ScoreHistoryItem
+                if (evt.EventType == "Goal")
                 {
-                    PlayerName = goal.PlayerName,
-                    Minute = goal.Minute,
-                    HomeScore = homeScore,
-                    AwayScore = awayScore,
-                    IsHomeGoal = goal.TeamId == Match.HomeTeamId
-                });
+                    if (evt.TeamId == Match.HomeTeamId) homeScore++;
+                    else awayScore++;
+
+                    history.Add(new ScoreHistoryItem
+                    {
+                        PlayerName = evt.PlayerName,
+                        Minute = evt.Minute,
+                        HomeScore = homeScore,
+                        AwayScore = awayScore,
+                        IsHomeGoal = evt.TeamId == Match.HomeTeamId
+                    });
+                }
+                else if (evt.EventType == "Shootout")
+                {
+                    history.Add(new ScoreHistoryItem
+                    {
+                        PlayerName = "PENALTY SHOOTOUT",
+                        Minute = evt.Minute,
+                        HomeScore = Match.HomePenaltyGoals,
+                        AwayScore = Match.AwayPenaltyGoals,
+                        IsHomeGoal = Match.HomePenaltyGoals > Match.AwayPenaltyGoals,
+                        IsShootoutResult = true
+                    });
+                }
             }
 
             history.Reverse();
@@ -105,5 +119,6 @@ public class ScoreHistoryItem
     public int HomeScore { get; set; }
     public int AwayScore { get; set; }
     public bool IsHomeGoal { get; set; }
-    public string ScoreText => $"{HomeScore} – {AwayScore}";
+    public bool IsShootoutResult { get; set; }
+    public string ScoreText => IsShootoutResult ? $"{HomeScore}–{AwayScore} (P)" : $"{HomeScore}–{AwayScore}";
 }

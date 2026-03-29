@@ -144,13 +144,16 @@ public class PlayerProgressionService
 
     // ── Public API ────────────────────────────────────────────────────
 
-    public void ProcessDailyProgression(Player player, int numDays)
+    public void ProcessDailyProgression(Player player, int numDays, double youthDevFactor = 1.0)
     {
         if (numDays <= 0) return;
 
         var bracket = GetAgeBracket(player.Age);
         var accumulators = player.GrowthAccumulators;
         var seasonChanges = player.SeasonAttributeChanges;
+
+        // Apply youth development factor for under-21s
+        double effectiveYouthFactor = (bracket == AgeBracket.Development) ? youthDevFactor : 1.0;
 
         // Core drift for relevant attributes
         var relevantAttrs = GetRelevantAttributes(player.Position);
@@ -162,7 +165,7 @@ public class PlayerProgressionService
             var (min, max) = GetDailyRate(bracket, category);
 
             double dailyDelta = min + _rng.NextDouble() * (max - min);
-            double totalDelta = dailyDelta * (numDays * 0.8); // 80% weight for consistency
+            double totalDelta = dailyDelta * (numDays * 0.8) * effectiveYouthFactor; // Added factor
 
             if (!accumulators.ContainsKey(attr)) accumulators[attr] = 0;
             accumulators[attr] += totalDelta;
@@ -170,7 +173,6 @@ public class PlayerProgressionService
         }
 
         // Background drift for all attributes (even non-primary)
-        // This ensures EVERY player eventually has changes
         foreach (var attr in AllAttributes)
         {
             if (relevantAttrs.Contains(attr)) continue;
@@ -181,7 +183,7 @@ public class PlayerProgressionService
             if (bracket >= AgeBracket.Decline) tinyDrift -= 0.005; // Biased towards regression for vets
 
             if (!accumulators.ContainsKey(attr)) accumulators[attr] = 0;
-            accumulators[attr] += tinyDrift * numDays;
+            accumulators[attr] += tinyDrift * numDays * effectiveYouthFactor; // Added factor
             ApplyAccumulatorTicks(player, attr, accumulators, seasonChanges);
         }
 

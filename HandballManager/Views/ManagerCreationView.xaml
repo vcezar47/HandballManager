@@ -1,0 +1,418 @@
+<UserControl x:Class="HandballManager.Views.ManagerCreationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             mc:Ignorable="d"
+             FontSize="14"
+             d:DataContext="{d:DesignInstance vm:ManagerCreationViewModel}">
+
+    <UserControl.Resources>
+        <!-- Text field style -->
+        <Style x:Key="DarkTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#1A2238"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#2A2A4A"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#E94560"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Improved Dark ComboBox Style -->
+        <Style x:Key="DarkComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="#1A2238"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#2A2A4A"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Name="ToggleButton" 
+                                          BorderBrush="{TemplateBinding BorderBrush}" 
+                                          Background="{TemplateBinding Background}"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          HorizontalContentAlignment="Left"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Grid.ColumnSpan="2">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Name="Border" CornerRadius="10" 
+                                                Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="30"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" Margin="10,0" VerticalAlignment="Center"/>
+                                                <Path Name="Arrow" Grid.Column="1" Fill="#E94560" Data="M0,0 L8,8 L16,0" 
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="#E94560"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ContentPresenter Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                  VerticalAlignment="Center" Margin="12,0"/>
+                            </ToggleButton>
+                            <Popup Name="Popup" Placement="Bottom" 
+                                   IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                   AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid Name="DropDown" SnapsToDevicePixels="True" 
+                                      MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border Name="DropDownBorder" Background="#16213E" 
+                                            BorderThickness="1" BorderBrush="#2A2A4A" CornerRadius="10"/>
+                                    <ScrollViewer Margin="4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}" CornerRadius="6" Margin="2,1">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1E2A4A"/>
+                                <Setter Property="Foreground" Value="#E94560"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E94560"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Circle Button for Attributes -->
+        <Style x:Key="CircleBtn" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="#1A2238"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#2A2A4A"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#E94560"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#1E2A4A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E94560"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Label style -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#666688"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border MaxWidth="1400" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Margin="40,20" Padding="60,40" CornerRadius="20">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#16213E" Offset="0"/>
+                    <GradientStop Color="#0F3460" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" Opacity="0.4" ShadowDepth="10"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="420"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Column: Personal Info -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="PERSONAL DETAILS" FontSize="20" FontWeight="Black" Margin="0,0,0,25" Foreground="White"/>
+
+                    <TextBlock Text="FIRST NAME" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" 
+                             Style="{StaticResource DarkTextBox}" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="LAST NAME" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" 
+                             Style="{StaticResource DarkTextBox}" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="DATE OF BIRTH" Style="{StaticResource FieldLabel}"/>
+                    <UniformGrid Columns="3" Margin="0,0,0,20">
+                        <StackPanel Margin="0,0,4,0">
+                            <TextBlock Text="DAY" FontSize="8" Foreground="#444466" Margin="0,0,0,2"/>
+                            <ComboBox ItemsSource="{Binding Days}" SelectedItem="{Binding SelectedDay}" Style="{StaticResource DarkComboBox}"/>
+                        </StackPanel>
+                        <StackPanel Margin="4,0,4,0">
+                            <TextBlock Text="MONTH" FontSize="8" Foreground="#444466" Margin="0,0,0,2"/>
+                            <ComboBox ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth}" Style="{StaticResource DarkComboBox}"/>
+                        </StackPanel>
+                        <StackPanel Margin="4,0,0,0">
+                            <TextBlock Text="YEAR" FontSize="8" Foreground="#444466" Margin="0,0,0,2"/>
+                            <ComboBox ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear}" Style="{StaticResource DarkComboBox}"/>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <TextBlock Text="PLACE OF BIRTH" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding PlaceOfBirth, UpdateSourceTrigger=PropertyChanged}" 
+                             Style="{StaticResource DarkTextBox}" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="NATIONALITY" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox ItemsSource="{Binding Nationalities}" 
+                              SelectedItem="{Binding Nationality}"
+                              Style="{StaticResource DarkComboBox}" Margin="0,0,0,25"/>
+
+                    <!-- License Selection -->
+                    <TextBlock Text="HEAD COACH LICENSE" FontSize="11" FontWeight="ExtraBold" 
+                               Foreground="#E94560" Margin="0,15,0,12"/>
+
+                    <ItemsControl ItemsSource="{Binding LicenseOptions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SetLicenseCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Margin="0,0,0,8">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Card" Background="#1A1A2E" BorderThickness="1" 
+                                                    BorderBrush="#2A2A4A" CornerRadius="12" Padding="15,12">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding DisplayName}" Foreground="White" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding ReputationLabel}" FontSize="10" Foreground="#666688"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Points, StringFormat={}{0} PTS}" 
+                                                               Foreground="#E94560" FontWeight="Black" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Card" Property="BorderBrush" Value="#E94560"/>
+                                                    <Setter TargetName="Card" Property="Background" Value="#1E1E3A"/>
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Card" Property="BorderBrush" Value="#666688"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Right Column: Attributes -->
+                <StackPanel Grid.Column="2">
+                    <Grid Margin="0,0,0,25">
+                        <TextBlock Text="ATTRIBUTES" FontSize="20" FontWeight="Black" Foreground="White"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <TextBlock Text="POINTS REMAINING: " Foreground="#666688" FontSize="12" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding RemainingPoints}" Foreground="#E94560" FontSize="18" FontWeight="Black"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Background="#1A1A2E" CornerRadius="20" Padding="35,30">
+                        <StackPanel>
+                            <TextBlock Text="COACHING STYLE" FontSize="12" FontWeight="Black" Foreground="#666688" Margin="0,0,0,20"/>
+
+                            <!-- Motivation -->
+                            <Grid Margin="0,0,0,25">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="MOTIVATION" Foreground="White" FontWeight="Bold"/>
+                                    <TextBlock Text="Increases team morale in intervals" FontSize="9" Foreground="#444466"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Motivation:-1" Style="{StaticResource CircleBtn}" Content="-"/>
+                                    <Border Width="60" Margin="15,0">
+                                        <TextBlock Text="{Binding Motivation}" Foreground="#E94560" FontWeight="Black" FontSize="24" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Motivation:1" Style="{StaticResource CircleBtn}" Content="+"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Youth Development -->
+                            <Grid Margin="0,0,0,25">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="YOUTH DEVELOPMENT" Foreground="White" FontWeight="Bold"/>
+                                    <TextBlock Text="Controls player growth under age 21" FontSize="9" Foreground="#444466"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="YouthDevelopment:-1" Style="{StaticResource CircleBtn}" Content="-"/>
+                                    <Border Width="60" Margin="15,0">
+                                        <TextBlock Text="{Binding YouthDevelopment}" Foreground="#E94560" FontWeight="Black" FontSize="24" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="YouthDevelopment:1" Style="{StaticResource CircleBtn}" Content="+"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Discipline -->
+                            <Grid Margin="0,0,0,25">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="DISCIPLINE" Foreground="White" FontWeight="Bold"/>
+                                    <TextBlock Text="Affects frequency of suspensions" FontSize="9" Foreground="#444466"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Discipline:-1" Style="{StaticResource CircleBtn}" Content="-"/>
+                                    <Border Width="60" Margin="15,0">
+                                        <TextBlock Text="{Binding Discipline}" Foreground="#E94560" FontWeight="Black" FontSize="24" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Discipline:1" Style="{StaticResource CircleBtn}" Content="+"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Adaptability -->
+                            <Grid Margin="0,0,0,25">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="ADAPTABILITY" Foreground="White" FontWeight="Bold"/>
+                                    <TextBlock Text="Speed of adapting to new leagues" FontSize="9" Foreground="#444466"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Adaptability:-1" Style="{StaticResource CircleBtn}" Content="-"/>
+                                    <Border Width="60" Margin="15,0">
+                                        <TextBlock Text="{Binding Adaptability}" Foreground="#E94560" FontWeight="Black" FontSize="24" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="Adaptability:1" Style="{StaticResource CircleBtn}" Content="+"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Timeout Talks -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="TIME-OUT TALKS" Foreground="White" FontWeight="Bold"/>
+                                    <TextBlock Text="Efficiency of tactical changes" FontSize="9" Foreground="#444466"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="TimeoutTalks:-1" Style="{StaticResource CircleBtn}" Content="-"/>
+                                    <Border Width="60" Margin="15,0">
+                                        <TextBlock Text="{Binding TimeoutTalks}" Foreground="#E94560" FontWeight="Black" FontSize="24" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <Button Command="{Binding AdjustAttributeCommand}" CommandParameter="TimeoutTalks:1" Style="{StaticResource CircleBtn}" Content="+"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Button Grid.Row="2" Command="{Binding CreateManagerCommand}"
+                            IsEnabled="{Binding CanCreate}"
+                            Margin="0,40,0,0" Height="70">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Bd" CornerRadius="35">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#E94560" Offset="0"/>
+                                            <GradientStop Color="#C62148" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="CREATE MANAGER" Foreground="White" FontSize="20" FontWeight="Black" 
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Opacity" Value="0.9"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="Bd" Property="Background" Value="#2A2A4A"/>
+                                        <Setter Property="Opacity" Value="0.5"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </ScrollViewer>
+</UserControl>

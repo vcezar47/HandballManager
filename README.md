@@ -28,10 +28,19 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 ## Recently added Features
 
 *   **Detailed information tab for each club (trophies, description, squad integration etc.)**
+*   **----- 29.03.2026 MAJOR UPDATE -----**
+*   **Managers** 
+*   **Manager Creation**
+*   **Dynamic Stadium Attendance (based on club form, competition, game importance)** 
+*   **Updated Club Info UI**
+*   **Personal Manager "Profile" Tab**
+*   **Neutral venue logic for Cup and Supercup Final4's**
 
 ## Upcoming Features
 
-*   **Managers**
+*   **Squad selection for games**
+*   **Team tactics**
+*   **In-depth match simulation (time-outs, substitutions etc.)**
 
 ## Copyright
 

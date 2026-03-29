@@ -357,7 +357,9 @@ public class CupService
             return;
 
         var (day1, day2) = GetFinalFourDates();
-        const string venue = "Sala Polivalentă, Bucharest";
+        var venueTeam = (await _db.Teams.Where(t => t.StadiumCapacity > 1500).ToListAsync())
+            .OrderBy(_ => _rng.Next()).FirstOrDefault() ?? (await _db.Teams.FindAsync(qfFixtures[0].HomeTeamId))!;
+        string venue = $"{venueTeam.StadiumName}, {venueTeam.City}";
 
         // Winners of QF1 vs QF2 (semi 1), Winners of QF3 vs QF4 (semi 2)
         int Winner(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
@@ -400,7 +402,8 @@ public class CupService
             return;
 
         var (_, day2) = GetFinalFourDates();
-        const string venue = "Sala Polivalentă, Bucharest";
+        // Use same venue from the semifinals
+        string venue = sfFixtures[0].VenueName ?? "Sala Polivalentă, Bucharest";
 
         int Winner(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
         int Loser(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.AwayTeamId : f.HomeTeamId;

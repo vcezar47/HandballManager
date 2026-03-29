@@ -132,6 +132,9 @@ public partial class MainViewModel : BaseViewModel
         CanGoBack = false;
         CanGoForward = false;
 
+        // Ensure the team includes its manager
+        await _db.Entry(team).Reference(t => t.Manager).LoadAsync();
+
         await HomeVM.InitializeAsync();
         await RefreshPendingOfferCountAsync();
         await RefreshUnreadNewsCountAsync();
@@ -193,7 +196,7 @@ public partial class MainViewModel : BaseViewModel
 
     public async void NavigateToTeamRoster(Team team)
     {
-        var vm = new ClubInfoViewModel(_db, _scouting, _transferService, _clock, NavigateToPlayerDetail, OpenTransferNegotiation);
+        var vm = new ClubInfoViewModel(_db, _scouting, _transferService, _clock, NavigateToPlayerDetail, OpenTransferNegotiation, this);
         await vm.InitializeAsync(team.Id);
         NavigateTo(vm);
     }
@@ -323,6 +326,26 @@ public partial class MainViewModel : BaseViewModel
     {
         await SupercupHistoryVM.InitializeAsync();
         NavigateTo(SupercupHistoryVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToProfile()
+    {
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        if (playerTeam != null)
+        {
+            var manager = await _db.Managers.FirstOrDefaultAsync(m => m.TeamId == playerTeam.Id);
+            if (manager != null)
+            {
+                NavigateToManagerDetail(manager);
+            }
+        }
+    }
+
+    public void NavigateToManagerDetail(Manager manager)
+    {
+        var vm = new ManagerDetailViewModel(manager);
+        NavigateTo(vm);
     }
 
     [RelayCommand]

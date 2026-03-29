@@ -16,6 +16,11 @@ public class Team
     public string LogoPath { get; set; } = string.Empty;
     public string Nation { get; set; } = string.Empty;
 
+    public Manager? Manager { get; set; }
+    public ReputationLevel ClubReputation { get; set; } = ReputationLevel.Local;
+    public int StadiumCapacity { get; set; } = 2000;
+    public string StadiumImage { get; set; } = string.Empty;
+
     public List<Player> Players { get; set; } = [];
     public LeagueEntry? LeagueEntry { get; set; }
 }

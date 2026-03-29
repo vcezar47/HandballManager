@@ -16,9 +16,23 @@ public class MatchRecord
 
     public bool IsCupMatch { get; set; }
     public string? CupRound { get; set; }
+    public int Attendance { get; set; }
+    public string VenueName { get; set; } = string.Empty;
+
+    public int HomePenaltyGoals { get; set; }
+    public int AwayPenaltyGoals { get; set; }
+    public bool WasDecidedByShootout { get; set; }
+    public bool WasDecidedByOvertime { get; set; }
 
     public List<MatchEvent> MatchEvents { get; set; } = [];
     public List<MatchPlayerStat> PlayerStats { get; set; } = [];
 
-    public string Result => $"{HomeTeamName} {HomeGoals} – {AwayGoals} {AwayTeamName}";
+    public string Result {
+        get {
+            string res = $"{HomeTeamName} {HomeGoals} – {AwayGoals} {AwayTeamName}";
+            if (WasDecidedByShootout) res += $" (P: {HomePenaltyGoals}-{AwayPenaltyGoals})";
+            else if (WasDecidedByOvertime) res += " (AET)";
+            return res;
+        }
+    }
 }

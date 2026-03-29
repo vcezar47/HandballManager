@@ -19,7 +19,9 @@ public partial class StartViewModel : BaseViewModel
     private readonly Action<Team> _onTeamSelected;
 
     [ObservableProperty]
-    private int _currentStep = 1; // 1: League, 2: Team
+    private int _currentStep = 0; // 0: Manager Creation, 1: League, 2: Team
+
+    public ManagerCreationViewModel ManagerCreationVM { get; }
 
     [ObservableProperty]
     private List<LeagueInfo> _leagues = [];
@@ -33,11 +35,20 @@ public partial class StartViewModel : BaseViewModel
     [ObservableProperty]
     private Team? _selectedTeam;
 
+    private Manager? _playerManager;
+
     public StartViewModel(HandballDbContext db, Action<Team> onTeamSelected)
     {
-        Title = "League Selection";
+        Title = "Manager Creation";
         _db = db;
         _onTeamSelected = onTeamSelected;
+
+        ManagerCreationVM = new ManagerCreationViewModel(db, manager =>
+        {
+            _playerManager = manager;
+            CurrentStep = 1;
+            Title = "League Selection";
+        });
 
         Leagues = new List<LeagueInfo>
         {
@@ -65,21 +76,34 @@ public partial class StartViewModel : BaseViewModel
     [RelayCommand]
     private void GoBack()
     {
-        if (CurrentStep > 1)
+        if (CurrentStep > 0)
         {
             CurrentStep--;
-            Title = "League Selection";
+            Title = CurrentStep switch
+            {
+                0 => "Manager Creation",
+                1 => "League Selection",
+                _ => "Select Your Team"
+            };
         }
     }
 
     [RelayCommand]
     private void StartCareer()
     {
-        if (SelectedTeam != null)
+        if (SelectedTeam != null && _playerManager != null)
         {
             // Mark the selected team as the player's team
             foreach (var t in _db.Teams) t.IsPlayerTeam = false;
             SelectedTeam.IsPlayerTeam = true;
+
+            // Remove existing manager if any
+            var existingManagers = _db.Managers.Where(m => m.TeamId == SelectedTeam.Id).ToList();
+            _db.Managers.RemoveRange(existingManagers);
+
+            // Assign player manager
+            _playerManager.TeamId = SelectedTeam.Id;
+
             _db.SaveChanges();
 
             _onTeamSelected(SelectedTeam);

@@ -102,6 +102,7 @@ public partial class HomeViewModel : BaseViewModel
         if (CurrentDate == default)
             CurrentDate = _clock.CurrentDate.Date;
 
+        await _leagueService.GenerateSeasonFixturesAsync();
         await BuildAllEventDatesAsync();
         await UpdateNextFixtureAsync(setViewedMatchweekDefault: true);
         await LoadMatchweekResultsAsync();
@@ -136,9 +137,33 @@ public partial class HomeViewModel : BaseViewModel
 
         // Get league results for this date (by matchweek)
         var leagueMatchweekIndex = LeagueService.MatchweekDates.IndexOf(date);
-        var leagueResults = leagueMatchweekIndex >= 0
-            ? await _leagueService.GetResultsForMatchweekAsync(leagueMatchweekIndex + 1)
-            : new List<MatchRecord>();
+        var leagueResults = new List<MatchRecord>();
+        if (leagueMatchweekIndex >= 0)
+        {
+            var matchweek = leagueMatchweekIndex + 1;
+            leagueResults = await _leagueService.GetResultsForMatchweekAsync(matchweek);
+            
+            // Add unplayed league fixtures as stubs
+            var unplayedLeague = await _leagueService.GetFixturesForRoundAsync(matchweek);
+            foreach (var f in unplayedLeague.Where(f => !f.IsPlayed))
+            {
+                leagueResults.Add(new MatchRecord
+                {
+                    Id = -1,
+                    HomeTeamId = f.HomeTeamId,
+                    AwayTeamId = f.AwayTeamId,
+                    HomeTeamName = f.HomeTeam?.Name ?? "TBD",
+                    AwayTeamName = f.AwayTeam?.Name ?? "TBD",
+                    HomeTeamLogo = f.HomeTeam?.LogoPath ?? "",
+                    AwayTeamLogo = f.AwayTeam?.LogoPath ?? "",
+                    HomeGoals = 0,
+                    AwayGoals = 0,
+                    IsCupMatch = false,
+                    PlayedOn = date,
+                    MatchweekNumber = matchweek
+                });
+            }
+        }
 
         // Get cup results for this date
         var cupResults = await _db.MatchRecords

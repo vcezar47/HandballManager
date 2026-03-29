@@ -179,64 +179,83 @@ public class LeagueService
     public async Task<List<MatchRecord>> GetResultsForMatchweekAsync(int matchweek)
     {
         return await _db.MatchRecords
-            .Where(m => m.MatchweekNumber == matchweek)
+            .Where(m => m.MatchweekNumber == matchweek && !m.IsCupMatch)
             .OrderBy(m => m.Id)
             .ToListAsync();
     }
 
+    public async Task<List<LeagueFixture>> GetFixturesForRoundAsync(int round)
+    {
+        string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
+        return await _db.LeagueFixtures
+            .Include(f => f.HomeTeam)
+            .Include(f => f.AwayTeam)
+            .Where(f => f.Season == season && f.Round == round)
+            .ToListAsync();
+    }
+
+    public async Task GenerateSeasonFixturesAsync()
+    {
+        string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
+        
+        // Don't regenerate if already exists
+        if (await _db.LeagueFixtures.AnyAsync(f => f.Season == season))
+            return;
+
+        var teams = await _db.Teams.ToListAsync();
+        if (teams.Count % 2 != 0) return; // Should be even for Liga Florilor (12 teams)
+
+        // Shuffle teams for randomization every season
+        var rand = new Random();
+        var shuffledIds = teams.Select(t => t.Id).OrderBy(_ => rand.Next()).ToList();
+        
+        int n = shuffledIds.Count;
+        int rounds = n - 1;
+
+        for (int round = 0; round < rounds; round++)
+        {
+            for (int i = 0; i < n / 2; i++)
+            {
+                int homeIdx = (round + i) % (n - 1);
+                int awayIdx = (round + n - 1 - i) % (n - 1);
+
+                if (i == 0) awayIdx = n - 1;
+
+                int home = shuffledIds[homeIdx];
+                int away = shuffledIds[awayIdx];
+
+                // Alternate home/away for the pivot team (idx 0 in this logic)
+                // and everyone else to ensure balance
+                if (round % 2 == 1)
+                {
+                    int temp = home;
+                    home = away;
+                    away = temp;
+                }
+
+                // Week (round + 1)
+                _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + 1, HomeTeamId = home, AwayTeamId = away });
+                
+                // Construct the return match for the second half of the season
+                // Week (round + rounds + 1)
+                _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + rounds + 1, HomeTeamId = away, AwayTeamId = home });
+            }
+        }
+
+        await _db.SaveChangesAsync();
+    }
+
     public async Task<(int homeTeamId, int awayTeamId, int matchweek)> GetNextFixtureAsync(int playerTeamId)
     {
-        int played = await _db.MatchRecords
-            .Where(m => (m.HomeTeamId == playerTeamId || m.AwayTeamId == playerTeamId) && !m.IsCupMatch)
-            .CountAsync();
+        string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
+        var next = await _db.LeagueFixtures
+            .Where(f => f.Season == season && !f.IsPlayed && (f.HomeTeamId == playerTeamId || f.AwayTeamId == playerTeamId))
+            .OrderBy(f => f.Round)
+            .FirstOrDefaultAsync();
 
-        int nextMatchweek = played + 1;
+        if (next == null) return (-1, -1, -1);
 
-        if (nextMatchweek > MaxMatchweeks)
-            return (-1, -1, -1);
-
-        var teams = await _db.Teams.Select(t => t.Id).ToListAsync();
-        var pairings = GetPairingsForMatchweek(teams, nextMatchweek);
-        var playerPairing = pairings.First(p => p.HomeId == playerTeamId || p.AwayId == playerTeamId);
-
-        return (playerPairing.HomeId, playerPairing.AwayId, nextMatchweek);
+        return (next.HomeTeamId, next.AwayTeamId, next.Round);
     }
 
-    public static List<(int HomeId, int AwayId)> GetPairingsForMatchweek(List<int> teamIds, int matchweek)
-    {
-        int n = teamIds.Count;
-        if (n % 2 != 0) return [];
-
-        var list = new List<int>(teamIds);
-        int rounds = (n - 1) * 2;
-        int currentRound = (matchweek - 1) % rounds;
-
-        bool secondHalf = currentRound >= (n - 1);
-        int rotation = currentRound % (n - 1);
-
-        var rotating = list.GetRange(1, n - 1);
-        for (int i = 0; i < rotation; i++)
-        {
-            var first = rotating[0];
-            rotating.RemoveAt(0);
-            rotating.Add(first);
-        }
-
-        var pivoted = new List<int> { list[0] };
-        pivoted.AddRange(rotating);
-
-        var pairings = new List<(int, int)>();
-        for (int i = 0; i < n / 2; i++)
-        {
-            int home = pivoted[i];
-            int away = pivoted[n - 1 - i];
-
-            if (secondHalf)
-                pairings.Add((away, home));
-            else
-                pairings.Add((home, away));
-        }
-
-        return pairings;
-    }
 }

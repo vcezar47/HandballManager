@@ -74,7 +74,7 @@ public class SupercupService
         var corona = teams.FirstOrDefault(t => t.Name == "CSM Corona Brașov");
         var minaur = teams.FirstOrDefault(t => t.Name == "Minaur Baia Mare");
 
-        const string venue = "Pitești Arena, Pitești";
+        const string venue = "TeraPlast Arena, Bistrița";
 
         if (csm != null && bistrita != null && corona != null && minaur != null)
         {
@@ -165,7 +165,9 @@ public class SupercupService
         var shuffled = participants.OrderBy(_ => _rng.Next()).ToList();
         
         var (saturday, sunday) = GetSupercupDates(nextYear);
-        const string venue = "Pitești Arena, Pitești";
+        var venueTeam = (await _db.Teams.Where(t => t.StadiumCapacity > 1500).ToListAsync())
+            .OrderBy(_ => _rng.Next()).FirstOrDefault() ?? participants[0];
+        string venue = $"{venueTeam.StadiumName}, {venueTeam.City}";
 
         _db.SupercupFixtures.Add(new SupercupFixture
         {
@@ -197,7 +199,8 @@ public class SupercupService
             return;
 
         var (_, sunday) = GetSupercupDates(LeagueService.CurrentSeasonYear);
-        const string venue = "Pitești Arena, Pitești";
+        // Use same venue from the semifinals
+        string venue = sfFixtures[0].VenueName ?? "TeraPlast Arena, Bistrița";
 
         int Winner(SupercupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
         int Loser(SupercupFixture f) => f.HomeGoals > f.AwayGoals ? f.AwayTeamId : f.HomeTeamId;
