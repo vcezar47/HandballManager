@@ -123,9 +123,9 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Content="SIMULATE MATCHDAY" Width="240" Height="50" Margin="14,0,0,0"
+                            <Button Content="MATCHDAY" Width="240" Height="50" Margin="14,0,0,0"
                                     Foreground="White" FontSize="13" FontWeight="Black"
-                                    Command="{Binding SimulateMatchCommand}"
+                                    Command="{Binding NavigateToSquadSelectionCommand}"
                                     IsEnabled="{Binding CanSimulateMatch}">
                                 <Button.Style>
                                     <Style TargetType="Button">

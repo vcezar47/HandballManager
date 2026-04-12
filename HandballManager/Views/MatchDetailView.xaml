@@ -278,8 +278,9 @@
                                             <DataGridTemplateColumn Header="RATING" Width="100">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Border Background="#38BDF8" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,4">
-                                                            <TextBlock Text="{Binding Rating, StringFormat='{}{0:F1}'}" Foreground="#0F172A" FontWeight="Black" FontSize="13"/>
+                                                        <Border Background="{Binding Rating, Converter={StaticResource RatingToColor}}" 
+                                                                CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,4">
+                                                            <TextBlock Text="{Binding Rating, StringFormat='{}{0:F1}'}" Foreground="White" FontWeight="Black" FontSize="13"/>
                                                         </Border>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
@@ -340,7 +341,8 @@
                                             <DataGridTemplateColumn Header="RATING" Width="100">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Border Background="#E94560" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,4">
+                                                        <Border Background="{Binding Rating, Converter={StaticResource RatingToColor}}" 
+                                                                CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,4">
                                                             <TextBlock Text="{Binding Rating, StringFormat='{}{0:F1}'}" Foreground="White" FontWeight="Black" FontSize="13"/>
                                                         </Border>
                                                     </DataTemplate>

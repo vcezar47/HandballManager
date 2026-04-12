@@ -362,7 +362,7 @@ public class CupService
         string venue = $"{venueTeam.StadiumName}, {venueTeam.City}";
 
         // Winners of QF1 vs QF2 (semi 1), Winners of QF3 vs QF4 (semi 2)
-        int Winner(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
+        int Winner(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
 
         var sf1Home = Winner(qfFixtures[0]);
         var sf1Away = Winner(qfFixtures[1]);
@@ -405,8 +405,8 @@ public class CupService
         // Use same venue from the semifinals
         string venue = sfFixtures[0].VenueName ?? "Sala Polivalentă, Bucharest";
 
-        int Winner(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
-        int Loser(CupFixture f) => f.HomeGoals > f.AwayGoals ? f.AwayTeamId : f.HomeTeamId;
+        int Winner(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
+        int Loser(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.AwayTeamId : f.HomeTeamId;
 
         // 3rd place match
         _db.CupFixtures.Add(new CupFixture

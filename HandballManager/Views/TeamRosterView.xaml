@@ -4,8 +4,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             xmlns:converters="clr-namespace:HandballManager.Converters"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:TeamRosterViewModel}">
+    <UserControl.Resources>
+        <converters:NationalityToFlagConverter x:Key="NationalityToFlag"/>
+    </UserControl.Resources>
     <Grid MaxWidth="1100" HorizontalAlignment="Center" Margin="40,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -243,17 +247,20 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="NAT"  Binding="{Binding Nationality}" Width="60">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Foreground" Value="#666688"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="NAT" Width="65">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Border CornerRadius="2" ClipToBounds="True" Width="20" Height="13" Margin="0,0,6,0" VerticalAlignment="Center">
+                                        <Image Source="{Binding Nationality, Converter={StaticResource NationalityToFlag}}" Stretch="Uniform"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding Nationality}" Foreground="#666688" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="POS"  Binding="{Binding Position}" Width="80">
+                    <DataGridTextColumn Header="POS"  Binding="{Binding Position}" Width="55">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>

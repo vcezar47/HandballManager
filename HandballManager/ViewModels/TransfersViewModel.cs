@@ -70,6 +70,7 @@ public partial class TransfersViewModel : BaseViewModel
     {
         await _transferService.AcceptOfferAsync(offerId, _clock.CurrentDate);
         await InitializeAsync();
+        if (_onRefresh != null) await _onRefresh();
     }
 
     [RelayCommand]
@@ -77,6 +78,7 @@ public partial class TransfersViewModel : BaseViewModel
     {
         await _transferService.RejectOfferAsync(offerId);
         await InitializeAsync();
+        if (_onRefresh != null) await _onRefresh();
     }
 
     [RelayCommand]

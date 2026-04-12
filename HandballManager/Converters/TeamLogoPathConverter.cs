@@ -12,7 +12,7 @@ public class TeamLogoPathConverter : IValueConverter
         {
             return $"/Assets/teamlogo/Romania/{logoPath}";
         }
-        return string.Empty;
+        return null;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

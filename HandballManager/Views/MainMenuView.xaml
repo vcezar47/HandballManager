@@ -4,79 +4,148 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="720" d:DesignWidth="1100"
-             Background="#1A1A2E">
+             d:DesignHeight="720" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <!-- Accent button template -->
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="58"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
-            <!-- Logo Section -->
-            <StackPanel Margin="0,0,0,60" VerticalAlignment="Center">
-                <Image Source="/Assets/gamelogo/colorpng.png" Width="120" Height="120" HorizontalAlignment="Center" Margin="0,0,0,20">
-                    <Image.Effect>
-                        <DropShadowEffect BlurRadius="20" Opacity="0.5" Color="#38BDF8"/>
-                    </Image.Effect>
-                </Image>
-                <TextBlock Text="HANDBALL" FontSize="48" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,0,0,5"/>
-                <TextBlock Text="MANAGER" FontSize="32" FontWeight="Bold" Foreground="#E94560"
-                           HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,0,0,20"/>
-                <TextBlock Text="v0.1.0 Alpha" FontSize="12" Foreground="#94A3B8"
-                           HorizontalAlignment="Center" FontFamily="Segoe UI"/>
+        <!-- Layered Background -->
+        <Border>
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0D0D1F" Offset="0"/>
+                    <GradientStop Color="#16213E" Offset="0.5"/>
+                    <GradientStop Color="#0F3460" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- Decorative blurred orbs -->
+        <Ellipse Width="500" Height="500" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                 Margin="-150,0,0,150" Opacity="0.07">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#E94560" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="400" Height="400" HorizontalAlignment="Right" VerticalAlignment="Top"
+                 Margin="0,80,0,0" Opacity="0.08">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#38BDF8" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- Main centered panel -->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
+
+            <!-- Logo + Title Section -->
+            <StackPanel Margin="0,0,0,50" VerticalAlignment="Center">
+                <!-- Logo with glow ring -->
+                <Border Width="110" Height="110" CornerRadius="55" HorizontalAlignment="Center" Margin="0,0,0,20">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#E94560" Offset="0"/>
+                            <GradientStop Color="#C73652" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="32" Opacity="0.6" Color="#E94560" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <Image Source="/Assets/gamelogo/whitepng.png" Width="70" Height="70"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Border>
+
+                <!-- Title -->
+                <TextBlock Text="HANDBALL" FontSize="44" FontWeight="Black" Foreground="White"
+                           HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,0,0,2">
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="12" Opacity="0.3" ShadowDepth="2"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock Text="MANAGER" FontSize="28" FontWeight="ExtraBold" Foreground="#E94560"
+                           HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,0,0,10"/>
+
+                <!-- Divider -->
+                <Border Height="1" Margin="40,0" Opacity="0.3">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="#38BDF8" Offset="0.5"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <TextBlock Text="Build your dynasty. Win it all." FontSize="13" Foreground="#64748B"
+                           HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,10,0,0"
+                           FontStyle="Italic"/>
             </StackPanel>
 
-            <!-- Menu Buttons -->
+            <!-- Buttons -->
             <StackPanel>
-                <!-- Start Game Button -->
-                <Button Command="{Binding StartGameCommand}" 
-                        Height="60" 
-                        Background="#38BDF8" 
-                        Foreground="#0F172A" 
-                        FontSize="18" 
-                        FontWeight="Bold"
-                        FontFamily="Segoe UI"
-                        Cursor="Hand"
-                        Margin="0,0,0,16"
-                        Content="START GAME">
+                <!-- START GAME -->
+                <Button Command="{Binding StartGameCommand}" Style="{StaticResource MenuButtonStyle}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Border" 
-                                    Background="{TemplateBinding Background}" 
-                                    CornerRadius="8" 
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border x:Name="Border" CornerRadius="10">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#E94560" Offset="0"/>
+                                        <GradientStop Color="#C73652" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="18" Opacity="0.4" Color="#E94560" ShadowDepth="4"/>
+                                </Border.Effect>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="▶  " Foreground="White" FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Text="START GAME" Foreground="White" FontSize="17" FontWeight="Black"
+                                               FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                                </StackPanel>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#0EA5E9"/>
+                                    <Setter TargetName="Border" Property="Opacity" Value="0.88"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#0284C7"/>
+                                    <Setter TargetName="Border" Property="Opacity" Value="0.75"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
 
-                <!-- Quit Game Button -->
-                <Button Command="{Binding QuitGameCommand}" 
-                        Height="60" 
-                        Background="#334155" 
-                        Foreground="White" 
-                        FontSize="18" 
-                        FontWeight="Bold"
-                        FontFamily="Segoe UI"
-                        Cursor="Hand"
-                        Content="QUIT GAME">
+                <!-- QUIT GAME -->
+                <Button Command="{Binding QuitGameCommand}" Style="{StaticResource MenuButtonStyle}"
+                        Margin="0,0,0,0">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Border" 
-                                    Background="{TemplateBinding Background}" 
-                                    CornerRadius="8" 
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border x:Name="Border" CornerRadius="10" Background="Transparent"
+                                    BorderBrush="#2A3A5A" BorderThickness="1">
+                                <TextBlock Text="QUIT GAME" Foreground="#64748B" FontSize="16" FontWeight="Bold"
+                                           FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#475569"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="#475569"/>
+                                    <Setter TargetName="Border" Property="Background" Value="#0F1929"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="Border" Property="Background" Value="#1E293B"/>
@@ -86,6 +155,10 @@
                     </Button.Template>
                 </Button>
             </StackPanel>
+
+            <!-- Footer -->
+            <TextBlock Text="v0.1.0 Alpha" FontSize="11" Foreground="#2A3A5A"
+                       HorizontalAlignment="Center" FontFamily="Segoe UI" Margin="0,30,0,0"/>
         </StackPanel>
     </Grid>
 </UserControl>

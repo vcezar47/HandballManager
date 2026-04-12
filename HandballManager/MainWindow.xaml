@@ -5,6 +5,7 @@
         xmlns:views="clr-namespace:HandballManager.Views"
         Title="Handball Manager" Height="720" Width="1100"
         WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
         Background="#1A1A2E">
 
     <Window.Resources>
@@ -87,7 +88,12 @@
         <DataTemplate DataType="{x:Type vm:ManagerDetailViewModel}">
             <views:ManagerDetailView />
         </DataTemplate>
-
+        <DataTemplate DataType="{x:Type vm:SquadSelectionViewModel}">
+            <views:SquadSelectionView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LiveMatchViewModel}">
+            <views:LiveMatchView />
+        </DataTemplate>
         <!-- Nav button style -->
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="Background"           Value="Transparent"/>
@@ -112,6 +118,16 @@
                                 <Setter TargetName="Bd" Property="Background" Value="#2A2A4A"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <MultiBinding Converter="{StaticResource TypeToBool}">
+                                        <Binding Path="DataContext.CurrentViewModel" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                        <Binding Path="Tag" RelativeSource="{RelativeSource Self}"/>
+                                    </MultiBinding>
+                                </DataTrigger.Binding>
+                                <Setter TargetName="Bd" Property="Background" Value="#2A2A4A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -143,7 +159,7 @@
                         <Button Content="←"
                                 Width="34" Height="28"
                                 Margin="0,0,4,0"
-                                Background="#111827" Foreground="#A0A8C0"
+                                Background="#1A3055" Foreground="#38BDF8"
                                 BorderThickness="0" Cursor="Hand"
                                 Command="{Binding NavigateBackCommand}"
                                 IsEnabled="{Binding CanGoBack}">
@@ -154,11 +170,11 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsEnabled" Value="False">
-                                            <Setter TargetName="Bd" Property="Background" Value="#0F1419"/>
-                                            <Setter Property="Foreground" Value="#3F4655"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#111827"/>
+                                            <Setter Property="Foreground" Value="#2A3050"/>
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#1E2936"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#1E4A7A"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -166,7 +182,7 @@
                         </Button>
                         <Button Content="→"
                                 Width="34" Height="28"
-                                Background="#111827" Foreground="#A0A8C0"
+                                Background="#1A3055" Foreground="#38BDF8"
                                 BorderThickness="0" Cursor="Hand"
                                 Command="{Binding NavigateForwardCommand}"
                                 IsEnabled="{Binding CanGoForward}">
@@ -177,11 +193,11 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsEnabled" Value="False">
-                                            <Setter TargetName="Bd" Property="Background" Value="#0F1419"/>
-                                            <Setter Property="Foreground" Value="#3F4655"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#111827"/>
+                                            <Setter Property="Foreground" Value="#2A3050"/>
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#1E2936"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#1E4A7A"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -193,24 +209,25 @@
                 <!-- Nav links -->
                 <StackPanel DockPanel.Dock="Top" Margin="8,0">
                     <Button Content="🏠  Home"          Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToHomeCommand}"/>
+                            Command="{Binding NavigateToHomeCommand}" Tag="HomeViewModel"/>
                     <Button Content="👤  Profile"       Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToProfileCommand}"/>
+                            Command="{Binding NavigateToProfileCommand}" Tag="ManagerDetailViewModel"/>
                     <Button Content="🛡️  Club Info"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToClubInfoCommand}"/>
+                            Command="{Binding NavigateToClubInfoCommand}" Tag="ClubInfoViewModel,TeamRosterViewModel"/>
                     <Button Content="👥  Roster"        Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToRosterCommand}"/>
+                            Command="{Binding NavigateToRosterCommand}" Tag="RosterViewModel"/>
                     <Button Content="📊  Competitions"  Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToCompetitionsCommand}"/>
+                            Command="{Binding NavigateToCompetitionsCommand}" 
+                            Tag="CompetitionsViewModel,LeagueTableViewModel,CupDetailViewModel,SupercupDetailViewModel,LeagueHistoryViewModel,CupHistoryViewModel,SupercupHistoryViewModel"/>
                     <Button Content="🔍  Scouting"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToScoutingCommand}"/>
+                            Command="{Binding NavigateToScoutingCommand}" Tag="ScoutingViewModel"/>
                     <Button Content="💰  Finances"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToFinancesCommand}"/>
+                            Command="{Binding NavigateToFinancesCommand}" Tag="FinancesViewModel"/>
                     <Button Content="📄  Contracts"    Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToContractsCommand}"/>
+                            Command="{Binding NavigateToContractsCommand}" Tag="ContractsViewModel,ContractRenewalViewModel"/>
                     <!-- Transfers button with pending offer badge -->
                     <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToTransfersCommand}">
+                            Command="{Binding NavigateToTransfersCommand}" Tag="TransfersViewModel,TransferNegotiationViewModel">
                         <Grid>
                             <TextBlock Text="⇌  Transfers" VerticalAlignment="Center"/>
                             <Border HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -225,7 +242,7 @@
                     </Button>
                     <!-- News button with unread badge -->
                     <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToNewsCommand}">
+                            Command="{Binding NavigateToNewsCommand}" Tag="NewsViewModel">
                         <Grid>
                             <TextBlock Text="📰  News" VerticalAlignment="Center"/>
                             <Border HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -239,7 +256,7 @@
                         </Grid>
                     </Button>
                     <!-- Youth button with golden glow during intake window (Mar 20-30) -->
-                    <Button Command="{Binding NavigateToYouthCommand}">
+                    <Button Command="{Binding NavigateToYouthCommand}" Tag="YouthViewModel,YouthSignViewModel,YouthDetailViewModel">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>

@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="HandballManager.Views.YouthDetailView"
+<UserControl x:Class="HandballManager.Views.YouthDetailView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:HandballManager.Converters">
     <UserControl.Resources>
         <conv:AttributeColorConverter x:Key="AttrColor"/>
+        <conv:NationalityToFlagConverter x:Key="NationalityToFlag"/>
         <Style x:Key="SectionHeader" TargetType="TextBlock">
             <Setter Property="Foreground"  Value="#E94560"/>
             <Setter Property="FontWeight"  Value="ExtraBold"/>
@@ -83,7 +84,12 @@
                             <Border Background="#1E2A4A" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
                                 <TextBlock Text="{Binding Position}" Foreground="#A0A8C0" FontWeight="Bold" FontSize="13"/>
                             </Border>
-                            <TextBlock Text="{Binding Nationality}" Foreground="#666688" FontSize="13" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                                <Border CornerRadius="2" ClipToBounds="True" Width="20" Height="13" Margin="0,0,6,0" VerticalAlignment="Center">
+                                    <Image Source="{Binding Nationality, Converter={StaticResource NationalityToFlag}}" Stretch="UniformToFill"/>
+                                </Border>
+                                <TextBlock Text="{Binding Nationality}" Foreground="#666688" FontSize="13" VerticalAlignment="Center"/>
+                            </StackPanel>
                             <TextBlock Text="{Binding Age, StringFormat='{}{0} yrs'}" Foreground="#666688" FontSize="13" VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="{Binding Height, StringFormat='{}{0} cm'}" Foreground="#666688" FontSize="13" VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="{Binding Weight, StringFormat='{}{0} kg'}" Foreground="#666688" FontSize="13" VerticalAlignment="Center"/>

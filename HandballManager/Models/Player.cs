@@ -199,6 +199,9 @@ public class Player
     public int? TeamId { get; set; }
     public Team? Team { get; set; }
 
+    // Match-time ephemeral state
+    public double MatchEnergy { get; set; } = 100.0;
+
     // Derived overall rating (weighted average — not stored in DB)
     public int Overall => (int)Math.Round(CalculateRawOverall());
 

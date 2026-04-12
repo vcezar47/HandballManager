@@ -16,6 +16,8 @@ public class CupFixture
 
     public int HomeGoals { get; set; }
     public int AwayGoals { get; set; }
+    public int HomePenaltyGoals { get; set; }
+    public int AwayPenaltyGoals { get; set; }
 
     public DateTime ScheduledDate { get; set; }
     public bool IsPlayed { get; set; }
@@ -31,5 +33,14 @@ public class CupFixture
     public MatchRecord? MatchRecord { get; set; }
 
     /// <summary>Display text for scores in the knockout bracket.</summary>
-    public string ScoreDisplay => IsPlayed ? $"{HomeGoals} : {AwayGoals}" : "vs";
+    public string ScoreDisplay
+    {
+        get
+        {
+            if (!IsPlayed) return "vs";
+            if (HomePenaltyGoals > 0 || AwayPenaltyGoals > 0)
+                return $"{HomeGoals} : {AwayGoals} ({HomePenaltyGoals}:{AwayPenaltyGoals} p)";
+            return $"{HomeGoals} : {AwayGoals}";
+        }
+    }
 }

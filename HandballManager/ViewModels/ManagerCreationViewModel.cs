@@ -40,7 +40,8 @@ public partial class ManagerCreationViewModel : BaseViewModel
     [ObservableProperty]
     private int _selectedYear = 1985;
 
-    public List<int> Days { get; } = Enumerable.Range(1, 31).ToList();
+    // Days is dynamic: only shows valid days for the selected month/year
+    public List<int> Days => Enumerable.Range(1, DateTime.DaysInMonth(SelectedYear, SelectedMonth)).ToList();
     public List<int> Months { get; } = Enumerable.Range(1, 12).ToList();
     public List<int> Years { get; } = Enumerable.Range(DateTime.Now.Year - 75, 60).Reverse().ToList();
 
@@ -84,6 +85,7 @@ public partial class ManagerCreationViewModel : BaseViewModel
 
     public bool CanCreate => !string.IsNullOrWhiteSpace(FirstName)
                           && !string.IsNullOrWhiteSpace(LastName)
+                          && !string.IsNullOrWhiteSpace(PlaceOfBirth)
                           && SelectedLicense != null
                           && RemainingPoints >= 0;
 
@@ -179,10 +181,28 @@ public partial class ManagerCreationViewModel : BaseViewModel
 
     partial void OnFirstNameChanged(string value) => OnPropertyChanged(nameof(CanCreate));
     partial void OnLastNameChanged(string value) => OnPropertyChanged(nameof(CanCreate));
+    partial void OnPlaceOfBirthChanged(string value) => OnPropertyChanged(nameof(CanCreate));
 
     partial void OnSelectedDayChanged(int value) => UpdateBirthdate();
-    partial void OnSelectedMonthChanged(int value) => UpdateBirthdate();
-    partial void OnSelectedYearChanged(int value) => UpdateBirthdate();
+
+    partial void OnSelectedMonthChanged(int value)
+    {
+        // Refresh the Days list so only valid days appear for the new month
+        OnPropertyChanged(nameof(Days));
+        // Clamp the selected day if it exceeds the new month's max days
+        int max = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
+        if (SelectedDay > max) SelectedDay = max;
+        UpdateBirthdate();
+    }
+
+    partial void OnSelectedYearChanged(int value)
+    {
+        // Refresh the Days list (February differs in leap years)
+        OnPropertyChanged(nameof(Days));
+        int max = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
+        if (SelectedDay > max) SelectedDay = max;
+        UpdateBirthdate();
+    }
 
     private void UpdateBirthdate()
     {

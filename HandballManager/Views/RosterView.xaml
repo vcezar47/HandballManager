@@ -4,8 +4,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             xmlns:converters="clr-namespace:HandballManager.Converters"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:RosterViewModel}">
+    <UserControl.Resources>
+        <converters:NationalityToFlagConverter x:Key="NationalityToFlag"/>
+    </UserControl.Resources>
     <Grid MaxWidth="1100" HorizontalAlignment="Center" Margin="40,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -171,14 +175,57 @@
 
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
+                        <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0,0,0,1"/>
                         <Setter Property="BorderBrush" Value="#1E1E3A"/>
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu>
+                                    <ContextMenu.Style>
+                                        <Style TargetType="ContextMenu">
+                                            <Setter Property="Background" Value="#16213E"/>
+                                            <Setter Property="BorderBrush" Value="#2A3A6A"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="Padding" Value="4"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ContextMenu">
+                                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                                            <ItemsPresenter Margin="{TemplateBinding Padding}"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ContextMenu.Style>
+                                    <ContextMenu.Resources>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="FontFamily" Value="Segoe UI"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Padding" Value="24,10"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="MenuItem">
+                                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="6">
+                                                            <ContentPresenter Content="{TemplateBinding Header}" Margin="{TemplateBinding Padding}"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsHighlighted" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="#E94560"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ContextMenu.Resources>
                                     <MenuItem Header="Renew contract"
-                                              Command="{Binding DataContext.RenewContractCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                              Command="{Binding PlacementTarget.Tag.RenewContractCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                               CommandParameter="{Binding}"/>
                                 </ContextMenu>
                             </Setter.Value>
@@ -249,17 +296,20 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="NAT"  Binding="{Binding Nationality}" Width="60">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Foreground" Value="#666688"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="NAT" Width="65">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Border CornerRadius="2" ClipToBounds="True" Width="20" Height="13" Margin="0,0,6,0" VerticalAlignment="Center">
+                                        <Image Source="{Binding Nationality, Converter={StaticResource NationalityToFlag}}" Stretch="Uniform"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding Nationality}" Foreground="#666688" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="POS"  Binding="{Binding Position}" Width="60">
+                    <DataGridTextColumn Header="POS"  Binding="{Binding Position}" Width="55">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -270,7 +320,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="AGE"  Binding="{Binding Age}" Width="60">
+                    <DataGridTextColumn Header="AGE"  Binding="{Binding Age}" Width="55">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -291,7 +341,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="BUYOUT" Binding="{Binding BuyoutFee, StringFormat={}{0:N0} €}" Width="110">
+                    <DataGridTextColumn Header="BUYOUT" Binding="{Binding BuyoutFee, StringFormat={}{0:N0} €}" Width="90">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -302,7 +352,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="G" Binding="{Binding SeasonGoals}" Width="50">
+                    <DataGridTextColumn Header="G" Binding="{Binding SeasonGoals}" Width="40">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -312,7 +362,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="A" Binding="{Binding SeasonAssists}" Width="50">
+                    <DataGridTextColumn Header="A" Binding="{Binding SeasonAssists}" Width="40">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -322,7 +372,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="S" Binding="{Binding SeasonSaves}" Width="50">
+                    <DataGridTextColumn Header="S" Binding="{Binding SeasonSaves}" Width="40">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -332,7 +382,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="ADR" Width="70">
+                    <DataGridTemplateColumn Header="ADR" Width="60">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Background="#38BDF8" CornerRadius="4" HorizontalAlignment="Center" Padding="4,2" Margin="5">

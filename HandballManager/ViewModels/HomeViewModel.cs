@@ -16,6 +16,7 @@ public partial class HomeViewModel : BaseViewModel
     private readonly HandballDbContext _db;
     private readonly Func<int, Task> _onNavigateToMatchDetail;
     private readonly Func<Task>? _onDayAdvanced;
+    private readonly Action<int, int, string, string, bool>? _onNavigateToSquadSelection;
     private readonly GameClock _clock;
 
     [ObservableProperty]
@@ -78,13 +79,14 @@ public partial class HomeViewModel : BaseViewModel
     private bool _playerHasSupercupFixturePending;
     private DateTime? _nextCupDateForTeam;
     private DateTime? _nextSupercupDateForTeam;
+    private string _nextVenueName = string.Empty;
 
     // Total "event slots" for the matchweek browser: league matchweeks + cup dates
     private List<DateTime> _allEventDates = [];
     private int _viewedEventIndex;
 
     public HomeViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine,
-        CupService cupService, SupercupService supercupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Func<Task>? onDayAdvanced = null)
+        CupService cupService, SupercupService supercupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Action<int, int, string, string, bool>? onNavigateToSquadSelection = null, Func<Task>? onDayAdvanced = null)
     {
         Title = "Home";
         _db = db;
@@ -94,6 +96,7 @@ public partial class HomeViewModel : BaseViewModel
         _supercupService = supercupService;
         _clock = clock;
         _onNavigateToMatchDetail = onNavigateToMatchDetail;
+        _onNavigateToSquadSelection = onNavigateToSquadSelection;
         _onDayAdvanced = onDayAdvanced;
     }
 
@@ -287,15 +290,18 @@ public partial class HomeViewModel : BaseViewModel
         }
 
         IsSeasonOver = false;
+        _nextMatchweek = matchweek;
+        
+        // Default to league, will be overwritten if cup is first or pending
         _nextHomeTeamId = homeId;
         _nextAwayTeamId = awayId;
-        _nextMatchweek = matchweek;
 
         // Build next match info text
         if (leagueFirst && matchweek > 0)
         {
             var homeTeam = _db.Teams.Find(homeId);
             var awayTeam = _db.Teams.Find(awayId);
+            _nextVenueName = homeTeam?.StadiumName ?? "";
             NextMatchInfo = $"Next: {homeTeam?.Name} vs {awayTeam?.Name}";
             NextMatchDateText = nextLeagueDate!.Value.ToString("dddd, MMM d, yyyy");
         }
@@ -303,6 +309,9 @@ public partial class HomeViewModel : BaseViewModel
         {
             var homeTeam = _db.Teams.Find(supercupFixtureForTeam.HomeTeamId);
             var awayTeam = _db.Teams.Find(supercupFixtureForTeam.AwayTeamId);
+            _nextHomeTeamId = supercupFixtureForTeam.HomeTeamId;
+            _nextAwayTeamId = supercupFixtureForTeam.AwayTeamId;
+            _nextVenueName = supercupFixtureForTeam.VenueName ?? "Neutral Venue";
             NextMatchInfo = $"🏆 Supercup: {homeTeam?.Name} vs {awayTeam?.Name}";
             NextMatchDateText = _nextSupercupDateForTeam!.Value.ToString("dddd, MMM d, yyyy");
         }
@@ -310,6 +319,9 @@ public partial class HomeViewModel : BaseViewModel
         {
             var homeTeam = _db.Teams.Find(cupFixtureForTeam.HomeTeamId);
             var awayTeam = _db.Teams.Find(cupFixtureForTeam.AwayTeamId);
+            _nextHomeTeamId = cupFixtureForTeam.HomeTeamId;
+            _nextAwayTeamId = cupFixtureForTeam.AwayTeamId;
+            _nextVenueName = cupFixtureForTeam.VenueName ?? homeTeam?.StadiumName ?? "";
             NextMatchInfo = $"🏆 Cup: {homeTeam?.Name} vs {awayTeam?.Name}";
             NextMatchDateText = _nextCupDateForTeam!.Value.ToString("dddd, MMM d, yyyy");
         }
@@ -404,6 +416,13 @@ public partial class HomeViewModel : BaseViewModel
 
         _viewedEventIndex = target;
         await LoadMatchweekResultsAsync();
+    }
+
+    [RelayCommand]
+    private void NavigateToSquadSelection()
+    {
+        if (!CanSimulateMatch) return;
+        _onNavigateToSquadSelection?.Invoke(_nextHomeTeamId, _nextAwayTeamId, _nextVenueName, NextMatchInfo, IsCupMatchday);
     }
 
     [RelayCommand]

@@ -30,6 +30,7 @@
     <Resource Include="Assets\visuals\prog90.png" />
     <Resource Include="Assets\visuals\reg45.png" />
     <Resource Include="Assets\visuals\reg90.png" />
+    <Resource Include="Assets\flags\**\*" />
     <Resource Include="Assets\gamelogo\**\*" />
     <Resource Include="Assets\leaguelogo\**\*" />
     <Resource Include="Assets\teamlogo\**\*" />

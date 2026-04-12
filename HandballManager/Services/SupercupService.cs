@@ -202,8 +202,8 @@ public class SupercupService
         // Use same venue from the semifinals
         string venue = sfFixtures[0].VenueName ?? "TeraPlast Arena, Bistrița";
 
-        int Winner(SupercupFixture f) => f.HomeGoals > f.AwayGoals ? f.HomeTeamId : f.AwayTeamId;
-        int Loser(SupercupFixture f) => f.HomeGoals > f.AwayGoals ? f.AwayTeamId : f.HomeTeamId;
+        int Winner(SupercupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
+        int Loser(SupercupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.AwayTeamId : f.HomeTeamId;
 
         _db.SupercupFixtures.Add(new SupercupFixture
         {

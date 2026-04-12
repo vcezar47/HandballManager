@@ -67,6 +67,10 @@ public partial class MainViewModel : BaseViewModel
     public NewsViewModel NewsVM { get; }
     public YouthViewModel YouthVM { get; }
     public StartViewModel StartVM { get; }
+    public SquadSelectionViewModel? SquadSelectionVM { get; private set; }
+    public LiveMatchViewModel? LiveMatchVM { get; private set; }
+
+    private bool _liveMatchInProgress = false;
 
     public MainViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine, GameClock clock, ScoutingService scouting, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService)
     {
@@ -86,7 +90,7 @@ public partial class MainViewModel : BaseViewModel
             NavigateTo(StartVM);
             await StartVM.InitializeAsync();
         });
-        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, supercupService, clock, NavigateToMatchDetail);
+        HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, supercupService, clock, NavigateToMatchDetail, NavigateToSquadSelection);
         RosterVM = new RosterViewModel(db, NavigateToPlayerDetail, OpenContractRenewal);
         LeagueTableVM = new LeagueTableViewModel(leagueService, NavigateToTeamRoster, async () => await NavigateToLeagueHistoryAsync());
         CompetitionsVM = new CompetitionsViewModel(leagueService, cupService, supercupService, NavigateToTeamRoster,
@@ -143,6 +147,42 @@ public partial class MainViewModel : BaseViewModel
         CurrentViewModel = HomeVM;
     }
 
+    private void NavigateToSquadSelection(int homeTeamId, int awayTeamId, string venueName, string matchInfo, bool isKnockout)
+    {
+        var home = _db.Teams.Include(t => t.Players).FirstOrDefault(t => t.Id == homeTeamId);
+        var away = _db.Teams.Include(t => t.Players).FirstOrDefault(t => t.Id == awayTeamId);
+        if (home == null || away == null) return;
+
+        var userTeam = _db.Teams.FirstOrDefault(t => t.IsPlayerTeam);
+        bool isHome = userTeam?.Id == homeTeamId;
+        
+        SquadSelectionVM = new SquadSelectionViewModel(home, away, isHome, 1.05, venueName, matchInfo, isKnockout, NavigateToArena);
+        NavigateTo(SquadSelectionVM);
+    }
+
+    private void NavigateToArena(LiveMatchEngine engine, SquadSelection homeSquad, SquadSelection awaySquad)
+    {
+        _liveMatchInProgress = true;
+        
+        bool isUserHome = engine.HomeTeam.IsPlayerTeam;
+        LiveMatchVM = new LiveMatchViewModel(engine, isUserHome, OnLiveMatchEnded);
+        NavigateTo(LiveMatchVM);
+    }
+
+    private async void OnLiveMatchEnded(LiveMatchEngine engine, SquadSelection homeSquad, SquadSelection awaySquad)
+    {
+        _liveMatchInProgress = false;
+        UpdateNavigationState(); // Re-enable nav buttons if applicable
+
+        int matchId = await _simulationEngine.RecordLiveMatchAndSimulateRestAsync(engine);
+        
+        // Clean up rendering hook
+        LiveMatchVM?.Cleanup();
+
+        await HomeVM.InitializeAsync();
+        await NavigateToMatchDetail(matchId);
+    }
+
     public async Task RefreshPendingOfferCountAsync()
     {
         var userTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
@@ -183,8 +223,21 @@ public partial class MainViewModel : BaseViewModel
         _forwardStack.Clear();
         CurrentViewModel = target;
 
-        CanGoBack = _backStack.Count > 0;
-        CanGoForward = _forwardStack.Count > 0;
+        UpdateNavigationState();
+    }
+
+    private void UpdateNavigationState()
+    {
+        if (_liveMatchInProgress)
+        {
+            CanGoBack = false;
+            CanGoForward = false;
+        }
+        else
+        {
+            CanGoBack = _backStack.Count > 0;
+            CanGoForward = _forwardStack.Count > 0;
+        }
     }
 
     public void NavigateToPlayerDetail(Player player)
@@ -238,13 +291,12 @@ public partial class MainViewModel : BaseViewModel
 
     private void DoNavigateBack()
     {
-        if (_backStack.Count == 0) return;
+        if (_liveMatchInProgress || _backStack.Count == 0) return;
         var target = _backStack.Pop();
         if (CurrentViewModel != null)
             _forwardStack.Push(CurrentViewModel);
         CurrentViewModel = target;
-        CanGoBack = _backStack.Count > 0;
-        CanGoForward = _forwardStack.Count > 0;
+        UpdateNavigationState();
     }
 
     public async Task NavigateToMatchDetail(int matchId)
@@ -404,13 +456,12 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private void NavigateForward()
     {
-        if (_forwardStack.Count == 0) return;
+        if (_liveMatchInProgress || _forwardStack.Count == 0) return;
         var target = _forwardStack.Pop();
         if (CurrentViewModel != null)
             _backStack.Push(CurrentViewModel);
 
         CurrentViewModel = target;
-        CanGoBack = _backStack.Count > 0;
-        CanGoForward = _forwardStack.Count > 0;
+        UpdateNavigationState();
     }
 }

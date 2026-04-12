@@ -36,6 +36,9 @@ public class SimulationEngine
     /// </summary>
     public async Task<List<MatchRecord>> SimulateMatchweekAsync(int matchweek)
     {
+        // One-time repair for any old 0-0 or incorrect progression data
+        await SyncTournamentFixturesWithRecordsAsync();
+
         // Ensure fixtures exist for the current season
         await _leagueService.GenerateSeasonFixturesAsync();
 
@@ -59,6 +62,198 @@ public class SimulationEngine
 
         await _db.SaveChangesAsync();
         return results;
+    }
+
+    /// <summary>
+    /// Records the result of a Live Match that was manually played and then simulates the rest of that day's fixtures.
+    /// </summary>
+    public async Task<int> RecordLiveMatchAndSimulateRestAsync(LiveMatchEngine engine)
+    {
+        var playDate = _lastDailyProgressionDate.Date;
+        
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        int matchweekNumber = 0;
+        string roundLabel = "";
+        bool isCup = false;
+        bool isSupercup = false;
+        bool isNeutral = false;
+        
+        var leagueFix = await _db.LeagueFixtures.FirstOrDefaultAsync(f => f.HomeTeamId == engine.HomeTeam.Id && f.AwayTeamId == engine.AwayTeam.Id && !f.IsPlayed && f.Season == season);
+        var cupFix = await _cupService.GetFixtureForTeamOnDateAsync(engine.HomeTeam.Id, playDate);
+        var supercupFix = await _supercupService.GetFixtureForTeamOnDateAsync(engine.HomeTeam.Id, playDate);
+
+        if (cupFix != null && cupFix.HomeTeamId == engine.HomeTeam.Id && cupFix.AwayTeamId == engine.AwayTeam.Id) 
+        {
+            isCup = true;
+            roundLabel = cupFix.Round;
+            isNeutral = cupFix.VenueName != null;
+        }
+
+        if (supercupFix != null && supercupFix.HomeTeamId == engine.HomeTeam.Id && supercupFix.AwayTeamId == engine.AwayTeam.Id)
+        {
+            isSupercup = true;
+            roundLabel = "Supercup";
+            isNeutral = true;
+        }
+
+        if (leagueFix != null && !isCup && !isSupercup)
+        {
+            matchweekNumber = leagueFix.Round;
+        }
+
+        var record = new MatchRecord
+        {
+            HomeTeamId = engine.HomeTeam.Id,
+            AwayTeamId = engine.AwayTeam.Id,
+            HomeTeamName = engine.HomeTeam.Name,
+            AwayTeamName = engine.AwayTeam.Name,
+            HomeTeamLogo = engine.HomeTeam.LogoPath,
+            AwayTeamLogo = engine.AwayTeam.LogoPath,
+            MatchweekNumber = matchweekNumber,
+            PlayedOn = playDate,
+            HomeGoals = engine.HomeScore,
+            AwayGoals = engine.AwayScore,
+            HomePenaltyGoals = engine.HomeShootoutScore,
+            AwayPenaltyGoals = engine.AwayShootoutScore,
+            WasDecidedByShootout = engine.HomeShootoutScore > 0 || engine.AwayShootoutScore > 0,
+            IsCupMatch = isCup || isSupercup,
+            CupRound = roundLabel,
+            VenueName = engine.VenueName ?? "",
+            Attendance = (int)(engine.HomeTeam.StadiumCapacity * 0.8) // Simplified attendance for live match
+        };
+
+        // Transfer events
+        foreach (var ev in engine.EventLog)
+        {
+            record.MatchEvents.Add(new MatchEvent
+            {
+                MatchRecord = record,
+                Minute = ev.Minute,
+                Second = ev.Second,
+                TeamId = ev.TeamId,
+                PlayerId = ev.PlayerId ?? 0,
+                PlayerName = ev.PlayerName ?? "Unknown",
+                EventType = ev.EventType,
+                Description = ev.Description
+            });
+        }
+        
+        foreach(var kv in engine.Stats)
+        {
+            var pId = kv.Key;
+            var st = kv.Value;
+            var tId = engine.HomeTeam.Players.Any(p => p.Id == pId) ? engine.HomeTeam.Id : engine.AwayTeam.Id;
+            
+            // Contextual Rating Calculation
+            double finalRating = 5.5; 
+            if (st.Saves > 0 || st.GoalsAgainst > 0) // It's a Goalkeeper
+            {
+                int totalShotsFaced = st.Saves + st.GoalsAgainst;
+                double savePct = totalShotsFaced > 0 ? (double)st.Saves / totalShotsFaced : 0.25;
+                // Base 6.0 for 25% save rate, moves 0.1 per 1% change above/below
+                finalRating = 6.0 + (savePct - 0.25) * 15.0 + (st.Saves * 0.05);
+            }
+            else // Outfield Player
+            {
+                finalRating = 5.5 + (st.Goals * 0.5) + (st.Assists * 0.3) - ((st.Shots - st.Goals) * 0.3);
+            }
+
+            record.PlayerStats.Add(new MatchPlayerStat
+            {
+                PlayerId = pId,
+                PlayerName = st.PlayerName,
+                TeamId = tId,
+                Goals = st.Goals,
+                Assists = st.Assists,
+                Saves = st.Saves,
+                Rating = Math.Clamp(finalRating, 3.0, 10.0)
+            });
+        }
+        
+        _db.MatchRecords.Add(record);
+
+        if (leagueFix != null && !isCup && !isSupercup)
+        {
+            leagueFix.IsPlayed = true;
+            leagueFix.MatchRecord = record;
+            await UpdateLeagueEntryAsync(engine.HomeTeam.Id, engine.HomeScore, engine.AwayScore);
+            await UpdateLeagueEntryAsync(engine.AwayTeam.Id, engine.AwayScore, engine.HomeScore);
+        }
+        else if (isCup && cupFix != null)
+        {
+            cupFix.IsPlayed = true;
+            cupFix.MatchRecord = record;
+            cupFix.HomeGoals = engine.HomeScore;
+            cupFix.AwayGoals = engine.AwayScore;
+            cupFix.HomePenaltyGoals = engine.HomeShootoutScore;
+            cupFix.AwayPenaltyGoals = engine.AwayShootoutScore;
+            
+            if (cupFix.Round == "Group" && cupFix.CupGroupId.HasValue)
+            {
+                await _cupService.UpdateGroupEntryAsync(cupFix.CupGroupId.Value, engine.HomeTeam.Id, engine.HomeScore, engine.AwayScore);
+                await _cupService.UpdateGroupEntryAsync(cupFix.CupGroupId.Value, engine.AwayTeam.Id, engine.AwayScore, engine.HomeScore);
+            }
+        }
+        else if (isSupercup && supercupFix != null)
+        {
+            supercupFix.IsPlayed = true;
+            supercupFix.MatchRecord = record;
+            supercupFix.HomeGoals = engine.HomeScore;
+            supercupFix.AwayGoals = engine.AwayScore;
+            supercupFix.HomePenaltyGoals = engine.HomeShootoutScore;
+            supercupFix.AwayPenaltyGoals = engine.AwayShootoutScore;
+        }
+
+        // Update player seasonal stats for the live match
+        foreach (var p in engine.HomeTeam.Players.Concat(engine.AwayTeam.Players))
+        {
+            if (engine.Stats.TryGetValue(p.Id, out var liveStat))
+            {
+                p.SeasonGoals += liveStat.Goals;
+                p.SeasonAssists += liveStat.Assists;
+                p.SeasonSaves += liveStat.Saves;
+                p.MatchesPlayed++;
+                
+                // Record rating from the live match engine using contextual logic
+                double finalRating = 5.5;
+                if (p.Position == "GK")
+                {
+                    int totalShotsFaced = liveStat.Saves + liveStat.GoalsAgainst;
+                    double savePct = totalShotsFaced > 0 ? (double)liveStat.Saves / totalShotsFaced : 0.25;
+                    finalRating = 6.0 + (savePct - 0.25) * 15.0 + (liveStat.Saves * 0.05);
+                }
+                else
+                {
+                    finalRating = 5.5 + (liveStat.Goals * 0.5) + (liveStat.Assists * 0.3) - ((liveStat.Shots - liveStat.Goals) * 0.3);
+                }
+                
+                p.SeasonRatingSum += Math.Clamp(finalRating, 3.0, 10.0);
+            }
+        }
+
+        await _db.SaveChangesAsync();
+
+        // Update Manager Stats
+        UpdateManagerStats(engine.HomeTeam.Manager, engine.HomeScore, engine.AwayScore);
+        UpdateManagerStats(engine.AwayTeam.Manager, engine.AwayScore, engine.HomeScore);
+        
+        await _db.SaveChangesAsync();
+
+        // Simulate rest
+        if (leagueFix != null && !isCup && !isSupercup)
+        {
+            await SimulateMatchweekAsync(matchweekNumber);
+        }
+        else if (isCup)
+        {
+            await SimulateCupFixturesAsync(playDate);
+        }
+        else if (isSupercup)
+        {
+            await SimulateSupercupFixturesAsync(playDate);
+        }
+
+        return record.Id;
     }
 
     /// <summary>
@@ -152,6 +347,8 @@ public class SimulationEngine
 
             fixture.HomeGoals = record.HomeGoals;
             fixture.AwayGoals = record.AwayGoals;
+            fixture.HomePenaltyGoals = record.HomePenaltyGoals;
+            fixture.AwayPenaltyGoals = record.AwayPenaltyGoals;
             fixture.IsPlayed = true;
             fixture.MatchRecord = record;
 
@@ -239,6 +436,10 @@ public class SimulationEngine
         var homeTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == homeTeamId);
         var awayTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == awayTeamId);
 
+        // Filter: Only use top 16 players for statistical accuracy
+        homeTeam.Players = homeTeam.Players.Where(p => !p.IsInjured).OrderByDescending(p => p.Overall100).Take(16).ToList();
+        awayTeam.Players = awayTeam.Players.Where(p => !p.IsInjured).OrderByDescending(p => p.Overall100).Take(16).ToList();
+
         var record = new MatchRecord
         {
             HomeTeamId = homeTeamId,
@@ -255,7 +456,9 @@ public class SimulationEngine
         };
 
         var playerStats = new Dictionary<int, MatchPlayerStat>();
-        foreach (var p in homeTeam.Players.Concat(awayTeam.Players))
+        // Only initialize stats for the starting 7 (top 7 by position/overall)
+        // Others will be added lazily if they record a stat (simulating being subbed in)
+        foreach (var p in homeTeam.Players.Take(7).Concat(awayTeam.Players.Take(7)))
         {
             playerStats[p.Id] = new MatchPlayerStat
             {
@@ -284,6 +487,13 @@ public class SimulationEngine
         // Simulating both halves with dynamic home advantage
         double homeAdvantage = CalculateHomeAdvantage(homeTeam, record.Attendance, effectiveCapacity, isNeutralVenue);
         
+        // Apply Final4 Host crowd advantage for Cup/Supercup matches
+        if (isNeutralVenue && venueName != null)
+        {
+            if (venueName == homeTeam.StadiumName) homeAdvantage += 0.05;
+            if (venueName == awayTeam.StadiumName) homeAdvantage -= 0.05;
+        }
+
         // First half
         SimulatePossessions(record, homeTeam, awayTeam, playerStats, true, homeAdvantage);
         // Second half
@@ -318,28 +528,29 @@ public class SimulationEngine
             }
         }
 
-        // Update Manager Stats
-        if (homeTeam.Manager != null && awayTeam.Manager != null)
+        // Calculate final ratings for all players before saving
+        foreach (var ps in playerStats.Values)
         {
-            if (record.HomeGoals > record.AwayGoals)
+            // Identify player position for contextual rating
+            var player = homeTeam.Players.Concat(awayTeam.Players).FirstOrDefault(p => p.Id == ps.PlayerId);
+            
+            double finalRating = 5.5;
+            if (player?.Position == "GK")
             {
-                homeTeam.Manager.GamesWon++;
-                awayTeam.Manager.GamesLost++;
-            }
-            else if (record.HomeGoals < record.AwayGoals)
-            {
-                homeTeam.Manager.GamesLost++;
-                awayTeam.Manager.GamesWon++;
+                int totalShotsFaced = ps.Saves + ps.GoalsAgainst;
+                double savePct = totalShotsFaced > 0 ? (double)ps.Saves / totalShotsFaced : 0.25;
+                finalRating = 6.0 + (savePct - 0.25) * 15.0 + (ps.Saves * 0.05);
             }
             else
             {
-                homeTeam.Manager.GamesDrawn++;
-                awayTeam.Manager.GamesDrawn++;
+                finalRating = 5.5 + (ps.Goals * 0.5) + (ps.Assists * 0.3) - ((ps.Shots - ps.Goals) * 0.3);
             }
+            ps.Rating = Math.Clamp(finalRating, 3.0, 10.0);
         }
 
         _db.MatchRecords.Add(record);
-        record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Rating > 0));
+        // Include players in summary if they recorded any stat OR played significant time (Rating is now always >= 3.0)
+        record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Shots > 0));
 
         // Only update league standings for league matches
         if (!isCupMatch)
@@ -347,6 +558,10 @@ public class SimulationEngine
             await UpdateLeagueEntryAsync(homeTeamId, record.HomeGoals, record.AwayGoals);
             await UpdateLeagueEntryAsync(awayTeamId, record.AwayGoals, record.HomeGoals);
         }
+
+        // Update Manager Stats
+        UpdateManagerStats(homeTeam.Manager, record.HomeGoals, record.AwayGoals);
+        UpdateManagerStats(awayTeam.Manager, record.AwayGoals, record.HomeGoals);
 
         // Update player seasonal stats and apply progression
         foreach (var player in homeTeam.Players.Concat(awayTeam.Players))
@@ -438,7 +653,8 @@ public class SimulationEngine
         for (int i = 0; i < possessionCount; i++)
         {
             double diff = (attackRating * currentBonus) - defenseRating;
-            double shotChance = Math.Clamp(0.6 + (diff / 40.0), 0.3, 0.9);
+            // Reduced shot chance from 0.73 to 0.69 to avoid excessive goals (35+)
+            double shotChance = Math.Clamp(0.69 + (diff / 35.0), 0.35, 0.95);
 
             if (_rng.NextDouble() > shotChance) continue;
 
@@ -446,12 +662,23 @@ public class SimulationEngine
             var shooter = PickPlayerForAction(attackers, "Goal");
             if (shooter == null) continue;
 
-            double goalChance = Math.Clamp(0.7 + (shooter.Finishing - gkRating) / 30.0, 0.35, 0.95);
+            // Goal Chance (Reduced base from 0.82 to 0.77 for realistic handball scores)
+            double goalChance = Math.Clamp(0.77 + (shooter.Finishing - gkRating) / 30.0, 0.40, 0.96);
 
             if (_rng.NextDouble() < goalChance)
             {
                 // GOAL
+                if (!stats.ContainsKey(shooter.Id))
+                    stats[shooter.Id] = new MatchPlayerStat { PlayerId = shooter.Id, PlayerName = shooter.Name, TeamId = attackers.Id };
+                
                 stats[shooter.Id].Goals++;
+                stats[shooter.Id].Shots++;
+
+                // Track goal against for GK
+                if (!stats.ContainsKey(gk.Id))
+                    stats[gk.Id] = new MatchPlayerStat { PlayerId = gk.Id, PlayerName = gk.Name, TeamId = defenders.Id };
+                stats[gk.Id].GoalsAgainst++;
+
                 var ev = new MatchEvent
                 {
                     MatchRecord = record,
@@ -469,24 +696,24 @@ public class SimulationEngine
                     var assistant = PickPlayerForAction(attackers, "Assist", shooter.Id);
                     if (assistant != null)
                     {
+                        if (!stats.ContainsKey(assistant.Id))
+                            stats[assistant.Id] = new MatchPlayerStat { PlayerId = assistant.Id, PlayerName = assistant.Name, TeamId = attackers.Id };
+                        
                         stats[assistant.Id].Assists++;
-                        record.MatchEvents.Add(new MatchEvent
-                        {
-                            MatchRecord = record,
-                            TeamId = attackers.Id,
-                            PlayerId = assistant.Id,
-                            PlayerName = assistant.Name,
-                            EventType = "Assist",
-                            Minute = ev.Minute
-                        });
                     }
                 }
             }
             else
             {
                 // SAVE
-                if (stats.ContainsKey(gk.Id))
-                    stats[gk.Id].Saves++;
+                if (!stats.ContainsKey(shooter.Id))
+                    stats[shooter.Id] = new MatchPlayerStat { PlayerId = shooter.Id, PlayerName = shooter.Name, TeamId = attackers.Id };
+                stats[shooter.Id].Shots++;
+
+                if (!stats.ContainsKey(gk.Id))
+                    stats[gk.Id] = new MatchPlayerStat { PlayerId = gk.Id, PlayerName = gk.Name, TeamId = defenders.Id };
+                
+                stats[gk.Id].Saves++;
             }
         }
     }
@@ -808,6 +1035,37 @@ public class SimulationEngine
 
         int attendance = (int)(capacity * Math.Clamp(fillRate, 0.1, 1.0));
         return attendance;
+    }
+
+    private void UpdateManagerStats(Manager? manager, int myGoals, int oppGoals)
+    {
+        if (manager == null) return;
+        if (myGoals > oppGoals) manager.GamesWon++;
+        else if (myGoals == oppGoals) manager.GamesDrawn++;
+        else manager.GamesLost++;
+    }
+
+    public async Task SyncTournamentFixturesWithRecordsAsync()
+    {
+        var cupFixtures = await _db.CupFixtures.Include(f => f.MatchRecord).Where(f => f.IsPlayed && f.MatchRecord != null).ToListAsync();
+        foreach (var f in cupFixtures)
+        {
+            f.HomeGoals = f.MatchRecord!.HomeGoals;
+            f.AwayGoals = f.MatchRecord.AwayGoals;
+            f.HomePenaltyGoals = f.MatchRecord.HomePenaltyGoals;
+            f.AwayPenaltyGoals = f.MatchRecord.AwayPenaltyGoals;
+        }
+
+        var supercupFixtures = await _db.SupercupFixtures.Include(f => f.MatchRecord).Where(f => f.IsPlayed && f.MatchRecord != null).ToListAsync();
+        foreach (var f in supercupFixtures)
+        {
+            f.HomeGoals = f.MatchRecord!.HomeGoals;
+            f.AwayGoals = f.MatchRecord.AwayGoals;
+            f.HomePenaltyGoals = f.MatchRecord.HomePenaltyGoals;
+            f.AwayPenaltyGoals = f.MatchRecord.AwayPenaltyGoals;
+        }
+
+        await _db.SaveChangesAsync();
     }
 }
 
