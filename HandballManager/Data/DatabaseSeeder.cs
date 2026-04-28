@@ -74,9 +74,18 @@ public static class DatabaseSeeder
                     Log($"Seeding team: {teamData.Name} from {fileName}...");
 
                     var players = teamData.Players;
+                    
+                    // Detect Competition Name from folder
+                    string competitionName = "Liga Florilor"; // Default
+                    if (file.Contains("NBI", StringComparison.OrdinalIgnoreCase))
+                    {
+                        competitionName = "NB I";
+                    }
+                    teamData.CompetitionName = competitionName;
 
                     // Assign LogoPath based on fileName
-                    teamData.LogoPath = fileName.ToLower() switch
+                    string logoName = fileName.ToLower();
+                    teamData.LogoPath = logoName switch
                     {
                         "baia_mare.json" => "baiamare.png",
                         "brasov.json" => "coronabrasov.png",
@@ -90,8 +99,49 @@ public static class DatabaseSeeder
                         "slatina.json" => "slatina.png",
                         "targu_jiu.json" => "targujiu.png",
                         "zalau.json" => "zalau.png",
+                        // Hungarian Teams
+                        "gyor.json" => "Hungary/gyor.png",
+                        "dvsc.json" => "Hungary/dvsc.png",
+                        "ferencvaros.json" => "Hungary/ferencvaros.png",
+                        "esztergomi.json" => "Hungary/esztergomi.png",
+                        "vaci_nkse.json" => "Hungary/vaci.png",
+                        "alba_fehervar.json" => "Hungary/alba.png",
+                        "kisvarda.json" => "Hungary/kisvarda.png",
+                        "mosonmagyarovar.json" => "Hungary/mosonmagyarovar.png",
+                        "szombathely.json" => "Hungary/szombathely.png",
+                        "vasas_sc.json" => "Hungary/vasas.png",
+                        "budaors.json" => "Hungary/budaors.png",
+                        "neka.json" => "Hungary/neka.png",
+                        "kozarmisleny_se.json" => "Hungary/kozarmisleny.png",
+                        "dunaujvarosi_ka.json" => "Hungary/dunaujvaros.png",
                         _ => string.Empty
                     };
+
+                    // For Romanian teams, they are in the root of teamlogo folder, but better to be explicit
+                    if (!teamData.LogoPath.Contains("/") && !string.IsNullOrEmpty(teamData.LogoPath))
+                    {
+                        teamData.LogoPath = "Romania/" + teamData.LogoPath;
+                    }
+
+                    // Handle StadiumImage prefixing
+                    if (!string.IsNullOrEmpty(teamData.StadiumImage) && !teamData.StadiumImage.Contains("/"))
+                    {
+                        string countryDir = competitionName == "NB I" ? "Hungary" : "Romania";
+                        teamData.StadiumImage = countryDir + "/" + teamData.StadiumImage;
+                    }
+
+                    // Pre-calculate player wages so we can set the team's wage budget correctly
+                    foreach (var player in players)
+                    {
+                        player.MonthlyWage = Services.TransferService.EstimateRequestedMonthlyWage(player);
+                        
+                        if (player.Height == 0) player.Height = Rng.Next(170, 195);
+                        if (player.Weight == 0) player.Weight = Rng.Next(65, 95);
+
+                        int currentYear = 2025;
+                        int addedYears = player.Age < 25 ? Rng.Next(2, 6) : (player.Age <= 30 ? Rng.Next(2, 4) : Rng.Next(1, 3));
+                        player.ContractEndDate = new DateTime(currentYear + addedYears, 6, 30);
+                    }
 
                     // Calculate expected wages
                     decimal yearlyWage = players.Sum(p => (decimal)p.MonthlyWage * 12);
@@ -106,7 +156,6 @@ public static class DatabaseSeeder
                     // Transfer budget is the rest of the club balance after securing a year's worth of wages
                     teamData.TransferBudget = Math.Max(0, teamData.ClubBalance - (teamData.WageBudget * 52m));
 
-                    // If the pre-defined budget couldn't even cover the wages, boost the club balance to prevent immediate bankruptcy
                     if (teamData.TransferBudget == 0)
                     {
                         teamData.ClubBalance = teamData.WageBudget * 52m;
@@ -120,34 +169,10 @@ public static class DatabaseSeeder
                     foreach (var player in players)
                     {
                         player.TeamId = teamData.Id;
-                        if (player.Height == 0) player.Height = Rng.Next(170, 195);
-                        if (player.Weight == 0) player.Weight = Rng.Next(65, 95);
-
-                        // Default Game Start Year for this setup
-                        int currentYear = 2025;
-
-                        // Assign random contract lengths based on age
-                        int addedYears;
-                        if (player.Age < 25)
-                        {
-                            addedYears = Rng.Next(2, 6); // 2 to 5 years
-                        }
-                        else if (player.Age <= 30)
-                        {
-                            addedYears = Rng.Next(2, 4); // 2 to 3 years
-                        }
-                        else
-                        {
-                            addedYears = Rng.Next(1, 3); // 1 to 2 years
-                        }
-
-                        // Contracts expire on June 30 of the expiring year
-                        player.ContractEndDate = new DateTime(currentYear + addedYears, 6, 30);
-
                         db.Players.Add(player);
                     }
 
-                    db.LeagueEntries.Add(new LeagueEntry { TeamId = teamData.Id });
+                    db.LeagueEntries.Add(new LeagueEntry { TeamId = teamData.Id, CompetitionName = competitionName });
                     db.SaveChanges();
                     Log($"Successfully seeded {teamData.Name} with {players.Count} players.");
                 }
@@ -304,7 +329,6 @@ public static class DatabaseSeeder
                 "HCM Baia Mare" => allTeams.FirstOrDefault(x => x.Name.Contains("Baia Mare"))?.Id ?? 0,
                 "Chimistul Râmnicu Vâlcea" or "Oltchim Râmnicu Vâlcea" => allTeams.FirstOrDefault(x => x.Name.Contains("Vâlcea"))?.Id ?? 0,
                 "Silcotub Zalău" => allTeams.FirstOrDefault(x => x.Name.Contains("Zalău"))?.Id ?? 0,
-                "IEFS București" or "Cetatea Bucur București" or "Știința București" or "Universitatea București" => allTeams.FirstOrDefault(x => x.Name == "CSM București")?.Id ?? 0,
                 _ => 0
             };
         }
@@ -331,12 +355,50 @@ public static class DatabaseSeeder
                 var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (champsList != null)
                 {
-                    foreach (var r in champsList) r.TeamId = GetTeamId(r.TeamName);
+                    foreach (var r in champsList) 
+                    {
+                        r.TeamId = GetTeamId(r.TeamName);
+                        r.CompetitionName = "Liga Florilor";
+                    }
                     db.ChampionRecords.AddRange(champsList);
                     Log($"Successfully seeded {champsList.Count} historical champions.");
                 }
             }
             catch (Exception ex) { Log($"Error seeding champions: {ex.Message}"); }
+        }
+
+        // Seed NBI Champions
+        string nbiChampsFile = "";
+        var possibleNbiPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/NBI/champions.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/NBI/champions.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/NBI/champions.json")
+        };
+
+        foreach (var p in possibleNbiPaths)
+        {
+            if (File.Exists(p)) { nbiChampsFile = p; break; }
+        }
+
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "NB I") && !string.IsNullOrEmpty(nbiChampsFile))
+        {
+            try
+            {
+                var champsJson = File.ReadAllText(nbiChampsFile);
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (champsList != null)
+                {
+                    foreach (var r in champsList) 
+                    {
+                        r.TeamId = GetTeamId(r.TeamName);
+                        r.CompetitionName = "NB I";
+                    }
+                    db.ChampionRecords.AddRange(champsList);
+                    Log($"Successfully seeded {champsList.Count} historical NBI champions.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding NBI champions: {ex.Message}"); }
         }
 
         // Seed Cup Winners
@@ -367,6 +429,49 @@ public static class DatabaseSeeder
                 }
             }
             catch (Exception ex) { Log($"Error seeding cup winners: {ex.Message}"); }
+        }
+
+        // Seed Magyar Kupa Winners
+        string magyarKupFile = "";
+        var possibleMagyarKupaPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Magyar Kupa/cup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Magyar Kupa/cup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Magyar Kupa/cup_winners.json")
+        };
+
+        foreach (var p in possibleMagyarKupaPaths)
+        {
+            if (File.Exists(p)) { magyarKupFile = p; break; }
+        }
+
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "NB I") && !string.IsNullOrEmpty(magyarKupFile))
+        {
+            try
+            {
+                var cupJson = File.ReadAllText(magyarKupFile);
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (cupList != null)
+                {
+                    foreach (var r in cupList)
+                    {
+                        r.CompetitionName = "NB I";
+                        // Map historical names to current team IDs
+                        r.TeamId = r.TeamName switch
+                        {
+                            "Vasas" => allTeams.FirstOrDefault(x => x.Name.Contains("Vasas"))?.Id ?? 0,
+                            "Ferencváros" => allTeams.FirstOrDefault(x => x.Name.Contains("Ferencváros"))?.Id ?? 0,
+                            "Győri ETO" => allTeams.FirstOrDefault(x => x.Name.Contains("Győr"))?.Id ?? 0,
+                            "Debreceni VSC" => allTeams.FirstOrDefault(x => x.Name.Contains("DVSC") || x.Name.Contains("Debrecen"))?.Id ?? 0,
+                            "Dunaferr" => allTeams.FirstOrDefault(x => x.Name.Contains("Dunaújváros"))?.Id ?? 0,
+                            _ => 0
+                        };
+                    }
+                    db.CupWinnerRecords.AddRange(cupList);
+                    Log($"Successfully seeded {cupList.Count} historical Magyar Kupa winners.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Magyar Kupa winners: {ex.Message}"); }
         }
 
         db.SaveChanges();

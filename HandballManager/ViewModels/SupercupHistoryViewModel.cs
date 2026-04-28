@@ -12,7 +12,8 @@ public partial class SupercupHistoryViewModel : BaseViewModel
 
     private static readonly Dictionary<string, string> NameMapping = new()
     {
-        { "CS Oltchim Râmnicu Vâlcea", "SCM Râmnicu Vâlcea" }
+        { "CS Oltchim Râmnicu Vâlcea", "SCM Râmnicu Vâlcea" },
+        { "HCM Baia Mare", "Minaur Baia Mare" }
     };
 
     [ObservableProperty]
@@ -34,7 +35,6 @@ public partial class SupercupHistoryViewModel : BaseViewModel
             .ThenByDescending(c => c.Id)
             .ToListAsync();
 
-        var teams = await _db.Teams.ToListAsync();
 
         Winners = new ObservableCollection<SupercupWinnerRecord>(records);
 
@@ -42,17 +42,20 @@ public partial class SupercupHistoryViewModel : BaseViewModel
             .GroupBy(r => NameMapping.TryGetValue(r.TeamName, out var modern) ? modern : r.TeamName)
             .Select(g => 
             {
-                var team = teams.FirstOrDefault(t => t.Name == g.Key);
                 return new TeamTitleSummary 
                 { 
                     TeamName = g.Key, 
-                    Count = g.Count(),
-                    LogoPath = team?.LogoPath ?? string.Empty
+                    Count = g.Count()
                 };
             })
             .OrderByDescending(s => s.Count)
             .ThenBy(s => s.TeamName)
             .ToList();
+
+        for (int i = 0; i < summary.Count; i++)
+        {
+            summary[i].Rank = i + 1;
+        }
 
         MedalTable = new ObservableCollection<TeamTitleSummary>(summary);
     }

@@ -1,13 +1,13 @@
 {
-  "Name": "SCM R\u00e2mnicu V\u00e2lcea",
-  "City": "R\u00e2mnicu V\u00e2lcea",
+  "Name": "SCM Râmnicu Vâlcea",
+  "City": "Râmnicu Vâlcea",
   "Nation": "Romania",
   "Budget": 2400000,
-  "FoundedYear": 2013,
+  "FoundedYear": 1973,
   "StadiumName": "Sala Sporturilor Traian",
   "StadiumCapacity": 2375,
   "StadiumImage": "salatraian.jpg",
-  "Description": "The successor to the legendary Oltchim, R\u00e2mnicu V\u00e2lcea remains a powerhouse with a deep connection to the city's handball heritage.",
+  "Description": "SCM Râmnicu Vâlcea is the historical powerhouse of Romanian women’s handball, acting as the successor to the legendary CS Oltchim Râmnicu Vâlcea, which won 19 national titles before its dissolution. The team currently plays in the Liga Florilor and the EHF European League. Râmnicu Vâlcea remains a powerhouse with a deep connection to the city's handball heritage.",
   "IsPlayerTeam": false,
   "ClubReputation": "National",
   "Manager": {
@@ -61,7 +61,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "2002-01-01"
     },
     {
@@ -101,7 +100,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "1998-06-24"
     },
     {
@@ -141,7 +139,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "2000-01-01"
     },
     {
@@ -181,7 +178,6 @@
       "Strength": 10,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1910,
       "Birthdate": "1997-12-05"
     },
     {
@@ -221,7 +217,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2002-01-01"
     },
     {
@@ -261,7 +256,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2002-01-01"
     },
     {
@@ -301,7 +295,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1720,
       "Birthdate": "2001-01-01"
     },
     {
@@ -341,7 +334,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2007-07-07"
     },
     {
@@ -381,7 +373,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2005-01-01"
     },
     {
@@ -421,7 +412,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1991-12-13"
     },
     {
@@ -461,7 +451,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1996-02-27"
     },
     {
@@ -501,7 +490,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1996-01-28"
     },
     {
@@ -541,7 +529,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "1999-05-31"
     },
     {
@@ -581,7 +568,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-07-09"
     },
     {
@@ -621,7 +607,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1999-07-10"
     },
     {
@@ -661,7 +646,6 @@
       "Strength": 13,
       "Flair": 13,
       "Leadership": 11,
-      "MonthlyWage": 2570,
       "Birthdate": "2003-05-17"
     },
     {
@@ -701,7 +685,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 2010,
       "Birthdate": "1998-05-28"
     },
     {
@@ -741,7 +724,6 @@
       "Strength": 15,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 2220,
       "Birthdate": "1998-03-13"
     },
     {
@@ -781,7 +763,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-09-15"
     }
   ]

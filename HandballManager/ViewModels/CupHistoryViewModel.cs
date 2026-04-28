@@ -17,11 +17,15 @@ public partial class CupHistoryViewModel : BaseViewModel
         { "Universitatea Bacău", "CSM Bacău" },
         { "Știința Bacău", "CSM Bacău" },
         { "Silcotub Zalău", "HC Zalău" },
-        { "HCM Baia Mare", "CS Minaur Baia Mare" },
+        { "HCM Baia Mare", "Minaur Baia Mare" },
         { "Rulmentul Brașov", "CSM Corona Brașov" },
-        { "Rapid CFR București", "CS Rapid București" },
+        { "Rapid CFR București", "Rapid București" },
         { "Progresul Târgu Mureș", "CSU Târgu Mureș" },
-        { "Mureșul Târgu Mureș", "CSU Târgu Mureș" }
+        { "Mureșul Târgu Mureș", "CSU Târgu Mureș" },
+        { "Vasas", "Vasas SC" },
+        { "Ferencváros", "FTC-Rail Cargo Hungaria" },
+        { "Debreceni VSC", "DVSC Schaeffler" },
+        { "Győri ETO", "Győri Audi ETO KC" }
     };
 
     [ObservableProperty]
@@ -30,20 +34,31 @@ public partial class CupHistoryViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<TeamTitleSummary> _medalTable = new();
 
+    [ObservableProperty]
+    private string _cupDisplayName = "Cupa României";
+
     public CupHistoryViewModel(HandballDbContext db)
     {
         Title = "Cup History";
         _db = db;
     }
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(string? competitionName = null)
     {
+        if (competitionName == null)
+        {
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        }
+
+        CupDisplayName = competitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+        Title = $"{CupDisplayName} History";
+
         var records = await _db.CupWinnerRecords
+            .Where(c => c.CompetitionName == competitionName)
             .OrderByDescending(c => c.Season)
             .ThenByDescending(c => c.Id)
             .ToListAsync();
-
-        var teams = await _db.Teams.ToListAsync();
 
         Winners = new ObservableCollection<CupWinnerRecord>(records);
 
@@ -51,17 +66,20 @@ public partial class CupHistoryViewModel : BaseViewModel
             .GroupBy(r => NameMapping.TryGetValue(r.TeamName, out var modern) ? modern : r.TeamName)
             .Select(g => 
             {
-                var team = teams.FirstOrDefault(t => t.Name == g.Key);
                 return new TeamTitleSummary 
                 { 
                     TeamName = g.Key, 
-                    Count = g.Count(),
-                    LogoPath = team?.LogoPath ?? string.Empty
+                    Count = g.Count()
                 };
             })
             .OrderByDescending(s => s.Count)
             .ThenBy(s => s.TeamName)
             .ToList();
+
+        for (int i = 0; i < summary.Count; i++)
+        {
+            summary[i].Rank = i + 1;
+        }
 
         MedalTable = new ObservableCollection<TeamTitleSummary>(summary);
     }

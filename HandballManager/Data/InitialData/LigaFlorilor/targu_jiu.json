@@ -1,18 +1,18 @@
 {
-  "Name": "CSM T\u00e2rgu Jiu",
-  "City": "T\u00e2rgu Jiu",
+  "Name": "CSM Târgu Jiu",
+  "City": "Târgu Jiu",
   "Nation": "Romania",
   "Budget": 1200000,
   "FoundedYear": 2017,
-  "StadiumName": "Sala Sporturilor T\u00e2rgu Jiu",
+  "StadiumName": "Sala Sporturilor Târgu Jiu",
   "StadiumCapacity": 1223,
   "StadiumImage": "salasporturilortargujiu.jpg",
-  "Description": "A club representing the Gorj region, T\u00e2rgu Jiu is a resilient team that often finds itself in the heat of the relegation battle, fighting for every survival point.",
+  "Description": "CSM Târgu Jiu is a multi-sport club whose women's handball team competes in the Liga Florilor (Liga Națională). A club representing the Gorj region, Târgu Jiu is a resilient team that often finds itself in the heat of the relegation battle, fighting for every survival point.",
   "IsPlayerTeam": false,
   "ClubReputation": "Local",
   "Manager": {
     "FirstName": "Liviu",
-    "LastName": "Andrie\u0219",
+    "LastName": "Andrieș",
     "Birthdate": "1968-08-22",
     "Nationality": "ROU",
     "License": 3,
@@ -61,12 +61,11 @@
       "Strength": 13,
       "Flair": 15,
       "Leadership": 13,
-      "MonthlyWage": 2120,
       "Birthdate": "1998-01-24"
     },
     {
       "FirstName": "Maria",
-      "LastName": "Gavril\u0103 Fr\u0103\u021bilescu",
+      "LastName": "Gavrilă Frățilescu",
       "ShirtNumber": 7,
       "Position": "CB",
       "Nationality": "ROU",
@@ -101,7 +100,6 @@
       "Strength": 12,
       "Flair": 13,
       "Leadership": 14,
-      "MonthlyWage": 2120,
       "Birthdate": "1996-01-01"
     },
     {
@@ -141,7 +139,6 @@
       "Strength": 15,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 1720,
       "Birthdate": "2001-01-01"
     },
     {
@@ -181,7 +178,6 @@
       "Pace": 11,
       "Stamina": 12,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "1997-01-01"
     },
     {
@@ -221,12 +217,11 @@
       "Pace": 11,
       "Stamina": 11,
       "Strength": 13,
-      "MonthlyWage": 1460,
       "Birthdate": "2001-01-01"
     },
     {
       "FirstName": "Ljubica",
-      "LastName": "Glend\u017ea",
+      "LastName": "Glendža",
       "ShirtNumber": 1,
       "Position": "GK",
       "Nationality": "MNE",
@@ -261,12 +256,11 @@
       "Pace": 10,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1300,
       "Birthdate": "1997-01-01"
     },
     {
       "FirstName": "Andreea",
-      "LastName": "Chiricu\u021b\u0103",
+      "LastName": "Chiricuță",
       "ShirtNumber": 23,
       "Position": "LW",
       "Nationality": "ROU",
@@ -301,7 +295,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 13,
-      "MonthlyWage": 1550,
       "Birthdate": "1994-01-01"
     },
     {
@@ -341,7 +334,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 10,
-      "MonthlyWage": 1460,
       "Birthdate": "1997-01-01"
     },
     {
@@ -381,12 +373,11 @@
       "Strength": 12,
       "Flair": 13,
       "Leadership": 12,
-      "MonthlyWage": 1630,
       "Birthdate": "1997-01-01"
     },
     {
-      "FirstName": "Floren\u021ba",
-      "LastName": "Dumbr\u0103vean",
+      "FirstName": "Florența",
+      "LastName": "Dumbrăvean",
       "ShirtNumber": 14,
       "Position": "RW",
       "Nationality": "ROU",
@@ -421,7 +412,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 1550,
       "Birthdate": "1996-07-21"
     },
     {
@@ -461,7 +451,6 @@
       "Strength": 10,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1460,
       "Birthdate": "1998-01-01"
     },
     {
@@ -501,7 +490,6 @@
       "Strength": 15,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1910,
       "Birthdate": "2002-01-01"
     },
     {
@@ -541,11 +529,10 @@
       "Strength": 13,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1460,
       "Birthdate": "2001-01-01"
     },
     {
-      "FirstName": "Laura Petru\u021ba",
+      "FirstName": "Laura Petruța",
       "LastName": "Moldovan",
       "ShirtNumber": 13,
       "Position": "CB",
@@ -581,7 +568,6 @@
       "Strength": 11,
       "Flair": 12,
       "Leadership": 14,
-      "MonthlyWage": 1820,
       "Birthdate": "1994-01-01"
     },
     {
@@ -621,7 +607,6 @@
       "Strength": 12,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 1460,
       "Birthdate": "1990-01-01"
     },
     {
@@ -661,12 +646,11 @@
       "Strength": 10,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1380,
       "Birthdate": "1999-01-01"
     },
     {
       "FirstName": "Larisa",
-      "LastName": "\u0218erban",
+      "LastName": "Șerban",
       "ShirtNumber": 15,
       "Position": "CB",
       "Nationality": "ROU",
@@ -701,12 +685,11 @@
       "Strength": 11,
       "Flair": 12,
       "Leadership": 9,
-      "MonthlyWage": 1380,
       "Birthdate": "2005-01-01"
     },
     {
       "FirstName": "Alessia Maria",
-      "LastName": "Ci\u0219ma\u0219u",
+      "LastName": "Cișmașu",
       "ShirtNumber": 5,
       "Position": "LW",
       "Nationality": "ROU",
@@ -741,12 +724,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1230,
       "Birthdate": "2007-01-01"
     },
     {
       "FirstName": "Minodora Florentina",
-      "LastName": "Ancu\u021ba",
+      "LastName": "Ancuța",
       "ShirtNumber": 6,
       "Position": "LB",
       "Nationality": "ROU",
@@ -781,12 +763,11 @@
       "Strength": 13,
       "Flair": 10,
       "Leadership": 8,
-      "MonthlyWage": 1230,
       "Birthdate": "2007-01-01"
     },
     {
-      "FirstName": "\u0218tefania Rebeca",
-      "LastName": "Suc\u0103lescu",
+      "FirstName": "Ștefania Rebeca",
+      "LastName": "Sucălescu",
       "ShirtNumber": 18,
       "Position": "RB",
       "Nationality": "ROU",
@@ -821,12 +802,11 @@
       "Strength": 12,
       "Flair": 10,
       "Leadership": 7,
-      "MonthlyWage": 1080,
       "Birthdate": "2008-01-01"
     },
     {
-      "FirstName": "Elena \u0218tefania",
-      "LastName": "Bu\u0219e",
+      "FirstName": "Elena Ștefania",
+      "LastName": "Bușe",
       "ShirtNumber": 1,
       "Position": "GK",
       "Nationality": "ROU",
@@ -860,7 +840,6 @@
       "NaturalFitness": 15,
       "Stamina": 12,
       "Strength": 11,
-      "MonthlyWage": 1020,
       "Birthdate": "2008-01-01"
     }
   ]

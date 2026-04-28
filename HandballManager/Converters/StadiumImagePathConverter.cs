@@ -11,7 +11,7 @@ public class StadiumImagePathConverter : IValueConverter
         if (value is string imagePath && !string.IsNullOrEmpty(imagePath))
         {
             // First check the Romania subfolder as all our current stadiums are there
-            return $"/Assets/stadiums/Romania/{imagePath}";
+            return $"/Assets/stadiums/{imagePath}";
         }
         
         // Return placeholder if nothing else works

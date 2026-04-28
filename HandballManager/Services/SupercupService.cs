@@ -67,8 +67,9 @@ public class SupercupService
             return;
 
         var (saturday, sunday) = GetSupercupDates(LeagueService.CurrentSeasonYear);
-
-        var teams = await _db.Teams.ToListAsync();
+        
+        // Filter for Romanian teams only
+        var teams = await _db.Teams.Where(t => t.CompetitionName == "Liga Florilor").ToListAsync();
         var csm = teams.FirstOrDefault(t => t.Name == "CSM București");
         var bistrita = teams.FirstOrDefault(t => t.Name == "Gloria Bistrița");
         var corona = teams.FirstOrDefault(t => t.Name == "CSM Corona Brașov");
@@ -150,14 +151,15 @@ public class SupercupService
         {
             foreach (var f in cupFinalists)
             {
-                if (f != null) participants.Add(f);
+                if (f != null && f.CompetitionName == "Liga Florilor") 
+                    participants.Add(f);
             }
         }
 
         foreach (var t in sortedLeagueTeams)
         {
             if (participants.Count >= 4) break;
-            if (!participants.Any(p => p.Id == t.Id))
+            if (t.CompetitionName == "Liga Florilor" && !participants.Any(p => p.Id == t.Id))
                 participants.Add(t);
         }
 
@@ -165,7 +167,8 @@ public class SupercupService
         var shuffled = participants.OrderBy(_ => _rng.Next()).ToList();
         
         var (saturday, sunday) = GetSupercupDates(nextYear);
-        var venueTeam = (await _db.Teams.Where(t => t.StadiumCapacity > 1500).ToListAsync())
+        string compName = participants[0].CompetitionName;
+        var venueTeam = (await _db.Teams.Where(t => t.CompetitionName == compName && t.StadiumCapacity > 1500).ToListAsync())
             .OrderBy(_ => _rng.Next()).FirstOrDefault() ?? participants[0];
         string venue = $"{venueTeam.StadiumName}, {venueTeam.City}";
 

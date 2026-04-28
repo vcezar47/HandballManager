@@ -15,7 +15,7 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,32">
             <TextBlock Text="HISTORY" FontSize="11" FontWeight="ExtraBold"
                        Foreground="#E94560" FontFamily="Segoe UI" Margin="4,0,0,10"/>
-            <TextBlock Text="Cupa României Archives" FontSize="36" FontWeight="Black"
+            <TextBlock Text="{Binding CupDisplayName, StringFormat='{}{0} Archives'}" FontSize="36" FontWeight="Black"
                        Foreground="White" FontFamily="Segoe UI"/>
         </StackPanel>
 
@@ -79,17 +79,30 @@
                             </Style>
                         </DataGrid.CellStyle>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="CLUB" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
-                                            <Image Source="{Binding LogoPath, StringFormat='/Assets/teamlogo/Romania/{0}'}" Width="16" Height="16" Margin="0,0,10,0"/>
-                                            <TextBlock Text="{Binding TeamName}" Foreground="White" FontWeight="Bold"
-                                                       FontFamily="Segoe UI" VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="#" Binding="{Binding Rank}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment"   Value="Center"/>
+                                        <Setter Property="FontWeight"          Value="Bold"/>
+                                        <Setter Property="Foreground"          Value="#666688"/>
+                                        <Setter Property="FontSize"            Value="14"/>
+                                        <Setter Property="FontFamily"          Value="Segoe UI"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="CLUB" Binding="{Binding TeamName}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment"   Value="Center"/>
+                                        <Setter Property="FontWeight"          Value="Bold"/>
+                                        <Setter Property="Foreground"          Value="White"/>
+                                        <Setter Property="FontSize"            Value="14"/>
+                                        <Setter Property="FontFamily"          Value="Segoe UI"/>
+                                        <Setter Property="Margin"              Value="10,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="TITLES" Binding="{Binding Count}" Width="80">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">

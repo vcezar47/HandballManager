@@ -9,6 +9,7 @@
         <conv:InverseBoolConverter x:Key="InverseBool"/>
         <conv:RatingToColorConverter x:Key="RatingToColor"/>
         <conv:TypeToBoolConverter x:Key="TypeToBool"/>
+        <conv:EqualityToBoolConverter x:Key="EqualityToBool"/>
         <conv:NationalityToFlagConverter x:Key="NationalityToFlag"/>
 
         <!-- Global dark context menu style -->

@@ -1,13 +1,13 @@
 {
-  "Name": "Gloria Bistri\u021ba",
-  "City": "Bistri\u021ba",
+  "Name": "Gloria Bistrița",
+  "City": "Bistrița",
   "Nation": "Romania",
   "Budget": 2800000,
   "FoundedYear": 2009,
   "StadiumName": "Complexul Sportiv TeraPlast Arena",
   "StadiumCapacity": 3007,
   "StadiumImage": "teraplastarena.jpg",
-  "Description": "A rapidly rising power in the league, Gloria Bistri\u021ba boasts a modern arena and a highly competitive squad.",
+  "Description": "Clubul Sportiv Gloria Bistrița, commonly known as Gloria Bistrița and colloquially as Gloria, is a professional women's handball team based in Bistrița, Bistrița-Năsăud, Transylvania, Romania, that competes in the Liga Naţională and the EHF Champions League, and is part of the multi-sport club with the same name, which also includes a men’s football section. A rapidly rising power in the league, Gloria Bistrița boasts a modern arena and a highly competitive squad.",
   "IsPlayerTeam": false,
   "ClubReputation": "National",
   "Manager": {
@@ -61,7 +61,6 @@
       "Pace": 9,
       "Stamina": 12,
       "Strength": 14,
-      "MonthlyWage": 2120,
       "Birthdate": "1999-01-01"
     },
     {
@@ -101,7 +100,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "1993-01-01"
     },
     {
@@ -141,7 +139,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1460,
       "Birthdate": "2006-01-01"
     },
     {
@@ -181,7 +178,6 @@
       "Strength": 13,
       "Flair": 13,
       "Leadership": 11,
-      "MonthlyWage": 2330,
       "Birthdate": "2002-01-01"
     },
     {
@@ -221,7 +217,6 @@
       "Strength": 16,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1997-07-30"
     },
     {
@@ -261,7 +256,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1992-05-14"
     },
     {
@@ -301,7 +295,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     },
     {
@@ -341,7 +334,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2004-01-01"
     },
     {
@@ -381,7 +373,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1995-01-01"
     },
     {
@@ -421,7 +412,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "1998-01-01"
     },
     {
@@ -461,7 +451,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1720,
       "Birthdate": "1996-02-14"
     },
     {
@@ -501,7 +490,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1998-01-01"
     },
     {
@@ -541,7 +529,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "1995-01-01"
     },
     {
@@ -581,7 +568,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "2001-04-07"
     },
     {
@@ -621,7 +607,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "1995-04-09"
     },
     {
@@ -661,7 +646,6 @@
       "Strength": 14,
       "Flair": 14,
       "Leadership": 13,
-      "MonthlyWage": 2570,
       "Birthdate": "1996-04-10"
     },
     {
@@ -701,7 +685,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2003-01-01"
     },
     {
@@ -741,7 +724,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "1998-10-14"
     },
     {
@@ -781,7 +763,6 @@
       "Strength": 18,
       "Flair": 10,
       "Leadership": 12,
-      "MonthlyWage": 2570,
       "Birthdate": "1998-01-01"
     },
     {
@@ -821,7 +802,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1720,
       "Birthdate": "1998-01-01"
     },
     {
@@ -861,7 +841,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1820,
       "Birthdate": "2002-01-01"
     },
     {
@@ -901,7 +880,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2008-01-01"
     },
     {
@@ -941,7 +919,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "2004-01-01"
     },
     {
@@ -981,7 +958,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "1996-05-21"
     }
   ]

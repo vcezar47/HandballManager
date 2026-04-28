@@ -13,10 +13,11 @@ public class LeagueService
         _db = db;
     }
 
-    public async Task<List<LeagueEntry>> GetStandingsAsync()
+    public async Task<List<LeagueEntry>> GetStandingsAsync(string competitionName = "Liga Florilor")
     {
         var entries = await _db.LeagueEntries
             .Include(e => e.Team)
+            .Where(e => e.CompetitionName == competitionName)
             .ToListAsync();
 
         var sorted = entries
@@ -40,19 +41,30 @@ public class LeagueService
             .ToListAsync();
     }
 
-    public const int MaxMatchweeks = 22;
-
-    public static DateTime GetMatchweekDate(int matchweek)
+    public static int GetMaxMatchweeks(string competitionName)
     {
-        var dates = MatchweekDates;
+        if (competitionName == "NB I") return 26;
+        return 22;
+    }
+
+    public static DateTime GetMatchweekDate(int matchweek, string competitionName)
+    {
+        var dates = GetMatchweekDates(competitionName);
         if (matchweek < 1 || matchweek > dates.Count)
-            throw new ArgumentOutOfRangeException(nameof(matchweek), matchweek, $"Matchweek must be between 1 and {dates.Count}.");
+            return dates.Last(); // Fallback for edge cases
 
         return dates[matchweek - 1];
     }
 
-    public static DateTime SeasonStartDate => MatchweekDates[0];
-    public static DateTime SeasonEndDate => MatchweekDates[^1];
+    public static int GetMatchweekForDate(DateTime date, string competitionName)
+    {
+        var dates = GetMatchweekDates(competitionName);
+        var index = dates.FindIndex(d => d.Date == date.Date);
+        return index >= 0 ? index + 1 : -1;
+    }
+
+    public static DateTime SeasonStartDate(string competitionName) => GetMatchweekDates(competitionName)[0];
+    public static DateTime SeasonEndDate(string competitionName) => GetMatchweekDates(competitionName)[^1];
 
     // First in-game day for the management "season" (pre-season + transfer window),
     // which intentionally starts before the first league matchweek.
@@ -60,21 +72,21 @@ public class LeagueService
     
     public static int CurrentSeasonYear { get; private set; } = 2025;
 
-    private static List<DateTime>? _matchweekDatesCache;
-    public static List<DateTime> MatchweekDates 
+    private static readonly Dictionary<string, List<DateTime>> _matchweekDatesCache = new();
+    
+    public static List<DateTime> GetMatchweekDates(string competitionName)
     {
-        get
+        if (!_matchweekDatesCache.TryGetValue(competitionName, out var dates))
         {
-            if (_matchweekDatesCache == null)
-            {
-                _matchweekDatesCache = GenerateSeasonMatchweekDates(CurrentSeasonYear);
-            }
-            return _matchweekDatesCache;
+            dates = GenerateSeasonMatchweekDates(CurrentSeasonYear, competitionName);
+            _matchweekDatesCache[competitionName] = dates;
         }
+        return dates;
     }
 
-    private static List<DateTime> GenerateSeasonMatchweekDates(int seasonYear)
+    private static List<DateTime> GenerateSeasonMatchweekDates(int seasonYear, string competitionName)
     {
+        int maxMatchweeks = GetMaxMatchweeks(competitionName);
         // Season runs Sep -> late May, with a winter break (no league matches).
         var seasonStart = FirstSaturdayOnOrAfter(new DateTime(seasonYear, 9, 1));
         var seasonEnd = LastSaturdayOnOrBefore(new DateTime(seasonYear + 1, 5, 25));
@@ -94,13 +106,13 @@ public class LeagueService
             throw new InvalidOperationException("No candidate match dates could be generated for the season.");
 
         // If we ever have fewer candidates than matchweeks (shouldn't happen), fall back to earliest dates.
-        if (candidates.Count <= MaxMatchweeks)
-            return candidates.Take(MaxMatchweeks).ToList();
+        if (candidates.Count <= maxMatchweeks)
+            return candidates.Take(maxMatchweeks).ToList();
 
         // Evenly spread matchweeks across the available Saturdays so the final rounds land in late May.
-        var indices = new int[MaxMatchweeks];
-        double step = (candidates.Count - 1) / (double)(MaxMatchweeks - 1);
-        for (int i = 0; i < MaxMatchweeks; i++)
+        var indices = new int[maxMatchweeks];
+        double step = (candidates.Count - 1) / (double)(maxMatchweeks - 1);
+        for (int i = 0; i < maxMatchweeks; i++)
             indices[i] = (int)Math.Round(i * step);
 
         // Enforce strictly increasing indices.
@@ -118,7 +130,7 @@ public class LeagueService
                 indices[i] -= overflow;
         }
 
-        var selected = new List<DateTime>(MaxMatchweeks);
+        var selected = new List<DateTime>(maxMatchweeks);
         foreach (var idx in indices)
         {
             int clamped = Math.Clamp(idx, 0, candidates.Count - 1);
@@ -161,7 +173,7 @@ public class LeagueService
     public static void AdvanceToNextSeason()
     {
         CurrentSeasonYear++;
-        _matchweekDatesCache = null; // Invalidate cache so it regenerates for the new year
+        _matchweekDatesCache.Clear(); // Invalidate cache so it regenerates for the new year
     }
 
     private static DateTime FirstSaturdayOnOrAfter(DateTime date)
@@ -176,21 +188,22 @@ public class LeagueService
         return date.Date.AddDays(-daysSinceSaturday);
     }
 
-    public async Task<List<MatchRecord>> GetResultsForMatchweekAsync(int matchweek)
+    public async Task<List<MatchRecord>> GetResultsForMatchweekAsync(int matchweek, string competitionName = "Liga Florilor")
     {
         return await _db.MatchRecords
             .Where(m => m.MatchweekNumber == matchweek && !m.IsCupMatch)
+            .Where(m => _db.Teams.Any(t => t.Id == m.HomeTeamId && t.CompetitionName == competitionName))
             .OrderBy(m => m.Id)
             .ToListAsync();
     }
 
-    public async Task<List<LeagueFixture>> GetFixturesForRoundAsync(int round)
+    public async Task<List<LeagueFixture>> GetFixturesForRoundAsync(int round, string competitionName = "Liga Florilor")
     {
         string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
         return await _db.LeagueFixtures
             .Include(f => f.HomeTeam)
             .Include(f => f.AwayTeam)
-            .Where(f => f.Season == season && f.Round == round)
+            .Where(f => f.Season == season && f.Round == round && f.CompetitionName == competitionName)
             .ToListAsync();
     }
 
@@ -198,47 +211,53 @@ public class LeagueService
     {
         string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
         
-        // Don't regenerate if already exists
-        if (await _db.LeagueFixtures.AnyAsync(f => f.Season == season))
-            return;
+        var allTeams = await _db.Teams.ToListAsync();
+        var competitions = allTeams.Select(t => t.CompetitionName).Distinct().ToList();
 
-        var teams = await _db.Teams.ToListAsync();
-        if (teams.Count % 2 != 0) return; // Should be even for Liga Florilor (12 teams)
-
-        // Shuffle teams for randomization every season
-        var rand = new Random();
-        var shuffledIds = teams.Select(t => t.Id).OrderBy(_ => rand.Next()).ToList();
-        
-        int n = shuffledIds.Count;
-        int rounds = n - 1;
-
-        for (int round = 0; round < rounds; round++)
+        foreach (var compName in competitions)
         {
-            for (int i = 0; i < n / 2; i++)
+            // Check if fixtures already exist for THIS competition and THIS season
+            if (await _db.LeagueFixtures.AnyAsync(f => f.Season == season && f.CompetitionName == compName))
+                continue;
+
+            var teams = allTeams.Where(t => t.CompetitionName == compName).ToList();
+            if (teams.Count % 2 != 0) continue; 
+
+            // Shuffle teams for randomization every season
+            var rand = new Random();
+            var shuffledIds = teams.Select(t => t.Id).OrderBy(_ => rand.Next()).ToList();
+            
+            int n = shuffledIds.Count;
+            int rounds = n - 1;
+
+            for (int round = 0; round < rounds; round++)
             {
-                int homeIdx = (round + i) % (n - 1);
-                int awayIdx = (round + n - 1 - i) % (n - 1);
-
-                if (i == 0) awayIdx = n - 1;
-
-                int home = shuffledIds[homeIdx];
-                int away = shuffledIds[awayIdx];
-
-                // Alternate home/away for the pivot team (idx 0 in this logic)
-                // and everyone else to ensure balance
-                if (round % 2 == 1)
+                for (int i = 0; i < n / 2; i++)
                 {
-                    int temp = home;
-                    home = away;
-                    away = temp;
-                }
+                    int homeIdx = (round + i) % (n - 1);
+                    int awayIdx = (round + n - 1 - i) % (n - 1);
 
-                // Week (round + 1)
-                _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + 1, HomeTeamId = home, AwayTeamId = away });
-                
-                // Construct the return match for the second half of the season
-                // Week (round + rounds + 1)
-                _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + rounds + 1, HomeTeamId = away, AwayTeamId = home });
+                    if (i == 0) awayIdx = n - 1;
+
+                    int home = shuffledIds[homeIdx];
+                    int away = shuffledIds[awayIdx];
+
+                    // Alternate home/away for the pivot team (idx 0 in this logic)
+                    // and everyone else to ensure balance
+                    if (round % 2 == 1)
+                    {
+                        int temp = home;
+                        home = away;
+                        away = temp;
+                    }
+
+                    // Week (round + 1)
+                    _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + 1, HomeTeamId = home, AwayTeamId = away, CompetitionName = compName });
+                    
+                    // Construct the return match for the second half of the season
+                    // Week (round + rounds + 1)
+                    _db.LeagueFixtures.Add(new LeagueFixture { Season = season, Round = round + rounds + 1, HomeTeamId = away, AwayTeamId = home, CompetitionName = compName });
+                }
             }
         }
 

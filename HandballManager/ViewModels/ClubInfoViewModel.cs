@@ -17,6 +17,19 @@ public class TrophyViewModel : ObservableObject
 
 public partial class ClubInfoViewModel : BaseViewModel
 {
+    private static readonly Dictionary<string, string[]> HistoricalNames = new()
+    {
+        { "SCM Râmnicu Vâlcea", new[] { "Chimistul Râmnicu Vâlcea", "Oltchim Râmnicu Vâlcea", "CS Oltchim Râmnicu Vâlcea" } },
+        { "Universitatea București", new[] { "Știința București" } },
+        { "Universitatea Timișoara", new[] { "Știința Timișoara", "Universitatea Știința Timișoara" } },
+        { "HC Zalău", new[] { "Silcotub Zalău" } },
+        { "Minaur Baia Mare", new[] { "HCM Baia Mare" } },
+        { "CSM Corona Brașov", new[] { "Rulmentul Brașov" } },
+        { "Rapid București", new[] { "CS Rapid București", "Rapid CFR București" } },
+        { "CSM Bacău", new[] { "Universitatea Bacău", "Știința Bacău" } },
+        { "CSU Târgu Mureș", new[] { "Progresul Târgu Mureș", "Mureșul Târgu Mureș" } }
+    };
+
     private readonly HandballDbContext _db;
     private readonly ScoutingService _scouting;
     private readonly TransferService _transferService;
@@ -87,40 +100,62 @@ public partial class ClubInfoViewModel : BaseViewModel
 
         Trophies.Clear();
 
-        // 1. Liga Florilor Trophies
-        int leagueTitles = await _db.ChampionRecords.CountAsync(r => r.TeamId == Team.Id || r.TeamName == Team.Name);
+        // Use team name as the canonical key — historical records were seeded with the exact name
+        // from champions.json and the competition is always tagged. Count by name within competition
+        // to avoid double-counting (TeamId OR TeamName could hit the same row twice).
+
+        // 1. League titles (Liga Florilor or NB I depending on the team's competition)
+        string leagueComp = Team.CompetitionName ?? "Liga Florilor";
+        string leagueLabel = leagueComp == "NB I" ? "NB I" : "Liga Florilor";
+        string leagueTrophyImg = leagueComp == "NB I"
+            ? "pack://application:,,,/Assets/trophies/placeholdertrophy.png"
+            : "pack://application:,,,/Assets/trophies/ligaflorilor.png";
+
+        var teamNamesToMatch = new List<string> { Team.Name };
+        if (HistoricalNames.TryGetValue(Team.Name, out var pastNames))
+        {
+            teamNamesToMatch.AddRange(pastNames);
+        }
+
+        int leagueTitles = await _db.ChampionRecords
+            .CountAsync(r => r.CompetitionName == leagueComp && teamNamesToMatch.Contains(r.TeamName));
         if (leagueTitles > 0)
         {
             Trophies.Add(new TrophyViewModel
             {
-                Name = "Liga Florilor",
-                ImagePath = "pack://application:,,,/Assets/trophies/ligaflorilor.png",
+                Name = leagueLabel,
+                ImagePath = leagueTrophyImg,
                 Count = leagueTitles
             });
         }
 
-        // 2. Cupa României Trophies
-        int cupTitles = await _db.CupWinnerRecords.CountAsync(r => r.TeamId == Team.Id || r.TeamName == Team.Name);
-        if (cupTitles > 0)
+        // 2. Cupa României Trophies (Romanian teams only)
+        if (leagueComp == "Liga Florilor")
         {
-            Trophies.Add(new TrophyViewModel
+            int cupTitles = await _db.CupWinnerRecords
+                .CountAsync(r => teamNamesToMatch.Contains(r.TeamName));
+            if (cupTitles > 0)
             {
-                Name = "Cupa României",
-                ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
-                Count = cupTitles
-            });
-        }
+                Trophies.Add(new TrophyViewModel
+                {
+                    Name = "Cupa României",
+                    ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
+                    Count = cupTitles
+                });
+            }
 
-        // 3. Supercupa României Trophies
-        int supercupTitles = await _db.SupercupWinnerRecords.CountAsync(r => r.TeamId == Team.Id || r.TeamName == Team.Name);
-        if (supercupTitles > 0)
-        {
-            Trophies.Add(new TrophyViewModel
+            // 3. Supercupa României Trophies
+            int supercupTitles = await _db.SupercupWinnerRecords
+                .CountAsync(r => teamNamesToMatch.Contains(r.TeamName));
+            if (supercupTitles > 0)
             {
-                Name = "Supercupa României",
-                ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
-                Count = supercupTitles
-            });
+                Trophies.Add(new TrophyViewModel
+                {
+                    Name = "Supercupa României",
+                    ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
+                    Count = supercupTitles
+                });
+            }
         }
     }
 }

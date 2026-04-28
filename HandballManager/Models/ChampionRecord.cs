@@ -6,4 +6,5 @@ public class ChampionRecord
     public string Season { get; set; } = string.Empty;
     public string TeamName { get; set; } = string.Empty;
     public int? TeamId { get; set; }
+    public string CompetitionName { get; set; } = "Liga Florilor";
 }

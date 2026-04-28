@@ -22,58 +22,93 @@
             <TextBlock Text="CHOOSE YOUR COMPETITION" Foreground="#E94560" HorizontalAlignment="Center"
                        FontWeight="ExtraBold" FontSize="12" Margin="0,0,0,24"/>
 
-            <ListBox ItemsSource="{Binding Leagues}" SelectedItem="{Binding SelectedLeague}"
-                     Background="Transparent" BorderThickness="0" HorizontalAlignment="Center">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <!-- Card padding reduced from 35 to 24; trophy Viewbox shrunk from 70→52 -->
-                        <Border x:Name="LeagueCard" Background="#1E2A4A" CornerRadius="16" Width="280" Margin="15" Padding="24">
-                            <Border.BorderBrush>
-                                <SolidColorBrush Color="White" Opacity="0.05"/>
-                            </Border.BorderBrush>
-                            <Border.BorderThickness>1</Border.BorderThickness>
-                            <StackPanel HorizontalAlignment="Center">
-                                <Image Source="/Assets/leaguelogo/ligaflorilor.png" Height="100" Margin="0,0,0,18" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <TextBlock Text="{Binding Name}" Foreground="White" FontSize="24" FontWeight="Black" HorizontalAlignment="Center" TextAlignment="Center"/>
-                                <TextBlock Text="{Binding Country}" Foreground="#E94560" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                <Setter TargetName="LeagueCard" Property="BorderBrush" Value="#E94560"/>
-                                <Setter TargetName="LeagueCard" Property="BorderThickness" Value="2"/>
-                                <Setter TargetName="LeagueCard" Property="Background">
-                                    <Setter.Value>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                            <GradientStop Color="#2A3A6A" Offset="0"/>
-                                            <GradientStop Color="#1A2238" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <ContentPresenter />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
+            <Grid HorizontalAlignment="Center" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Arrow -->
+                <Button Grid.Column="0" Command="{Binding MoveToPreviousLeagueCommand}"
+                        VerticalAlignment="Center" Margin="0,0,20,0"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock Text="◀" FontSize="40" Foreground="#E94560" Opacity="0.8">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!-- League Card -->
+                <ContentControl Grid.Column="1" Content="{Binding SelectedLeague}">
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate>
+                            <Border x:Name="LeagueCard" Background="#1E2A4A" CornerRadius="20" Width="320" Padding="30">
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#E94560" Offset="0"/>
+                                        <GradientStop Color="#C73652" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                                <Border.BorderThickness>2</Border.BorderThickness>
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="25" Opacity="0.4" Color="#E94560" ShadowDepth="0"/>
+                                </Border.Effect>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <Image Source="{Binding Logo}" Height="140" Margin="0,0,0,20" 
+                                           HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="28" FontWeight="Black" 
+                                               HorizontalAlignment="Center" TextAlignment="Center"/>
+                                    <TextBlock Text="{Binding Country}" Foreground="#E94560" FontSize="16" FontWeight="Bold" 
+                                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+
+                <!-- Right Arrow -->
+                <Button Grid.Column="2" Command="{Binding MoveToNextLeagueCommand}"
+                        VerticalAlignment="Center" Margin="20,0,0,0"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock Text="▶" FontSize="40" Foreground="#E94560" Opacity="0.8">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
 
             <!-- Button top margin reduced from 50 → 20 -->
             <Button Content="CONTINUE TO TEAM SELECTION" Command="{Binding SelectLeagueCommand}"

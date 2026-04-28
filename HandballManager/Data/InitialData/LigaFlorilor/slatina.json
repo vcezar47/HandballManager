@@ -5,9 +5,9 @@
   "Budget": 1200000,
   "FoundedYear": 2009,
   "StadiumName": "Sala LPS Slatina",
-  "StadiumCapacity": 300,
+  "StadiumCapacity": 450,
   "StadiumImage": "salalpsslatina.jpg",
-  "Description": "A determined club focused on stability and local development, always fighting for every point in the league.",
+  "Description": "CSM Slatina is a newly promoted women's handball team competing in the Liga Florilor (Liga Națională) for the 2025–2026 season. A determined club focused on stability and local development, always fighting for every point in the league.",
   "IsPlayerTeam": false,
   "ClubReputation": "Local",
   "Manager": {
@@ -61,7 +61,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1630,
       "Birthdate": "1989-01-01"
     },
     {
@@ -101,12 +100,11 @@
       "Pace": 10,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 1230,
       "Birthdate": "1998-01-21"
     },
     {
       "FirstName": "Nicoleta",
-      "LastName": "Dinc\u0103",
+      "LastName": "Dincă",
       "ShirtNumber": 2,
       "Position": "LW",
       "Nationality": "ROU",
@@ -141,7 +139,6 @@
       "Strength": 11,
       "Flair": 10,
       "Leadership": 15,
-      "MonthlyWage": 1380,
       "Birthdate": "1989-01-01"
     },
     {
@@ -181,7 +178,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 10,
-      "MonthlyWage": 1380,
       "Birthdate": "1997-01-01"
     },
     {
@@ -221,7 +217,6 @@
       "Strength": 11,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1910,
       "Birthdate": "1997-01-01"
     },
     {
@@ -261,7 +256,6 @@
       "Strength": 10,
       "Flair": 10,
       "Leadership": 9,
-      "MonthlyWage": 1380,
       "Birthdate": "1995-01-01"
     },
     {
@@ -301,12 +295,11 @@
       "Strength": 14,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     },
     {
       "FirstName": "Andreea",
-      "LastName": "\u021a\u00eerle",
+      "LastName": "Țîrle",
       "ShirtNumber": 23,
       "Position": "Pivot",
       "Nationality": "ROU",
@@ -341,12 +334,11 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "2003-01-01"
     },
     {
       "FirstName": "Nikolina",
-      "LastName": "Vuk\u010devi\u0107",
+      "LastName": "Vukčević",
       "ShirtNumber": 97,
       "Position": "Pivot",
       "Nationality": "MNE",
@@ -381,12 +373,11 @@
       "Strength": 15,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1910,
       "Birthdate": "2001-01-01"
     },
     {
-      "FirstName": "Gr\u00e9ta",
-      "LastName": "K\u00e1csor",
+      "FirstName": "Gréta",
+      "LastName": "Kácsor",
       "ShirtNumber": 4,
       "Position": "LB",
       "Nationality": "HUN",
@@ -421,7 +412,6 @@
       "Strength": 14,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "2001-01-01"
     },
     {
@@ -461,7 +451,6 @@
       "Strength": 14,
       "Flair": 9,
       "Leadership": 12,
-      "MonthlyWage": 1460,
       "Birthdate": "1996-01-11"
     },
     {
@@ -501,7 +490,6 @@
       "Strength": 13,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 1550,
       "Birthdate": "1991-05-28"
     },
     {
@@ -541,12 +529,11 @@
       "Strength": 13,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1300,
       "Birthdate": "2007-01-01"
     },
     {
       "FirstName": "Tamara",
-      "LastName": "P\u00e1l",
+      "LastName": "Pál",
       "ShirtNumber": 14,
       "Position": "CB",
       "Nationality": "HUN",
@@ -581,7 +568,6 @@
       "Strength": 11,
       "Flair": 15,
       "Leadership": 12,
-      "MonthlyWage": 2450,
       "Birthdate": "2000-09-01"
     },
     {
@@ -621,12 +607,11 @@
       "Strength": 11,
       "Flair": 13,
       "Leadership": 14,
-      "MonthlyWage": 1910,
       "Birthdate": "1988-10-13"
     },
     {
       "FirstName": "Nada",
-      "LastName": "\u0106orovi\u0107",
+      "LastName": "Ćorović",
       "ShirtNumber": 43,
       "Position": "CB",
       "Nationality": "MNE",
@@ -661,7 +646,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2001-01-01"
     },
     {
@@ -701,12 +685,11 @@
       "Strength": 13,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1380,
       "Birthdate": "2001-01-01"
     },
     {
       "FirstName": "Aleksandra",
-      "LastName": "Vukajlovi\u0107",
+      "LastName": "Vukajlović",
       "ShirtNumber": 7,
       "Position": "RB",
       "Nationality": "SRB",
@@ -741,7 +724,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 11,
-      "MonthlyWage": 1630,
       "Birthdate": "1998-01-01"
     }
   ]

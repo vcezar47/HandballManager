@@ -163,11 +163,16 @@
                                 </Button.Style>
                             </Button>
 
-                            <!-- DEV TOOL: Fast-forward to end of season for balancing -->
-                            <!--<Button Content="&#x26A1; SIM TO END" Width="160" Height="50" Margin="14,0,0,0"
-                                    Foreground="#1A1A2E" FontSize="13" FontWeight="Black"
+                            <Button Width="160" Height="50" Margin="14,0,0,0"
+                                    Foreground="White" FontSize="12" FontWeight="Black"
                                     Command="{Binding SimulateToEndOfSeasonCommand}"
                                     IsEnabled="{Binding CanSimulateToEndOfSeason}">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="⚡" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="SIM SEASON" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button.Content>
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Template">
@@ -202,7 +207,7 @@
                                         </Setter>
                                     </Style>
                                 </Button.Style>
-                            </Button>-->
+                            </Button>
                             
                             <StackPanel Orientation="Horizontal" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" Margin="20,0,0,0">
                                 <TextBlock Text="&#x231B;" Foreground="#A0A8C0" VerticalAlignment="Center" FontSize="18"/>
@@ -226,7 +231,7 @@
                         <TextBlock Text="SEASON COMPLETED" FontSize="11" FontWeight="ExtraBold"
                                    Foreground="White" Opacity="0.8" FontFamily="Segoe UI"
                                    Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBlock Text="The Liga Florilor season has come to an end." FontSize="24" FontWeight="Black"
+                        <TextBlock Text="{Binding SeasonCompletedMessage}" FontSize="24" FontWeight="Black"
                                    Foreground="White" FontFamily="Segoe UI" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,20"/>
                         <Button Content="BEGIN NEW SEASON" Style="{StaticResource ActionButton}"
                                 Background="White" Foreground="#E94560" HorizontalAlignment="Center"

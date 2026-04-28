@@ -1,12 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandballManager.Data;
 using HandballManager.Models;
 using HandballManager.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace HandballManager.ViewModels;
 
 public partial class CompetitionsViewModel : BaseViewModel
 {
+    private readonly HandballDbContext _db;
     private readonly LeagueService _leagueService;
     private readonly CupService _cupService;
     private readonly SupercupService _supercupService;
@@ -26,8 +29,24 @@ public partial class CompetitionsViewModel : BaseViewModel
 
     [ObservableProperty]
     private List<SupercupFixture> _supercupFixtures = [];
+    
+    [ObservableProperty]
+    private string _competitionName = "Liga Florilor";
+    
+    [ObservableProperty]
+    private bool _isRomanianLeague;
+
+    [ObservableProperty]
+    private bool _isHungarianLeague;
+    
+    [ObservableProperty]
+    private string _leagueLogoPath = "/Assets/leaguelogo/ligaflorilor.png";
+
+    [ObservableProperty]
+    private string _cupLogoPath = "/Assets/leaguelogo/cuparomaniei.png";
 
     public CompetitionsViewModel(
+        HandballDbContext db,
         LeagueService leagueService,
         CupService cupService,
         SupercupService supercupService,
@@ -37,6 +56,7 @@ public partial class CompetitionsViewModel : BaseViewModel
         Action? onNavigateToSupercupDetail = null)
     {
         Title = "Competitions";
+        _db = db;
         _leagueService = leagueService;
         _cupService = cupService;
         _supercupService = supercupService;
@@ -48,21 +68,44 @@ public partial class CompetitionsViewModel : BaseViewModel
 
     public async Task InitializeAsync()
     {
-        LeagueStandings = await _leagueService.GetStandingsAsync();
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        CompetitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        IsRomanianLeague = CompetitionName == "Liga Florilor";
+        IsHungarianLeague = CompetitionName == "NB I";
+        
+        LeagueLogoPath = CompetitionName == "NB I" 
+            ? "/Assets/leaguelogo/nbi.png" 
+            : "/Assets/leaguelogo/ligaflorilor.png";
+
+        CupLogoPath = CompetitionName == "NB I"
+            ? "/Assets/leaguelogo/magyarkupa.png"
+            : "/Assets/leaguelogo/cuparomaniei.png";
+        
+        LeagueStandings = await _leagueService.GetStandingsAsync(CompetitionName);
         PlayerCupGroup = await _cupService.GetPlayerTeamGroupAsync();
 
         if (PlayerCupGroup != null)
-            CupGroupTitle = $"Cupa României — Group {PlayerCupGroup.GroupName}";
-
-        var knockout = await _supercupService.GetKnockoutFixturesAsync();
-        // Determine whether to show finals or semi finals based on if semis are played
-        if (knockout.Any(f => f.Round == "Final" || f.Round == "ThirdPlace"))
         {
-            SupercupFixtures = knockout.Where(f => f.Round == "Final" || f.Round == "ThirdPlace").ToList();
+            CupGroupTitle = CompetitionName == "NB I"
+                ? $"Magyar Kupa — Group {PlayerCupGroup.GroupName}"
+                : $"Cupa României — Group {PlayerCupGroup.GroupName}";
         }
         else
         {
-            SupercupFixtures = knockout.Where(f => f.Round == "SemiFinal").ToList();
+            CupGroupTitle = CompetitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+        }
+
+        if (IsRomanianLeague)
+        {
+            var knockout = await _supercupService.GetKnockoutFixturesAsync();
+            if (knockout.Any(f => f.Round == "Final" || f.Round == "ThirdPlace"))
+                SupercupFixtures = knockout.Where(f => f.Round == "Final" || f.Round == "ThirdPlace").ToList();
+            else
+                SupercupFixtures = knockout.Where(f => f.Round == "SemiFinal").ToList();
+        }
+        else
+        {
+            SupercupFixtures = [];
         }
     }
 

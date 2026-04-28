@@ -94,6 +94,9 @@
         <DataTemplate DataType="{x:Type vm:LiveMatchViewModel}">
             <views:LiveMatchView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:WorldLeaguesViewModel}">
+            <views:WorldLeaguesView />
+        </DataTemplate>
         <!-- Nav button style -->
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="Background"           Value="Transparent"/>
@@ -144,6 +147,7 @@
 
         <!-- Sidebar – explicit Width="200" so the Auto column knows its size when visible -->
         <Border Grid.Column="0" Width="200" Background="#16213E"
+                IsEnabled="{Binding CanNavigate}"
                 Visibility="{Binding IsGameStarted, Converter={StaticResource BoolToVis}}">
             <DockPanel>
                 <!-- Logo + history area -->
@@ -219,6 +223,8 @@
                     <Button Content="📊  Competitions"  Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToCompetitionsCommand}" 
                             Tag="CompetitionsViewModel,LeagueTableViewModel,CupDetailViewModel,SupercupDetailViewModel,LeagueHistoryViewModel,CupHistoryViewModel,SupercupHistoryViewModel"/>
+                    <Button Content="🌍  World Leagues" Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToWorldLeaguesCommand}" Tag="WorldLeaguesViewModel"/>
                     <Button Content="🔍  Scouting"      Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToScoutingCommand}" Tag="ScoutingViewModel"/>
                     <Button Content="💰  Finances"      Style="{StaticResource NavButton}"

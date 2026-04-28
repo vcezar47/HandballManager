@@ -52,22 +52,55 @@ public partial class StartViewModel : BaseViewModel
 
         Leagues = new List<LeagueInfo>
         {
-            new() { Name = "Liga Florilor", Country = "Romania", Logo = "/Assets/Leagues/liga_florilor.png" }
+            new() { Name = "Liga Florilor", Country = "Romania", Logo = "/Assets/leaguelogo/ligaflorilor.png" },
+            new() { Name = "NB I", Country = "Hungary", Logo = "/Assets/leaguelogo/nbi.png" }
         };
         SelectedLeague = Leagues.First();
     }
 
     public async Task InitializeAsync()
     {
-        Teams = await _db.Teams.ToListAsync();
+        await LoadTeamsForSelectedLeagueAsync();
+    }
+
+    [RelayCommand]
+    private void MoveToNextLeague()
+    {
+        if (Leagues == null || Leagues.Count == 0) return;
+        int index = Leagues.IndexOf(SelectedLeague!);
+        if (index < Leagues.Count - 1)
+        {
+            SelectedLeague = Leagues[index + 1];
+        }
+    }
+
+    [RelayCommand]
+    private void MoveToPreviousLeague()
+    {
+        if (Leagues == null || Leagues.Count == 0) return;
+        int index = Leagues.IndexOf(SelectedLeague!);
+        if (index > 0)
+        {
+            SelectedLeague = Leagues[index - 1];
+        }
+    }
+
+    private async Task LoadTeamsForSelectedLeagueAsync()
+    {
+        if (SelectedLeague == null) return;
+        
+        Teams = await _db.Teams
+            .Where(t => t.CompetitionName == SelectedLeague.Name)
+            .ToListAsync();
         SelectedTeam = Teams.FirstOrDefault();
     }
 
     [RelayCommand]
-    private void SelectLeague()
+    private async Task SelectLeague()
     {
         if (SelectedLeague != null)
         {
+            await LoadTeamsForSelectedLeagueAsync();
             CurrentStep = 2;
             Title = "Select Your Team";
         }

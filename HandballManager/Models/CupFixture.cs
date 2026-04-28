@@ -8,6 +8,7 @@ public class CupFixture
     public CupGroup? CupGroup { get; set; }
 
     public string Season { get; set; } = string.Empty;
+    public string CompetitionName { get; set; } = "Liga Florilor"; // "Liga Florilor" or "NB I"
 
     public int HomeTeamId { get; set; }
     public Team? HomeTeam { get; set; }

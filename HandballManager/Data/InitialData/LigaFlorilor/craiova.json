@@ -4,14 +4,14 @@
   "Nation": "Romania",
   "Budget": 1800000,
   "FoundedYear": 2006,
-  "StadiumName": "Sala Polivalent\u0103 Craiova",
+  "StadiumName": "Sala Polivalentă Craiova",
   "StadiumCapacity": 4215,
   "StadiumImage": "polivalentacraiova.jpg",
-  "Description": "A strong contender that made history by winning the EHF Cup, Craiova is a symbol of sporting pride in southern Romania.",
+  "Description": "SCM Craiova (Sport Club Municipal Craiova) is a major force in Romanian handball, most famous for their historic EHF Cup title in 2018 where they defeated Vipers Kristiansand in a dramatic final. Founded in 2006, the team competes in the Liga Națională and plays their home matches at the modern Sala Polivalentă, which has a capacity of 4,215 seats.",
   "IsPlayerTeam": false,
   "ClubReputation": "Regional",
   "Manager": {
-    "FirstName": "Costic\u0103",
+    "FirstName": "Costică",
     "LastName": "Buceschi",
     "Birthdate": "1970-05-18",
     "Nationality": "ROU",
@@ -26,7 +26,7 @@
   "Players": [
     {
       "FirstName": "Marina",
-      "LastName": "Raj\u010di\u0107",
+      "LastName": "Rajčić",
       "ShirtNumber": 1,
       "Position": "GK",
       "Nationality": "MNE",
@@ -61,7 +61,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 1230,
       "Birthdate": "1994-01-01"
     },
     {
@@ -101,7 +100,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "1982-08-25"
     },
     {
@@ -141,7 +139,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 12,
-      "MonthlyWage": 1550,
       "Birthdate": "1999-01-01"
     },
     {
@@ -181,12 +178,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "1999-11-11"
     },
     {
       "FirstName": "Ivona",
-      "LastName": "Pavi\u0107evi\u0107",
+      "LastName": "Pavićević",
       "ShirtNumber": 91,
       "Position": "LW",
       "Nationality": "MNE",
@@ -221,12 +217,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "2002-01-01"
     },
     {
-      "FirstName": "\u017deljka",
-      "LastName": "Nikoli\u0107",
+      "FirstName": "Željka",
+      "LastName": "Nikolić",
       "ShirtNumber": 14,
       "Position": "RW",
       "Nationality": "SRB",
@@ -261,7 +256,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "1991-07-12"
     },
     {
@@ -301,7 +295,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "2004-07-09"
     },
     {
@@ -341,12 +334,11 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1999-01-01"
     },
     {
       "FirstName": "Ainhoa",
-      "LastName": "Hern\u00e1ndez",
+      "LastName": "Hernández",
       "ShirtNumber": 44,
       "Position": "Pivot",
       "Nationality": "ESP",
@@ -381,7 +373,6 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1999-01-01"
     },
     {
@@ -421,12 +412,11 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "1998-11-07"
     },
     {
-      "FirstName": "\u0106amila",
-      "LastName": "Mi\u010dijevi\u0107",
+      "FirstName": "Ćamila",
+      "LastName": "Mičijević",
       "ShirtNumber": 8,
       "Position": "LB",
       "Nationality": "CRO",
@@ -461,12 +451,11 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "2001-01-01"
     },
     {
-      "FirstName": "Asl\u0131",
-      "LastName": "\u0130skit",
+      "FirstName": "Aslı",
+      "LastName": "İskit",
       "ShirtNumber": 9,
       "Position": "LB",
       "Nationality": "TUR",
@@ -501,7 +490,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "1995-01-01"
     },
     {
@@ -541,7 +529,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2001-01-01"
     },
     {
@@ -581,12 +568,11 @@
       "Strength": 11,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1300,
       "Birthdate": "1992-06-10"
     },
     {
       "FirstName": "Valentina",
-      "LastName": "Bla\u017eevi\u0107",
+      "LastName": "Blažević",
       "ShirtNumber": 77,
       "Position": "CB",
       "Nationality": "CRO",
@@ -621,7 +607,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1910,
       "Birthdate": "1994-02-14"
     },
     {
@@ -661,7 +646,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 1820,
       "Birthdate": "2001-01-01"
     },
     {
@@ -701,7 +685,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2001-01-01"
     },
     {
@@ -741,12 +724,11 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "2001-01-01"
     },
     {
       "FirstName": "Alicia",
-      "LastName": "Gog\u00eerl\u0103",
+      "LastName": "Gogîrlă",
       "ShirtNumber": 71,
       "Position": "RB",
       "Nationality": "ROU",
@@ -781,7 +763,6 @@
       "Strength": 14,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "2004-01-01"
     }
   ]

@@ -10,7 +10,7 @@ public class TeamLogoPathConverter : IValueConverter
     {
         if (value is string logoPath && !string.IsNullOrEmpty(logoPath))
         {
-            return $"/Assets/teamlogo/Romania/{logoPath}";
+            return $"/Assets/teamlogo/{logoPath}";
         }
         return null;
     }

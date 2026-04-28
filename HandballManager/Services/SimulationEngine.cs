@@ -34,7 +34,7 @@ public class SimulationEngine
     /// <summary>
     /// Simulates all matches for the specified matchweek.
     /// </summary>
-    public async Task<List<MatchRecord>> SimulateMatchweekAsync(int matchweek)
+    public async Task<List<MatchRecord>> SimulateMatchweekAsync(int matchweek, string competitionName = "Liga Florilor")
     {
         // One-time repair for any old 0-0 or incorrect progression data
         await SyncTournamentFixturesWithRecordsAsync();
@@ -43,12 +43,12 @@ public class SimulationEngine
         await _leagueService.GenerateSeasonFixturesAsync();
 
         // Process daily progression for all elapsed days since last processing
-        var matchDate = LeagueService.GetMatchweekDate(matchweek);
+        var matchDate = LeagueService.GetMatchweekDate(matchweek, competitionName);
         await ProcessDailyProgressionAsync(matchDate);
 
         string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
         var fixtures = await _db.LeagueFixtures
-            .Where(f => f.Season == season && f.Round == matchweek && !f.IsPlayed)
+            .Where(f => f.Season == season && f.Round == matchweek && !f.IsPlayed && f.CompetitionName == competitionName)
             .ToListAsync();
 
         var results = new List<MatchRecord>();
@@ -62,6 +62,33 @@ public class SimulationEngine
 
         await _db.SaveChangesAsync();
         return results;
+    }
+
+    public async Task SimulateAllLeaguesForDateAsync(DateTime date)
+    {
+        // Process daily progression for this date first
+        await ProcessDailyProgressionAsync(date);
+
+        var competitions = await _db.Teams.Select(t => t.CompetitionName).Distinct().ToListAsync();
+        foreach (var comp in competitions)
+        {
+            int mw = LeagueService.GetMatchweekForDate(date, comp);
+            if (mw > 0)
+            {
+                string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+                var fixtures = await _db.LeagueFixtures
+                    .Where(f => f.Season == season && f.Round == mw && !f.IsPlayed && f.CompetitionName == comp)
+                    .ToListAsync();
+
+                foreach (var fixture in fixtures)
+                {
+                    var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, mw);
+                    fixture.IsPlayed = true;
+                    fixture.MatchRecord = result;
+                }
+            }
+        }
+        await _db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -242,7 +269,7 @@ public class SimulationEngine
         // Simulate rest
         if (leagueFix != null && !isCup && !isSupercup)
         {
-            await SimulateMatchweekAsync(matchweekNumber);
+            await SimulateAllLeaguesForDateAsync(playDate);
         }
         else if (isCup)
         {
@@ -448,7 +475,7 @@ public class SimulationEngine
             AwayTeamName = awayTeam.Name,
             HomeTeamLogo = homeTeam.LogoPath,
             AwayTeamLogo = awayTeam.LogoPath,
-            PlayedOn = playedOnOverride ?? LeagueService.GetMatchweekDate(matchweek),
+            PlayedOn = playedOnOverride ?? LeagueService.GetMatchweekDate(matchweek, homeTeam.CompetitionName),
             MatchweekNumber = matchweek,
             IsCupMatch = isCupMatch,
             CupRound = cupRound,
@@ -833,59 +860,72 @@ public class SimulationEngine
             .Include(e => e.Team)
             .ToListAsync();
 
-        // Determine Champion before wiping entries
-        var winnerEntry = allEntries
+        // Determine Champions for each competition before wiping entries
+        var competitions = allEntries.Select(e => e.CompetitionName).Distinct().ToList();
+        foreach (var comp in competitions)
+        {
+            var winnerEntry = allEntries
+                .Where(e => e.CompetitionName == comp)
+                .OrderByDescending(e => e.Points)
+                .ThenByDescending(e => e.GoalDifference)
+                .ThenByDescending(e => e.GoalsFor)
+                .FirstOrDefault();
+
+            if (winnerEntry?.Team != null)
+            {
+                var champRecord = new ChampionRecord
+                {
+                    Season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}",
+                    TeamName = winnerEntry.Team.Name,
+                    TeamId = winnerEntry.Team.Id,
+                    CompetitionName = comp
+                };
+                _db.ChampionRecords.Add(champRecord);
+            }
+        }
+
+        // --- Romanian Cup & Supercup Processing ---
+        var sortedRomanianTeams = allEntries
+            .Where(e => e.CompetitionName == "Liga Florilor" && e.Team != null)
             .OrderByDescending(e => e.Points)
             .ThenByDescending(e => e.GoalDifference)
             .ThenByDescending(e => e.GoalsFor)
-            .FirstOrDefault();
+            .Select(e => e.Team!)
+            .ToList();
 
-        // Prepare Supercup participants while standings are still intact
-        var sortedLeagueTeams = allEntries.OrderByDescending(e => e.Points)
-            .ThenByDescending(e => e.GoalDifference)
-            .ThenByDescending(e => e.GoalsFor)
-            .Where(e => e.Team != null)
-            .Select(e => e.Team!).ToList();
-
-        // Record Cup winner and prepare finalists
         string currentSeasonStr = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
-        var cupFinal = await _db.CupFixtures
-            .Include(f => f.HomeTeam)
-            .Include(f => f.AwayTeam)
-            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr);
+
+        // Record Romanian cup winner
+        var roCupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam).Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr && f.CompetitionName == "Liga Florilor");
 
         var cupFinalists = new List<Team>();
-        if (cupFinal != null)
+        if (roCupFinal != null)
         {
-            var cupWinner = cupFinal.HomeGoals > cupFinal.AwayGoals ? cupFinal.HomeTeam : cupFinal.AwayTeam;
+            var cupWinner = roCupFinal.HomeGoals > roCupFinal.AwayGoals ? roCupFinal.HomeTeam
+                : (roCupFinal.HomeGoals == roCupFinal.AwayGoals && roCupFinal.HomePenaltyGoals > roCupFinal.AwayPenaltyGoals) ? roCupFinal.HomeTeam : roCupFinal.AwayTeam;
             if (cupWinner != null)
-            {
-                var cupRecord = new CupWinnerRecord
-                {
-                    Season = currentDate.Year.ToString(),
-                    TeamName = cupWinner.Name,
-                    TeamId = cupWinner.Id
-                };
-                _db.CupWinnerRecords.Add(cupRecord);
-            }
-
-            if (cupFinal.HomeTeam != null) cupFinalists.Add(cupFinal.HomeTeam);
-            if (cupFinal.AwayTeam != null) cupFinalists.Add(cupFinal.AwayTeam);
+                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = cupWinner.Name, TeamId = cupWinner.Id, CompetitionName = "Liga Florilor" });
+            if (roCupFinal.HomeTeam != null) cupFinalists.Add(roCupFinal.HomeTeam);
+            if (roCupFinal.AwayTeam != null) cupFinalists.Add(roCupFinal.AwayTeam);
         }
 
-        await _supercupService.GenerateNextSupercupAsync(sortedLeagueTeams, cupFinalists);
-        await _cupService.ClearSeasonDataAsync();
-
-        if (winnerEntry?.Team != null)
+        // Record Hungarian cup winner
+        var huCupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam).Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr && f.CompetitionName == "NB I");
+        if (huCupFinal != null)
         {
-            var champRecord = new ChampionRecord
-            {
-                Season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}",
-                TeamName = winnerEntry.Team.Name,
-                TeamId = winnerEntry.Team.Id
-            };
-            _db.ChampionRecords.Add(champRecord);
+            var huWinner = huCupFinal.HomeGoals > huCupFinal.AwayGoals ? huCupFinal.HomeTeam
+                : (huCupFinal.HomeGoals == huCupFinal.AwayGoals && huCupFinal.HomePenaltyGoals > huCupFinal.AwayPenaltyGoals) ? huCupFinal.HomeTeam : huCupFinal.AwayTeam;
+            if (huWinner != null)
+                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = huWinner.Name, TeamId = huWinner.Id, CompetitionName = "NB I" });
         }
+
+        await _supercupService.GenerateNextSupercupAsync(sortedRomanianTeams, cupFinalists);
+        await _cupService.ClearSeasonDataAsync();
+        // ------------------------------------------
 
         foreach (var entry in allEntries)
         {

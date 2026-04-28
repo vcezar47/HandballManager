@@ -14,6 +14,7 @@ public class LeagueEntry
     public int GoalsAgainst { get; set; }
     public int Points => Won * 2 + Drawn;
     public int GoalDifference => GoalsFor - GoalsAgainst;
+    public string CompetitionName { get; set; } = "Liga Florilor"; // Default for existing data
 
     /// <summary>Set by LeagueService after sorting. Not persisted to DB.</summary>
     public int Rank { get; set; }

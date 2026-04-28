@@ -73,14 +73,14 @@
         <Grid MaxWidth="1200" HorizontalAlignment="Center" Margin="40,30">
             <StackPanel>
                 <!-- Header -->
-                <TextBlock Text="CUPA ROMÂNIEI" FontSize="11" FontWeight="ExtraBold"
+                <TextBlock Text="{Binding CupDisplayName}" FontSize="11" FontWeight="ExtraBold"
                            Foreground="#E94560" FontFamily="Segoe UI" Margin="4,0,0,10"/>
-                <Button Command="{Binding ViewCupHistoryCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" HorizontalAlignment="Left">
+                <Button Command="{Binding ViewCupHistoryCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" HorizontalAlignment="Left" x:Name="HistoryBtn">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Assets/leaguelogo/cuparomaniei.png" Width="40" Height="40" Margin="0,0,16,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <TextBlock Text="Cupa României" FontSize="36" FontWeight="Black"
+                                <Image Source="{Binding DataContext.CupLogoPath, RelativeSource={RelativeSource AncestorType=UserControl}}" Width="40" Height="40" Margin="0,0,16,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <TextBlock Text="{Binding DataContext.CupDisplayName, RelativeSource={RelativeSource AncestorType=UserControl}}" FontSize="36" FontWeight="Black"
                                            Foreground="White" FontFamily="Segoe UI" VerticalAlignment="Center" x:Name="HeaderText"/>
                             </StackPanel>
                             <ControlTemplate.Triggers>
@@ -319,52 +319,54 @@
                             <DropShadowEffect BlurRadius="30" Opacity="0.2" ShadowDepth="5"/>
                         </Border.Effect>
                         <StackPanel>
-                            <!-- Quarter-Finals -->
-                            <TextBlock Text="QUARTER-FINALS" FontSize="13" FontWeight="ExtraBold"
-                                       Foreground="#E94560" FontFamily="Segoe UI" Margin="0,0,0,16"/>
-                            <ItemsControl ItemsSource="{Binding QuarterFinals}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#1A2238" CornerRadius="12" Padding="20,12" Margin="0,0,0,8" HorizontalAlignment="Stretch">
-                                            <Border.BorderBrush>
-                                                <SolidColorBrush Color="White" Opacity="0.05"/>
-                                            </Border.BorderBrush>
-                                            <Border.BorderThickness>1</Border.BorderThickness>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding HomeTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="10,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                                </StackPanel>
-                                                <Border Grid.Column="1" Background="#16213E" CornerRadius="10" Padding="12,4" HorizontalAlignment="Center">
-                                                    <TextBlock Text="{Binding ScoreDisplay}" Foreground="#E94560" FontSize="16" FontWeight="Black" TextAlignment="Center"/>
-                                                </Border>
-                                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                                    <TextBlock Text="{Binding AwayTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Text="Quarter-finals will be determined after the group stage."
-                                       Foreground="#555577" FontStyle="Italic" FontFamily="Segoe UI" Margin="0,4,0,0">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding QuarterFinals.Count}" Value="0">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                            <!-- Quarter-Finals (HIDDEN FOR HUNGARY) -->
+                            <StackPanel Visibility="{Binding IsHungarianCup, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
+                                <TextBlock Text="QUARTER-FINALS" FontSize="13" FontWeight="ExtraBold"
+                                           Foreground="#E94560" FontFamily="Segoe UI" Margin="0,0,0,16"/>
+                                <ItemsControl ItemsSource="{Binding QuarterFinals}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A2238" CornerRadius="12" Padding="20,12" Margin="0,0,0,8" HorizontalAlignment="Stretch">
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="White" Opacity="0.05"/>
+                                                </Border.BorderBrush>
+                                                <Border.BorderThickness>1</Border.BorderThickness>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="150"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding HomeTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                        <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="10,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                                    </StackPanel>
+                                                    <Border Grid.Column="1" Background="#16213E" CornerRadius="10" Padding="12,4" HorizontalAlignment="Center">
+                                                        <TextBlock Text="{Binding ScoreDisplay}" Foreground="#E94560" FontSize="16" FontWeight="Black" TextAlignment="Center"/>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                        <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                                        <TextBlock Text="{Binding AwayTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="Quarter-finals will be determined after the group stage."
+                                           Foreground="#555577" FontStyle="Italic" FontFamily="Segoe UI" Margin="0,4,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding QuarterFinals.Count}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
 
                             <!-- Semi-Finals -->
                             <TextBlock Text="SEMI-FINALS" FontSize="13" FontWeight="ExtraBold"

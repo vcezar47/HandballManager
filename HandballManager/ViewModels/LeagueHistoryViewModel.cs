@@ -10,7 +10,7 @@ public class TeamTitleSummary
 {
     public string TeamName { get; set; } = string.Empty;
     public int Count { get; set; }
-    public string LogoPath { get; set; } = string.Empty;
+    public int Rank { get; set; }
 }
 
 public partial class LeagueHistoryViewModel : BaseViewModel
@@ -25,9 +25,9 @@ public partial class LeagueHistoryViewModel : BaseViewModel
         { "Știința Timișoara", "Universitatea Timișoara" },
         { "Universitatea Știința Timișoara", "Universitatea Timișoara" },
         { "Silcotub Zalău", "HC Zalău" },
-        { "HCM Baia Mare", "CS Minaur Baia Mare" },
+        { "HCM Baia Mare", "Minaur Baia Mare" },
         { "Rulmentul Brașov", "CSM Corona Brașov" },
-        { "Rapid București", "CS Rapid București" }
+        { "CS Rapid București", "Rapid București" }
     };
 
     [ObservableProperty]
@@ -36,37 +36,57 @@ public partial class LeagueHistoryViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<TeamTitleSummary> _medalTable = new();
 
+    [ObservableProperty]
+    private string _competitionName = "Liga Florilor";
+    
+    [ObservableProperty]
+    private bool _isRomanianLeague;
+
     public LeagueHistoryViewModel(HandballDbContext db)
     {
         Title = "League History";
         _db = db;
     }
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(string? competitionOverride = null)
     {
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        CompetitionName = competitionOverride ?? playerTeam?.CompetitionName ?? "Liga Florilor";
+        IsRomanianLeague = CompetitionName == "Liga Florilor";
+
         var records = await _db.ChampionRecords
-            .OrderByDescending(c => c.Id)
+            .Where(c => c.CompetitionName == CompetitionName)
             .ToListAsync();
 
-        var teams = await _db.Teams.ToListAsync();
+        // Sort by season descending (extracting the end year from "2024/2025")
+        var sortedRecords = records
+            .OrderByDescending(c => int.Parse(c.Season.Split('/')[1]))
+            .ToList();
 
-        Champions = new ObservableCollection<ChampionRecord>(records);
+        var teams = await _db.Teams
+            .Where(t => t.CompetitionName == CompetitionName)
+            .ToListAsync();
+
+        Champions = new ObservableCollection<ChampionRecord>(sortedRecords);
 
         var summary = records
             .GroupBy(r => NameMapping.TryGetValue(r.TeamName, out var modern) ? modern : r.TeamName)
             .Select(g => 
             {
-                var team = teams.FirstOrDefault(t => t.Name == g.Key);
                 return new TeamTitleSummary 
                 { 
                     TeamName = g.Key, 
-                    Count = g.Count(),
-                    LogoPath = team?.LogoPath ?? string.Empty
+                    Count = g.Count()
                 };
             })
             .OrderByDescending(s => s.Count)
             .ThenBy(s => s.TeamName)
             .ToList();
+
+        for (int i = 0; i < summary.Count; i++)
+        {
+            summary[i].Rank = i + 1;
+        }
 
         MedalTable = new ObservableCollection<TeamTitleSummary>(summary);
     }

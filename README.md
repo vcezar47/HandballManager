@@ -16,14 +16,19 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 
 ## Current In-game Competitions
 
-*   **Romania Women's Handball League (Liga Florilor)**
-*   **Romania Women's Handball Cup (Cupa Romaniei)**
-*   **Romania Women's Handball Supercup (Supercupa Romaniei)**
+*   <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball League (Liga Florilor)**
+*   <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball Cup (Cupa Romaniei)**
+*   <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball Supercup (Supercupa Romaniei)**
+*   <img src="HandballManager/Assets/flags/hungary.png" height="15"> **Hungary Women's Handball League (NB I)**
+*   <img src="HandballManager/Assets/flags/hungary.png" height="15"> **Hungary Women's Handball Cup (Magyar Kupa)**
 
 ## Upcoming Competitions
 
-*   **Hungary Women's Handball League (NB I)**
-*   **Hungary Women's Handball Cup (Magyar Kupa)**
+*   <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball League (LFH Division 1)**
+*   <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball Cup (Coupe de France)**
+*   <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball League (Kvindeligaen)**
+*   <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball Cup**
+*   <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball SuperCup**
 
 ## Recently added Features
 
@@ -39,6 +44,9 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 *   **Squad selection before games**
 *   **In-depth match simulation (time-outs, substitutions etc.)**
 *   **UI Improvements**
+*   **----- 29.04.2026 Late April Update -----**
+*   **Hungary Women's Handball League (NB I) added**
+*   **Hungary Women's Handball Cup (Magyar Kupa) added**
 
 ## Upcoming Features
 

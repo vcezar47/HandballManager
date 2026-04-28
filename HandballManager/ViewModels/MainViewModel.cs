@@ -35,6 +35,9 @@ public partial class MainViewModel : BaseViewModel
     private bool _canGoForward;
 
     [ObservableProperty]
+    private bool _canNavigate = true;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingOffers))]
     private int _pendingOfferCount;
 
@@ -67,6 +70,7 @@ public partial class MainViewModel : BaseViewModel
     public NewsViewModel NewsVM { get; }
     public YouthViewModel YouthVM { get; }
     public StartViewModel StartVM { get; }
+    public WorldLeaguesViewModel WorldLeaguesVM { get; }
     public SquadSelectionViewModel? SquadSelectionVM { get; private set; }
     public LiveMatchViewModel? LiveMatchVM { get; private set; }
 
@@ -92,12 +96,12 @@ public partial class MainViewModel : BaseViewModel
         });
         HomeVM = new HomeViewModel(db, leagueService, simulationEngine, cupService, supercupService, clock, NavigateToMatchDetail, NavigateToSquadSelection);
         RosterVM = new RosterViewModel(db, NavigateToPlayerDetail, OpenContractRenewal);
-        LeagueTableVM = new LeagueTableViewModel(leagueService, NavigateToTeamRoster, async () => await NavigateToLeagueHistoryAsync());
-        CompetitionsVM = new CompetitionsViewModel(leagueService, cupService, supercupService, NavigateToTeamRoster,
+        LeagueTableVM = new LeagueTableViewModel(db, leagueService, NavigateToTeamRoster, async (comp) => await NavigateToLeagueHistoryAsync(comp));
+        CompetitionsVM = new CompetitionsViewModel(db, leagueService, cupService, supercupService, NavigateToTeamRoster,
             async () => await NavigateToLeagueDetailAsync(),
             async () => await NavigateToCupDetailAsync(),
             async () => await NavigateToSupercupDetailAsync());
-        CupDetailVM = new CupDetailViewModel(cupService, NavigateToTeamRoster, async () => await NavigateToCupHistoryAsync());
+        CupDetailVM = new CupDetailViewModel(cupService, db, NavigateToTeamRoster, async (comp) => await NavigateToCupHistoryAsync(comp));
         ScoutingVM = new ScoutingViewModel(db, clock, scouting, NavigateToPlayerDetail, _transferService, OpenTransferNegotiation);
         LeagueHistoryVM = new LeagueHistoryViewModel(db);
         CupHistoryVM = new CupHistoryViewModel(db);
@@ -108,6 +112,13 @@ public partial class MainViewModel : BaseViewModel
         TransfersVM = new TransfersViewModel(db, transferService, clock, RefreshPendingOfferCountAsync, OpenTransferNegotiation); 
         NewsVM = new NewsViewModel(db, RefreshUnreadNewsCountAsync);
         YouthVM = new YouthViewModel(db, clock, youthIntakeService, transferService, OpenYouthSign, OpenYouthDetail);
+        WorldLeaguesVM = new WorldLeaguesViewModel(
+            db, leagueService, cupService, supercupService,
+            onTeamSelected: NavigateToTeamRoster,
+            onNavigateToLeagueDetail: async (comp) => await NavigateToLeagueDetailAsync(comp),
+            onNavigateToLeagueHistory: async (comp) => await NavigateToLeagueHistoryAsync(comp),
+            onNavigateToCupDetail: async (comp) => await NavigateToCupDetailAsync(comp),
+            onNavigateToSupercupDetail: async () => await NavigateToSupercupDetailAsync());
 
         _currentViewModel = MainMenuVM;
 
@@ -232,11 +243,13 @@ public partial class MainViewModel : BaseViewModel
         {
             CanGoBack = false;
             CanGoForward = false;
+            CanNavigate = false;
         }
         else
         {
             CanGoBack = _backStack.Count > 0;
             CanGoForward = _forwardStack.Count > 0;
+            CanNavigate = true;
         }
     }
 
@@ -332,16 +345,23 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToLeagueDetailAsync()
+    private async Task NavigateToWorldLeaguesAsync()
     {
-        await LeagueTableVM.InitializeAsync();
+        await WorldLeaguesVM.InitializeAsync();
+        NavigateTo(WorldLeaguesVM);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToLeagueDetailAsync(string? competitionName = null)
+    {
+        await LeagueTableVM.InitializeAsync(competitionName);
         NavigateTo(LeagueTableVM);
     }
 
     [RelayCommand]
-    private async Task NavigateToCupDetailAsync()
+    private async Task NavigateToCupDetailAsync(string? competitionName = null)
     {
-        await CupDetailVM.InitializeAsync();
+        await CupDetailVM.InitializeAsync(competitionName);
         NavigateTo(CupDetailVM);
     }
 
@@ -353,16 +373,16 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToLeagueHistoryAsync()
+    private async Task NavigateToLeagueHistoryAsync(string? competitionName = null)
     {
-        await LeagueHistoryVM.InitializeAsync();
+        await LeagueHistoryVM.InitializeAsync(competitionName);
         NavigateTo(LeagueHistoryVM);
     }
 
     [RelayCommand]
-    private async Task NavigateToCupHistoryAsync()
+    private async Task NavigateToCupHistoryAsync(string? competitionName = null)
     {
-        await CupHistoryVM.InitializeAsync();
+        await CupHistoryVM.InitializeAsync(competitionName);
         NavigateTo(CupHistoryVM);
     }
 

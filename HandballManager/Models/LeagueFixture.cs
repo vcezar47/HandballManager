@@ -12,5 +12,6 @@ public class LeagueFixture
 
     public Team HomeTeam { get; set; } = null!;
     public Team AwayTeam { get; set; } = null!;
+    public string CompetitionName { get; set; } = "Liga Florilor";
     public MatchRecord? MatchRecord { get; set; }
 }

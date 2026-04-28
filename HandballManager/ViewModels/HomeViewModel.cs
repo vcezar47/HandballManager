@@ -62,6 +62,9 @@ public partial class HomeViewModel : BaseViewModel
     private bool _isSeasonOver;
 
     [ObservableProperty]
+    private string _seasonCompletedMessage = string.Empty;
+
+    [ObservableProperty]
     private bool _canBeginNewSeason;
 
     [ObservableProperty]
@@ -102,13 +105,16 @@ public partial class HomeViewModel : BaseViewModel
 
     public async Task InitializeAsync()
     {
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        string competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+
         if (CurrentDate == default)
             CurrentDate = _clock.CurrentDate.Date;
 
         await _leagueService.GenerateSeasonFixturesAsync();
         await BuildAllEventDatesAsync();
         await UpdateNextFixtureAsync(setViewedMatchweekDefault: true);
-        await LoadMatchweekResultsAsync();
+        await LoadMatchweekResultsAsync(competitionName);
 
         MatchSimulated = false;
         UpdateCalendarState();
@@ -119,35 +125,42 @@ public partial class HomeViewModel : BaseViewModel
     /// </summary>
     private async Task BuildAllEventDatesAsync()
     {
-        var leagueDates = LeagueService.MatchweekDates.ToList();
-        var cupDates = await _cupService.GetAllCupDatesAsync();
-        var supercupDates = await _supercupService.GetAllDatesAsync();
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        string comp = playerTeam?.CompetitionName ?? "Liga Florilor";
 
+        var leagueDates = LeagueService.GetMatchweekDates(comp).ToList();
         var allDates = new HashSet<DateTime>(leagueDates);
-        foreach (var cd in cupDates)
-            allDates.Add(cd.Date);
-        foreach (var sd in supercupDates)
-            allDates.Add(sd.Date);
+
+        // Add cup and supercup dates for the relevant competition
+        var cupDates = await _cupService.GetAllCupDatesAsync(comp);
+        var supercupDates = await _supercupService.GetAllDatesAsync();
+        
+        foreach (var cd in cupDates) allDates.Add(cd.Date);
+        // Only Romanian Supercup exists currently
+        if (comp == "Liga Florilor")
+        {
+            foreach (var sd in supercupDates) allDates.Add(sd.Date);
+        }
 
         _allEventDates = allDates.OrderBy(d => d).ToList();
     }
 
-    private async Task LoadMatchweekResultsAsync()
+    private async Task LoadMatchweekResultsAsync(string competitionName = "Liga Florilor")
     {
         if (_allEventDates.Count == 0) return;
 
         var date = _allEventDates[_viewedEventIndex];
 
         // Get league results for this date (by matchweek)
-        var leagueMatchweekIndex = LeagueService.MatchweekDates.IndexOf(date);
+        var leagueMatchweekIndex = LeagueService.GetMatchweekDates(competitionName).IndexOf(date);
         var leagueResults = new List<MatchRecord>();
         if (leagueMatchweekIndex >= 0)
         {
             var matchweek = leagueMatchweekIndex + 1;
-            leagueResults = await _leagueService.GetResultsForMatchweekAsync(matchweek);
+            leagueResults = await _leagueService.GetResultsForMatchweekAsync(matchweek, competitionName);
             
             // Add unplayed league fixtures as stubs
-            var unplayedLeague = await _leagueService.GetFixturesForRoundAsync(matchweek);
+            var unplayedLeague = await _leagueService.GetFixturesForRoundAsync(matchweek, competitionName);
             foreach (var f in unplayedLeague.Where(f => !f.IsPlayed))
             {
                 leagueResults.Add(new MatchRecord
@@ -168,14 +181,19 @@ public partial class HomeViewModel : BaseViewModel
             }
         }
 
-        // Get cup results for this date
-        var cupResults = await _db.MatchRecords
+        // Get cup results for this date (filtered by competition)
+        var cupResults = new List<MatchRecord>();
+        
+        // Load cup results for the current competition
+        var playedCup = await _db.MatchRecords
             .Where(m => m.IsCupMatch && m.PlayedOn.Date == date.Date)
+            .Where(m => _db.Teams.Any(t => t.Id == m.HomeTeamId && t.CompetitionName == competitionName))
             .OrderBy(m => m.Id)
             .ToListAsync();
+        cupResults.AddRange(playedCup);
 
         // Also get unplayed cup fixtures for this date
-        var unplayedCupFixtures = await _cupService.GetFixturesForDateAsync(date);
+        var unplayedCupFixtures = await _cupService.GetFixturesForDateAsync(date, competitionName);
         foreach (var f in unplayedCupFixtures.Where(f => !f.IsPlayed))
         {
             // Create a temporary stub record for display
@@ -196,35 +214,53 @@ public partial class HomeViewModel : BaseViewModel
             });
         }
         
-        var unplayedSupercupFixtures = await _supercupService.GetFixturesForDateAsync(date);
-        foreach (var f in unplayedSupercupFixtures.Where(f => !f.IsPlayed))
+        if (competitionName == "Liga Florilor")
         {
-            cupResults.Add(new MatchRecord
+            var unplayedSupercupFixtures = await _supercupService.GetFixturesForDateAsync(date);
+            foreach (var f in unplayedSupercupFixtures.Where(f => !f.IsPlayed))
             {
-                Id = -1,
-                HomeTeamId = f.HomeTeamId,
-                AwayTeamId = f.AwayTeamId,
-                HomeTeamName = f.HomeTeam?.Name ?? "TBD",
-                AwayTeamName = f.AwayTeam?.Name ?? "TBD",
-                HomeTeamLogo = f.HomeTeam?.LogoPath ?? "",
-                AwayTeamLogo = f.AwayTeam?.LogoPath ?? "",
-                HomeGoals = 0,
-                AwayGoals = 0,
-                IsCupMatch = true,
-                CupRound = f.Round == "SemiFinal" ? "Supercup Semi-Final" : (f.Round == "Final" ? "Supercup Final" : "Supercup 3rd Place"),
-                PlayedOn = f.ScheduledDate
-            });
+                cupResults.Add(new MatchRecord
+                {
+                    Id = -1,
+                    HomeTeamId = f.HomeTeamId,
+                    AwayTeamId = f.AwayTeamId,
+                    HomeTeamName = f.HomeTeam?.Name ?? "TBD",
+                    AwayTeamName = f.AwayTeam?.Name ?? "TBD",
+                    HomeTeamLogo = f.HomeTeam?.LogoPath ?? "",
+                    AwayTeamLogo = f.AwayTeam?.LogoPath ?? "",
+                    HomeGoals = 0,
+                    AwayGoals = 0,
+                    IsCupMatch = true,
+                    CupRound = f.Round == "SemiFinal" ? "Supercup Semi-Final" : (f.Round == "Final" ? "Supercup Final" : "Supercup 3rd Place"),
+                    PlayedOn = f.ScheduledDate
+                });
+            }
         }
 
         MatchweekResults = leagueResults.Concat(cupResults).ToList();
 
         // Build header text
-        if (leagueMatchweekIndex >= 0 && cupResults.Any())
-            MatchweekDateText = $"Matchweek {leagueMatchweekIndex + 1} + Cupa României • {date:dddd, MMM d, yyyy}";
+        bool hasSupercup = cupResults.Any(r => r.IsCupMatch && 
+            (r.CupRound?.Contains("Supercup", StringComparison.OrdinalIgnoreCase) == true || 
+             r.CupRound?.Contains("Szuperkupa", StringComparison.OrdinalIgnoreCase) == true ||
+             r.CupRound?.Contains("Supercupa", StringComparison.OrdinalIgnoreCase) == true));
+        
+        bool hasCup = cupResults.Any(r => r.IsCupMatch && !hasSupercup);
+        
+        string compCupName = competitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+        string compSupercupName = competitionName == "NB I" ? "Szuperkupa" : "Supercupa României";
+
+        if (leagueMatchweekIndex >= 0 && (hasCup || hasSupercup))
+        {
+            string tournamentPart = hasSupercup ? compSupercupName : compCupName;
+            MatchweekDateText = $"Matchweek {leagueMatchweekIndex + 1} + {tournamentPart} • {date:dddd, MMM d, yyyy}";
+        }
         else if (leagueMatchweekIndex >= 0)
             MatchweekDateText = $"Matchweek {leagueMatchweekIndex + 1} • {date:dddd, MMM d, yyyy}";
-        else if (cupResults.Any())
-            MatchweekDateText = $"Cupa României • {date:dddd, MMM d, yyyy}";
+        else if (hasSupercup)
+            MatchweekDateText = $"{compSupercupName} • {date:dddd, MMM d, yyyy}";
+        else if (hasCup)
+            MatchweekDateText = $"{compCupName} • {date:dddd, MMM d, yyyy}";
         else
             MatchweekDateText = date.ToString("dddd, MMM d, yyyy");
 
@@ -258,7 +294,7 @@ public partial class HomeViewModel : BaseViewModel
         _playerHasCupFixturePending = _nextCupDateForTeam.HasValue && _nextCupDateForTeam.Value.Date <= CurrentDate.Date;
         _playerHasSupercupFixturePending = _nextSupercupDateForTeam.HasValue && _nextSupercupDateForTeam.Value.Date <= CurrentDate.Date;
 
-        DateTime? nextLeagueDate = matchweek > 0 ? LeagueService.GetMatchweekDate(matchweek) : null;
+        DateTime? nextLeagueDate = matchweek > 0 ? LeagueService.GetMatchweekDate(matchweek, playerTeam.CompetitionName) : null;
 
         DateTime? minCupDate = _nextCupDate;
         if (_nextSupercupDate.HasValue && (!minCupDate.HasValue || _nextSupercupDate.Value < minCupDate.Value)) 
@@ -365,6 +401,21 @@ public partial class HomeViewModel : BaseViewModel
         UpdateCalendarState();
     }
 
+    private async Task<DateTime?> GetNextGlobalLeagueDateAsync(string season)
+    {
+        var unplayedRounds = await _db.LeagueFixtures
+            .Where(f => f.Season == season && !f.IsPlayed)
+            .Select(f => new { f.Round, f.CompetitionName })
+            .Distinct()
+            .ToListAsync();
+
+        if (!unplayedRounds.Any()) return null;
+
+        return unplayedRounds
+            .Select(x => LeagueService.GetMatchweekDate(x.Round, x.CompetitionName))
+            .Min();
+    }
+
     private void UpdateCalendarState()
     {
         CurrentDateText = CurrentDate.ToString("dddd, MMM d, yyyy");
@@ -373,10 +424,15 @@ public partial class HomeViewModel : BaseViewModel
         {
             IsMatchdayToday = false;
             IsCupMatchday = false;
+            
+            var pTeam = _db.Teams.FirstOrDefault(t => t.IsPlayerTeam);
+            string comp = pTeam?.CompetitionName ?? "Liga Florilor";
+            SeasonCompletedMessage = $"The {comp} season has come to an end.";
         }
         else
         {
-            DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek);
+            var pTeam = _db.Teams.FirstOrDefault(t => t.IsPlayerTeam);
+            DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek, pTeam?.CompetitionName ?? "Liga Florilor");
             bool leaguePending = _nextMatchweek > 0 && CurrentDate.Date >= leagueDate.Date;
             bool cupPending = _playerHasCupFixturePending || _playerHasSupercupFixturePending;
 
@@ -415,7 +471,10 @@ public partial class HomeViewModel : BaseViewModel
         if (target < 0 || target >= _allEventDates.Count) return;
 
         _viewedEventIndex = target;
-        await LoadMatchweekResultsAsync();
+        
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        string competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        await LoadMatchweekResultsAsync(competitionName);
     }
 
     [RelayCommand]
@@ -433,15 +492,22 @@ public partial class HomeViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek);
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            string competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+            
+            DateTime leagueDate = LeagueService.GetMatchweekDate(_nextMatchweek, competitionName);
             bool isLeagueDay = _nextMatchweek > 0 && CurrentDate.Date >= leagueDate.Date;
 
             // Simulate league matches if it's a league matchday
             if (isLeagueDay)
             {
-                int simulatedWeek = _nextMatchweek;
-                await _simulationEngine.SimulateMatchweekAsync(simulatedWeek);
-                LastResultText = $"Matchweek {simulatedWeek} Completed";
+                var pTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+                string comp = pTeam?.CompetitionName ?? "Liga Florilor";
+                
+                // Simulate player's matchweek AND any other leagues' matches today
+                await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
+                
+                LastResultText = $"Matchweek {_nextMatchweek} Completed";
             }
             else if (_playerHasSupercupFixturePending && _nextSupercupDateForTeam.HasValue)
             {
@@ -462,7 +528,7 @@ public partial class HomeViewModel : BaseViewModel
             _viewedEventIndex = _allEventDates.FindIndex(d => d.Date == simulatedDate);
             if (_viewedEventIndex < 0) _viewedEventIndex = Math.Max(0, _allEventDates.Count - 1);
 
-            await LoadMatchweekResultsAsync();
+            await LoadMatchweekResultsAsync(competitionName);
             await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
         }
         finally
@@ -482,50 +548,47 @@ public partial class HomeViewModel : BaseViewModel
         CanSimulateToEndOfSeason = false;
         try
         {
-            while (!IsSeasonOver)
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            string competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+            string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+
+            // Walk forward day by day, simulating every league on every matchday,
+            // until no unplayed fixtures remain in ANY competition.
+            var seasonEndCeiling = new DateTime(LeagueService.CurrentSeasonYear + 1, 6, 1);
+
+            while (CurrentDate < seasonEndCeiling)
             {
-                DateTime? nextLeagueDate = _nextMatchweek > 0
-                    ? LeagueService.GetMatchweekDate(_nextMatchweek)
-                    : null;
+                // Check if ALL leagues are done
+                bool anyLeft = await _db.LeagueFixtures.AnyAsync(f => f.Season == season && !f.IsPlayed);
+                if (!anyLeft) break;
 
-                DateTime? minCupDate = _nextCupDate;
-                if (_nextSupercupDate.HasValue && (!minCupDate.HasValue || _nextSupercupDate.Value < minCupDate.Value)) 
-                    minCupDate = _nextSupercupDate;
-
-                DateTime? nextEvent = null;
-                if (nextLeagueDate.HasValue && minCupDate.HasValue)
-                    nextEvent = nextLeagueDate.Value <= minCupDate.Value ? nextLeagueDate : minCupDate;
-                else
-                    nextEvent = nextLeagueDate ?? minCupDate;
-
-                if (nextEvent == null) break;
-
-                while (_clock.CurrentDate.Date < nextEvent.Value.Date)
-                    _clock.AdvanceDay();
+                _clock.AdvanceDay();
                 CurrentDate = _clock.CurrentDate;
 
-                bool isLeague = nextLeagueDate.HasValue && CurrentDate.Date == nextLeagueDate.Value.Date;
-                bool isCup = _nextCupDate.HasValue && CurrentDate.Date == _nextCupDate.Value.Date;
-                bool isSupercup = _nextSupercupDate.HasValue && CurrentDate.Date == _nextSupercupDate.Value.Date;
+                // Simulate all league fixtures for this date (handles every competition)
+                await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
 
-                if (isLeague)
-                    await _simulationEngine.SimulateMatchweekAsync(_nextMatchweek);
-                if (isSupercup)
-                    await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate!.Value);
-                if (isCup)
-                    await _simulationEngine.SimulateCupFixturesAsync(_nextCupDate!.Value);
+                // Simulate any supercup fixtures today (query DB directly — no stale fields)
+                var supercupToday = await _supercupService.GetFixturesForDateAsync(CurrentDate);
+                if (supercupToday.Any(f => !f.IsPlayed))
+                    await _simulationEngine.SimulateSupercupFixturesAsync(CurrentDate);
 
-                if (_onDayAdvanced != null) await _onDayAdvanced();
-
-                await BuildAllEventDatesAsync();
-                await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
-
-                if (IsSeasonOver) break;
+                // Simulate any cup fixtures today
+                var cupToday = await _cupService.GetFixturesForDateAsync(CurrentDate);
+                if (cupToday.Any(f => !f.IsPlayed))
+                    await _simulationEngine.SimulateCupFixturesAsync(CurrentDate);
             }
 
+            // Finalise UI state
+            await BuildAllEventDatesAsync();
+            await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
+            UpdateCalendarState();
+
             if (_allEventDates.Count > 0)
+            {
                 _viewedEventIndex = _allEventDates.Count - 1;
-            await LoadMatchweekResultsAsync();
+                await LoadMatchweekResultsAsync(competitionName);
+            }
         }
         finally
         {
@@ -572,7 +635,8 @@ public partial class HomeViewModel : BaseViewModel
 
             _clock.AdvanceDay();
             CurrentDate = _clock.CurrentDate;
-            await _simulationEngine.ProcessDailyProgressionAsync(CurrentDate);
+            // This ensures all leagues (including player's if not played manually) advance
+            await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
             if (_onDayAdvanced != null) await _onDayAdvanced();
 
             await BuildAllEventDatesAsync();
@@ -604,9 +668,12 @@ public partial class HomeViewModel : BaseViewModel
             MatchSimulated = false;
             IsSeasonOver = false;
 
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            string comp = playerTeam?.CompetitionName ?? "Liga Florilor";
+
             await BuildAllEventDatesAsync();
             await UpdateNextFixtureAsync(setViewedMatchweekDefault: true);
-            await LoadMatchweekResultsAsync();
+            await LoadMatchweekResultsAsync(comp);
             LastResultText = "New Season Started! Players Aged & Stats Archived.";
         }
         finally

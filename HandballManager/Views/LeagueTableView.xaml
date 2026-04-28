@@ -18,7 +18,7 @@
             <Button Command="{Binding ViewLeagueHistoryCommand}" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" Padding="0" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <TextBlock Text="Liga Florilor Table" FontSize="36" FontWeight="Black"
+                        <TextBlock Text="{Binding CompetitionName, StringFormat='{}{0} Table'}" FontSize="36" FontWeight="Black"
                                    Foreground="White" FontFamily="Segoe UI" x:Name="TitleText"/>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">

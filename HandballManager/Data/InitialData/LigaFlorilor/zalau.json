@@ -1,13 +1,13 @@
 {
-  "Name": "HC Zal\u0103u",
-  "City": "Zal\u0103u",
+  "Name": "HC Zalău",
+  "City": "Zalău",
   "Nation": "Romania",
   "Budget": 900000,
-  "FoundedYear": 1954,
+  "FoundedYear": 1978,
   "StadiumName": "Sala Sporturilor \"Gheorghe Tadici\"",
   "StadiumCapacity": 950,
   "StadiumImage": "salagheorghetadici.jpg",
-  "Description": "A historic Romanian club led by the legendary Gheorghe Tadici. Known for a system that promotes young domestic players, Zal\u0103u often battles in the lower half of the table, relying on discipline and grit to secure their stay in the top flight.",
+  "Description": "HC Zalău is a women's handball club from Zalău, Romania, that plays in the Romanian Women's Handball League. In Europe HC Zalau won the Women's Women's EHF Challenge Cup 1995–1996 season and in the same season by participating in the EHF Women's Champions Trophy won 3rd place. In the 2011–2012 season in the EHF Cup HC Zalau played second final in history, lost against the Russian team Lada Togliatti. A historic Romanian club led by the legendary Gheorghe Tadici. Known for a system that promotes young domestic players, Zalău often battles in the lower half of the table, relying on discipline and grit to secure their stay in the top flight.",
   "IsPlayerTeam": false,
   "ClubReputation": "Regional",
   "Manager": {
@@ -26,7 +26,7 @@
   "Players": [
     {
       "FirstName": "Alexia",
-      "LastName": "Ni\u021b\u0103",
+      "LastName": "Niță",
       "ShirtNumber": 3,
       "Position": "LW",
       "Nationality": "ROU",
@@ -61,12 +61,11 @@
       "Strength": 8,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1150,
       "Birthdate": "2008-01-01"
     },
     {
       "FirstName": "Bianca Maria",
-      "LastName": "Vintil\u0103",
+      "LastName": "Vintilă",
       "ShirtNumber": 18,
       "Position": "CB",
       "Nationality": "ROU",
@@ -101,7 +100,6 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 9,
-      "MonthlyWage": 1150,
       "Birthdate": "2006-01-01"
     },
     {
@@ -141,7 +139,6 @@
       "Strength": 11,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1150,
       "Birthdate": "2003-01-01"
     },
     {
@@ -181,12 +178,11 @@
       "Strength": 14,
       "Flair": 9,
       "Leadership": 12,
-      "MonthlyWage": 1460,
       "Birthdate": "1991-06-22"
     },
     {
       "FirstName": "Ioana Beatrice",
-      "LastName": "B\u0103l\u0103ceanu",
+      "LastName": "Bălăceanu",
       "ShirtNumber": 20,
       "Position": "CB",
       "Nationality": "ROU",
@@ -221,7 +217,6 @@
       "Strength": 11,
       "Flair": 11,
       "Leadership": 11,
-      "MonthlyWage": 1300,
       "Birthdate": "2001-01-01"
     },
     {
@@ -261,12 +256,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 10,
-      "MonthlyWage": 1230,
       "Birthdate": "1998-01-01"
     },
     {
       "FirstName": "Ioana",
-      "LastName": "Ni\u021b\u0103",
+      "LastName": "Niță",
       "ShirtNumber": 1,
       "Position": "GK",
       "Nationality": "ROU",
@@ -301,7 +295,6 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 10,
-      "MonthlyWage": 950,
       "Birthdate": "2006-01-01"
     },
     {
@@ -341,12 +334,11 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 13,
-      "MonthlyWage": 950,
       "Birthdate": "2003-01-01"
     },
     {
       "FirstName": "Andreea",
-      "LastName": "N\u0103stas\u0103",
+      "LastName": "Năstasă",
       "ShirtNumber": 16,
       "Position": "GK",
       "Nationality": "ROU",
@@ -381,12 +373,11 @@
       "Pace": 9,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 890,
       "Birthdate": "1998-01-01"
     },
     {
       "FirstName": "Alexandra",
-      "LastName": "Or\u0219ivschi",
+      "LastName": "Orșivschi",
       "ShirtNumber": 10,
       "Position": "LW",
       "Nationality": "ROU",
@@ -421,7 +412,6 @@
       "Strength": 10,
       "Flair": 10,
       "Leadership": 11,
-      "MonthlyWage": 1150,
       "Birthdate": "1993-01-01"
     },
     {
@@ -461,12 +451,11 @@
       "Strength": 13,
       "Flair": 8,
       "Leadership": 9,
-      "MonthlyWage": 1300,
       "Birthdate": "2003-01-01"
     },
     {
       "FirstName": "Lorena",
-      "LastName": "Verde\u0219",
+      "LastName": "Verdeș",
       "ShirtNumber": 11,
       "Position": "LB",
       "Nationality": "ROU",
@@ -501,7 +490,6 @@
       "Strength": 13,
       "Flair": 10,
       "Leadership": 10,
-      "MonthlyWage": 1230,
       "Birthdate": "2002-01-01"
     },
     {
@@ -541,12 +529,11 @@
       "Strength": 11,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1080,
       "Birthdate": "2006-01-01"
     },
     {
       "FirstName": "Francesca",
-      "LastName": "B\u0103lan",
+      "LastName": "Bălan",
       "ShirtNumber": 25,
       "Position": "LW",
       "Nationality": "ROU",
@@ -581,12 +568,11 @@
       "Strength": 9,
       "Flair": 10,
       "Leadership": 8,
-      "MonthlyWage": 1150,
       "Birthdate": "2005-01-01"
     },
     {
       "FirstName": "Andreea",
-      "LastName": "M\u0103rginean",
+      "LastName": "Mărginean",
       "ShirtNumber": 9,
       "Position": "LB",
       "Nationality": "ROU",
@@ -621,7 +607,6 @@
       "Strength": 13,
       "Flair": 10,
       "Leadership": 13,
-      "MonthlyWage": 1150,
       "Birthdate": "1990-01-01"
     },
     {
@@ -661,7 +646,6 @@
       "Strength": 12,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1230,
       "Birthdate": "1998-01-01"
     },
     {
@@ -701,7 +685,6 @@
       "Strength": 13,
       "Flair": 8,
       "Leadership": 8,
-      "MonthlyWage": 1230,
       "Birthdate": "2005-01-01"
     }
   ]

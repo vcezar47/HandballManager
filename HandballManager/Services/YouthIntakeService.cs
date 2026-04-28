@@ -9,8 +9,22 @@ public class YouthIntakeService
 {
     private readonly HandballDbContext _db;
     private static readonly Random Rng = new();
-    private static readonly string[] FirstNames = ["Elena", "Maria", "Ioana", "Andreea", "Alexandra", "Diana", "Ana", "Cristina", "Laura", "Mihaela"];
-    private static readonly string[] LastNames = ["Popescu", "Ionescu", "Marinescu", "Stan", "Dumitrescu", "Georgescu", "Constantinescu", "Radu", "Nistor", "Munteanu"];
+    private static readonly string[] RouFirstNames = [
+        "Elena", "Maria", "Ioana", "Andreea", "Alexandra", "Diana", "Ana", "Cristina", "Laura", "Mihaela",
+        "Gabriela", "Sorina", "Denisa", "Lorena", "Bianca", "Ștefania", "Roxana", "Alina", "Oana", "Crina"
+    ];
+    private static readonly string[] RouLastNames = [
+        "Popescu", "Ionescu", "Marinescu", "Stan", "Dumitrescu", "Georgescu", "Constantinescu", "Radu", "Nistor", "Munteanu",
+        "Neagu", "Buceschi", "Pintea", "Grozav", "Dincă", "Badea", "Dindiligan", "Seraficeanu", "Laslo", "Ostase"
+    ];
+    private static readonly string[] HunFirstNames = [
+        "Anna", "Csenge", "Petra", "Gréta", "Viktória", "Nadine", "Noémi", "Blanka", "Katrin", "Melinda",
+        "Dorottya", "Zita", "Szimonetta", "Kinga", "Luca", "Réka", "Fanni", "Nikolett", "Nikoletta", "Eszter"
+    ];
+    private static readonly string[] HunLastNames = [
+        "Kovács", "Tóth", "Szabó", "Horváth", "Varga", "Kiss", "Molnár", "Németh", "Farkas", "Balogh",
+        "Pásztor", "Klujber", "Márton", "Schatzl", "Lukács", "Bíró", "Háfra", "Vámos", "Kuczora", "Albek"
+    ];
     private static readonly string[] Positions = ["GK", "LW", "RW", "LB", "RB", "CB", "Pivot"];
 
     public YouthIntakeService(HandballDbContext db)
@@ -35,7 +49,7 @@ public class YouthIntakeService
             {
                 int shirt = NextShirt(usedShirts);
                 usedShirts.Add(shirt);
-                var youth = GenerateOneYouth(team.Id, year, shirt);
+                var youth = GenerateOneYouth(team.Id, year, shirt, team.Nation ?? "ROU");
                 _db.YouthIntakePlayers.Add(youth);
             }
         }
@@ -51,10 +65,23 @@ public class YouthIntakeService
         return 99;
     }
 
-    private static YouthIntakePlayer GenerateOneYouth(int clubId, int intakeYear, int suggestedShirt)
+    private static string NationToCode(string nation) => nation switch
     {
-        string first = FirstNames[Rng.Next(FirstNames.Length)];
-        string last = LastNames[Rng.Next(LastNames.Length)];
+        "Hungary" => "HUN",
+        "Romania" => "ROU",
+        "HUN" => "HUN",
+        "ROU" => "ROU",
+        _ => "ROU"
+    };
+
+    private static YouthIntakePlayer GenerateOneYouth(int clubId, int intakeYear, int suggestedShirt, string nation)
+    {
+        string isoCode = NationToCode(nation);
+        string[] firstNamesPool = isoCode == "HUN" ? HunFirstNames : RouFirstNames;
+        string[] lastNamesPool = isoCode == "HUN" ? HunLastNames : RouLastNames;
+
+        string first = firstNamesPool[Rng.Next(firstNamesPool.Length)];
+        string last = lastNamesPool[Rng.Next(lastNamesPool.Length)];
         int age = Rng.Next(15, 18);
         var birthdate = new DateTime(intakeYear - age, Rng.Next(1, 13), Rng.Next(1, 28));
         string position = Positions[Rng.Next(Positions.Length)];
@@ -65,7 +92,7 @@ public class YouthIntakeService
             LastName = last,
             Birthdate = birthdate,
             Position = position,
-            Nationality = "ROU",
+            Nationality = isoCode,
             Height = Rng.Next(165, 188),
             Weight = Rng.Next(55, 82),
             ShirtNumber = suggestedShirt,
@@ -84,7 +111,7 @@ public class YouthIntakeService
             LastName = last,
             Birthdate = birthdate,
             Position = position,
-            Nationality = "ROU",
+            Nationality = isoCode,
             Height = p.Height,
             Weight = p.Weight,
             PlayerDataJson = json,

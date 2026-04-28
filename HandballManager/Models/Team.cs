@@ -15,6 +15,7 @@ public class Team
     public bool IsPlayerTeam { get; set; }
     public string LogoPath { get; set; } = string.Empty;
     public string Nation { get; set; } = string.Empty;
+    public string CompetitionName { get; set; } = "Liga Florilor";
 
     public Manager? Manager { get; set; }
     public ReputationLevel ClubReputation { get; set; } = ReputationLevel.Local;

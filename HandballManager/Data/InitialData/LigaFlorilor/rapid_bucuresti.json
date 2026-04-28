@@ -1,13 +1,13 @@
 {
-  "Name": "Rapid Bucure\u0219ti",
-  "City": "Bucure\u0219ti",
+  "Name": "Rapid București",
+  "City": "București",
   "Nation": "Romania",
   "Budget": 3200000,
-  "FoundedYear": 1923,
-  "StadiumName": "Sala Giule\u0219ti",
+  "FoundedYear": 1934,
+  "StadiumName": "Sala Giulești",
   "StadiumCapacity": 1500,
   "StadiumImage": "salagiulesti.jpg",
-  "Description": "One of the oldest and most beloved clubs in Romania, Rapid has a rich history and a very passionate fanbase.",
+  "Description": "CS Rapid București is a Romanian professional handball club based in Giulești, in the northwestern parts of Bucharest. Founded in 1934, they play their home games at the Sala Rapid. The club competes in the Liga Națională, the top division of Romanian handball. They won their first major honour, the League championship, in 1961. The club won the Romanian Cup for the first time in 2004, and their first European honour, the European Cup, in 1964. Rapid achieved the EHF treble. Domestically, the club has won six league titles and one Romanian Cup. Internationally, they have won one Champions League, one European League, and one European Cup since their inception.",
   "IsPlayerTeam": false,
   "ClubReputation": "National",
   "Manager": {
@@ -61,7 +61,6 @@
       "Pace": 10,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 2010,
       "Birthdate": "2000-06-01"
     },
     {
@@ -101,7 +100,6 @@
       "Pace": 10,
       "Stamina": 12,
       "Strength": 12,
-      "MonthlyWage": 1380,
       "Birthdate": "1999-01-01"
     },
     {
@@ -141,7 +139,6 @@
       "Pace": 10,
       "Stamina": 12,
       "Strength": 12,
-      "MonthlyWage": 1380,
       "Birthdate": "2000-01-01"
     },
     {
@@ -181,7 +178,6 @@
       "Pace": 10,
       "Stamina": 12,
       "Strength": 13,
-      "MonthlyWage": 1550,
       "Birthdate": "1994-01-01"
     },
     {
@@ -221,7 +217,6 @@
       "NaturalFitness": 12,
       "Stamina": 12,
       "Strength": 18,
-      "MonthlyWage": 2120,
       "Birthdate": "1996-01-01"
     },
     {
@@ -261,7 +256,6 @@
       "NaturalFitness": 12,
       "Stamina": 14,
       "Strength": 12,
-      "MonthlyWage": 2450,
       "Birthdate": "1993-08-01"
     },
     {
@@ -301,7 +295,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1550,
       "Birthdate": "2000-01-01"
     },
     {
@@ -341,7 +334,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 1630,
       "Birthdate": "1997-01-01"
     },
     {
@@ -381,7 +373,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 1720,
       "Birthdate": "1998-01-01"
     },
     {
@@ -421,7 +412,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 11,
-      "MonthlyWage": 2010,
       "Birthdate": "1994-01-01"
     },
     {
@@ -461,7 +451,6 @@
       "NaturalFitness": 12,
       "Stamina": 12,
       "Strength": 15,
-      "MonthlyWage": 1820,
       "Birthdate": "2004-01-01"
     },
     {
@@ -501,7 +490,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     },
     {
@@ -541,7 +529,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1720,
       "Birthdate": "1995-01-01"
     },
     {
@@ -581,7 +568,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 1630,
       "Birthdate": "1995-01-01"
     },
     {
@@ -621,7 +607,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1550,
       "Birthdate": "2000-01-01"
     },
     {
@@ -661,7 +646,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 1630,
       "Birthdate": "2002-01-01"
     },
     {
@@ -701,7 +685,6 @@
       "NaturalFitness": 12,
       "Stamina": 12,
       "Strength": 16,
-      "MonthlyWage": 1820,
       "Birthdate": "1994-03-18"
     },
     {
@@ -741,7 +724,6 @@
       "NaturalFitness": 12,
       "Stamina": 14,
       "Strength": 12,
-      "MonthlyWage": 2570,
       "Birthdate": "1992-08-05"
     },
     {
@@ -781,7 +763,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1550,
       "Birthdate": "1996-01-01"
     },
     {
@@ -821,7 +802,6 @@
       "NaturalFitness": 11,
       "Stamina": 12,
       "Strength": 15,
-      "MonthlyWage": 1820,
       "Birthdate": "1993-01-01"
     },
     {
@@ -861,7 +841,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 14,
-      "MonthlyWage": 1630,
       "Birthdate": "1996-01-01"
     },
     {
@@ -901,7 +880,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 11,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     },
     {
@@ -941,7 +919,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     },
     {
@@ -981,7 +958,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "1996-01-01"
     },
     {
@@ -1021,7 +997,6 @@
       "NaturalFitness": 12,
       "Stamina": 13,
       "Strength": 10,
-      "MonthlyWage": 1630,
       "Birthdate": "2000-01-01"
     }
   ]

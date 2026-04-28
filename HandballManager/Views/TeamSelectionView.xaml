@@ -91,11 +91,19 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0"
-                                Visibility="{Binding SelectedTeam, Converter={StaticResource NullToVis}}">
-                        <TextBlock Text="CLUB PROFILE" Foreground="#E94560" FontWeight="ExtraBold" FontSize="11" Margin="0,0,0,16"/>
+                    <Grid Grid.Row="0"
+                          Visibility="{Binding SelectedTeam, Converter={StaticResource NullToVis}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="CLUB PROFILE" Foreground="#E94560" FontWeight="ExtraBold" FontSize="11" Margin="0,0,0,16"/>
                         
-                        <Grid Margin="0,0,0,24">
+                        <Grid Grid.Row="1" Margin="0,0,0,24">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -111,7 +119,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <Grid Margin="0,0,0,24">
+                        <Grid Grid.Row="2" Margin="0,0,0,24">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -128,9 +136,12 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="ABOUT" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
-                        <TextBlock Text="{Binding SelectedTeam.Description}" Foreground="#A0A8C0" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontStyle="Italic"/>
-                    </StackPanel>
+                        <TextBlock Grid.Row="3" Text="ABOUT" Foreground="#666688" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                        
+                        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <TextBlock Text="{Binding SelectedTeam.Description}" Foreground="#A0A8C0" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontStyle="Italic"/>
+                        </ScrollViewer>
+                    </Grid>
 
                     <!-- Budget + action row pinned to bottom -->
                     <Grid Grid.Row="1"
@@ -159,33 +170,44 @@
                             </StackPanel>
                         </Grid>
 
-                        <Button Grid.Column="1" Content="START CAREER" Command="{Binding StartCareerCommand}"
-                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,0,0"
-                                Width="180" Height="45" Background="#E94560" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="22">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#C73652"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </Grid>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,0,0">
+                            <Button Content="START CAREER" Command="{Binding StartCareerCommand}"
+                                    Width="180" Height="45" Background="#E94560" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="22">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#C73652"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 
-                    <Button Content="← BACK" Command="{Binding GoBackCommand}"
-                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                            Background="Transparent" Foreground="#666688" BorderThickness="0" Cursor="Hand" FontSize="12" FontWeight="Bold"/>
+                            <Button Content="← BACK" Command="{Binding GoBackCommand}"
+                                    HorizontalAlignment="Center" Margin="0,10,0,0"
+                                    Background="Transparent" Foreground="#666688" BorderThickness="0" Cursor="Hand" FontSize="12" FontWeight="Bold">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

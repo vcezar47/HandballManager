@@ -34,7 +34,9 @@ public class NationalityToFlagConverter : IValueConverter
         { "SUI", "switzerland.png" },
         { "MKD", "macedonia.png" },
         { "BUL", "bulgaria.png" },
-        { "TUN", "tunisia.png" }
+        { "TUN", "tunisia.png" },
+        { "AUT", "austria.png" },
+        { "CZE", "czechia.png" }
     };
 
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)

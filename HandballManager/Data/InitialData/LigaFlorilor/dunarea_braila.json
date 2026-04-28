@@ -1,13 +1,13 @@
 {
-  "Name": "Dun\u0103rea Br\u0103ila",
-  "City": "Br\u0103ila",
+  "Name": "Dunărea Brăila",
+  "City": "Brăila",
   "Nation": "Romania",
   "Budget": 2500000,
   "FoundedYear": 1997,
-  "StadiumName": "Sala Polivalent\u0103 Danubius",
-  "StadiumCapacity": 2000,
+  "StadiumName": "Sala Polivalentă Danubius",
+  "StadiumCapacity": 2200,
   "StadiumImage": "saladanubius.jpg",
-  "Description": "Consistently finishing in the top tier, Dun\u0103rea Br\u0103ila is known for its strong tactical approach and local support.",
+  "Description": "HC Dunărea Brăila is a prominent Romanian women's handball club founded in 1997 that consistently competes at the top of the Liga Națională and in European tournaments. Dunărea Brăila is known for its strong tactical approach and local support.",
   "IsPlayerTeam": false,
   "ClubReputation": "Regional",
   "Manager": {
@@ -26,7 +26,7 @@
   "Players": [
     {
       "FirstName": "Elena",
-      "LastName": "\u0218erban",
+      "LastName": "Șerban",
       "ShirtNumber": 1,
       "Position": "GK",
       "Nationality": "ROU",
@@ -61,7 +61,6 @@
       "Pace": 10,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 1230,
       "Birthdate": "1994-10-15"
     },
     {
@@ -101,7 +100,6 @@
       "Pace": 10,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 1230,
       "Birthdate": "1994-06-28"
     },
     {
@@ -141,7 +139,6 @@
       "Pace": 11,
       "Stamina": 11,
       "Strength": 11,
-      "MonthlyWage": 1230,
       "Birthdate": "2004-10-12"
     },
     {
@@ -181,7 +178,6 @@
       "Strength": 11,
       "Flair": 12,
       "Leadership": 10,
-      "MonthlyWage": 2010,
       "Birthdate": "1995-12-12"
     },
     {
@@ -221,12 +217,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1550,
       "Birthdate": "2004-08-27"
     },
     {
       "FirstName": "Simone",
-      "LastName": "B\u00f6hme",
+      "LastName": "Böhme",
       "ShirtNumber": 8,
       "Position": "RW",
       "Nationality": "DEN",
@@ -261,7 +256,6 @@
       "Strength": 11,
       "Flair": 13,
       "Leadership": 12,
-      "MonthlyWage": 2120,
       "Birthdate": "1991-08-17"
     },
     {
@@ -301,12 +295,11 @@
       "Strength": 10,
       "Flair": 11,
       "Leadership": 8,
-      "MonthlyWage": 1550,
       "Birthdate": "2005-01-26"
     },
     {
       "FirstName": "Oana",
-      "LastName": "Bor\u0219",
+      "LastName": "Borș",
       "ShirtNumber": 55,
       "Position": "RW",
       "Nationality": "ROU",
@@ -341,7 +334,6 @@
       "Strength": 11,
       "Flair": 12,
       "Leadership": 9,
-      "MonthlyWage": 1720,
       "Birthdate": "2003-11-27"
     },
     {
@@ -381,12 +373,11 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 11,
-      "MonthlyWage": 2220,
       "Birthdate": "1994-03-24"
     },
     {
       "FirstName": "Katarina",
-      "LastName": "Je\u017ei\u0107",
+      "LastName": "Ježić",
       "ShirtNumber": 17,
       "Position": "Pivot",
       "Nationality": "CRO",
@@ -421,12 +412,11 @@
       "Strength": 12,
       "Flair": 9,
       "Leadership": 11,
-      "MonthlyWage": 1630,
       "Birthdate": "1992-12-19"
     },
     {
       "FirstName": "Mirabela",
-      "LastName": "Cote\u021b",
+      "LastName": "Coteț",
       "ShirtNumber": 21,
       "Position": "Pivot",
       "Nationality": "ROU",
@@ -461,7 +451,6 @@
       "Strength": 14,
       "Flair": 9,
       "Leadership": 9,
-      "MonthlyWage": 1630,
       "Birthdate": "2001-02-22"
     },
     {
@@ -501,12 +490,11 @@
       "Strength": 17,
       "Flair": 9,
       "Leadership": 11,
-      "MonthlyWage": 2220,
       "Birthdate": "1996-01-01"
     },
     {
       "FirstName": "Dejana",
-      "LastName": "Milosavljevi\u0107",
+      "LastName": "Milosavljević",
       "ShirtNumber": 10,
       "Position": "LB",
       "Nationality": "CRO",
@@ -541,12 +529,11 @@
       "Strength": 13,
       "Flair": 14,
       "Leadership": 13,
-      "MonthlyWage": 2120,
       "Birthdate": "1994-11-23"
     },
     {
       "FirstName": "Lara",
-      "LastName": "Gonz\u00e1lez Ortega",
+      "LastName": "González Ortega",
       "ShirtNumber": 27,
       "Position": "LB",
       "Nationality": "ESP",
@@ -581,12 +568,11 @@
       "Strength": 16,
       "Flair": 9,
       "Leadership": 14,
-      "MonthlyWage": 2120,
       "Birthdate": "1992-02-22"
     },
     {
       "FirstName": "Diana",
-      "LastName": "Lix\u0103ndroiu",
+      "LastName": "Lixăndroiu",
       "ShirtNumber": 28,
       "Position": "LB",
       "Nationality": "ROU",
@@ -621,12 +607,11 @@
       "Strength": 13,
       "Flair": 12,
       "Leadership": 9,
-      "MonthlyWage": 1550,
       "Birthdate": "2006-01-01"
     },
     {
       "FirstName": "Elena",
-      "LastName": "Ro\u0219u",
+      "LastName": "Roșu",
       "ShirtNumber": 24,
       "Position": "CB",
       "Nationality": "ROU",
@@ -661,7 +646,6 @@
       "Strength": 12,
       "Flair": 12,
       "Leadership": 11,
-      "MonthlyWage": 2010,
       "Birthdate": "1997-03-24"
     },
     {
@@ -701,7 +685,6 @@
       "Strength": 11,
       "Flair": 16,
       "Leadership": 10,
-      "MonthlyWage": 2220,
       "Birthdate": "2000-11-28"
     },
     {
@@ -741,12 +724,11 @@
       "Strength": 12,
       "Flair": 15,
       "Leadership": 12,
-      "MonthlyWage": 2690,
       "Birthdate": "2000-06-03"
     },
     {
-      "FirstName": "An\u0111ela",
-      "LastName": "Janju\u0161evi\u0107",
+      "FirstName": "Anđela",
+      "LastName": "Janjušević",
       "ShirtNumber": 88,
       "Position": "RB",
       "Nationality": "SRB",
@@ -781,12 +763,11 @@
       "Strength": 14,
       "Flair": 13,
       "Leadership": 12,
-      "MonthlyWage": 2220,
       "Birthdate": "1995-06-18"
     },
     {
       "FirstName": "Mireya",
-      "LastName": "Gonz\u00e1lez",
+      "LastName": "González",
       "ShirtNumber": 99,
       "Position": "RB",
       "Nationality": "ESP",
@@ -821,7 +802,6 @@
       "Strength": 13,
       "Flair": 14,
       "Leadership": 14,
-      "MonthlyWage": 2220,
       "Birthdate": "1991-07-18"
     }
   ]
