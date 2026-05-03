@@ -1,4 +1,4 @@
-# Handball Manager <img src="HandballManager/Assets/flags/colorpng.png" height="15">
+# Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="15">
 
 ## About the Game
 
