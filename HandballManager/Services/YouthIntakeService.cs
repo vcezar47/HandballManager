@@ -25,6 +25,14 @@ public class YouthIntakeService
         "Kovács", "Tóth", "Szabó", "Horváth", "Varga", "Kiss", "Molnár", "Németh", "Farkas", "Balogh",
         "Pásztor", "Klujber", "Márton", "Schatzl", "Lukács", "Bíró", "Háfra", "Vámos", "Kuczora", "Albek"
     ];
+    private static readonly string[] FraFirstNames = [
+        "Camille", "Chloé", "Manon", "Marine", "Sarah", "Laura", "Océane", "Lucie", "Marie", "Clémence",
+        "Mathilde", "Pauline", "Léna", "Aline", "Anaïs", "Lola", "Valentine", "Juliette", "Margaux", "Noémie"
+    ];
+    private static readonly string[] FraLastNames = [
+        "Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau",
+        "Simon", "Laurent", "Lefebvre", "Michel", "Garcia", "David", "Bertrand", "Roux", "Vincent", "Fournier"
+    ];
     private static readonly string[] Positions = ["GK", "LW", "RW", "LB", "RB", "CB", "Pivot"];
 
     public YouthIntakeService(HandballDbContext db)
@@ -69,16 +77,28 @@ public class YouthIntakeService
     {
         "Hungary" => "HUN",
         "Romania" => "ROU",
+        "France" => "FRA",
         "HUN" => "HUN",
         "ROU" => "ROU",
+        "FRA" => "FRA",
         _ => "ROU"
     };
 
     private static YouthIntakePlayer GenerateOneYouth(int clubId, int intakeYear, int suggestedShirt, string nation)
     {
         string isoCode = NationToCode(nation);
-        string[] firstNamesPool = isoCode == "HUN" ? HunFirstNames : RouFirstNames;
-        string[] lastNamesPool = isoCode == "HUN" ? HunLastNames : RouLastNames;
+        string[] firstNamesPool = isoCode switch
+        {
+            "HUN" => HunFirstNames,
+            "FRA" => FraFirstNames,
+            _ => RouFirstNames
+        };
+        string[] lastNamesPool = isoCode switch
+        {
+            "HUN" => HunLastNames,
+            "FRA" => FraLastNames,
+            _ => RouLastNames
+        };
 
         string first = firstNamesPool[Rng.Next(firstNamesPool.Length)];
         string last = lastNamesPool[Rng.Next(lastNamesPool.Length)];

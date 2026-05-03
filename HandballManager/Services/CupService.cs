@@ -20,6 +20,7 @@ public class CupService
     {
         await GenerateRomanianCupAsync();
         await GenerateHungarianCupAsync();
+        await GenerateFrenchCupAsync();
     }
 
     private async Task GenerateRomanianCupAsync()
@@ -107,6 +108,50 @@ public class CupService
         await _db.SaveChangesAsync();
     }
 
+    private async Task GenerateFrenchCupAsync()
+    {
+        const string comp = "Ligue Butagaz Énergie";
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupGroups.AnyAsync(g => g.Season == season && g.CompetitionName == comp))
+            return;
+
+        var teamIds = await _db.Teams.Where(t => t.CompetitionName == comp).Select(t => t.Id).ToListAsync();
+        if (teamIds.Count < 14) return;
+        var shuffled = teamIds.OrderBy(_ => _rng.Next()).ToList();
+
+        string[] groupNames = ["A", "B"];
+        var groups = new List<CupGroup>();
+        for (int g = 0; g < 2; g++)
+        {
+            var group = new CupGroup { GroupName = groupNames[g], Season = season, CompetitionName = comp };
+            foreach (var tid in shuffled.Skip(g * 7).Take(7))
+                group.Entries.Add(new CupGroupEntry { TeamId = tid });
+            groups.Add(group);
+            _db.CupGroups.Add(group);
+        }
+        await _db.SaveChangesAsync();
+
+        // 7 teams → round-robin = 7 matchdays, 3 matches + 1 bye per day
+        var dates = GetGroupStageDates(comp);
+        foreach (var group in groups)
+        {
+            var ids = group.Entries.Select(e => e.TeamId).ToList();
+            var schedule = GenerateRoundRobinSchedule(ids);
+            for (int day = 0; day < schedule.Count && day < dates.Count; day++)
+            {
+                foreach (var (h, a) in schedule[day])
+                {
+                    _db.CupFixtures.Add(new CupFixture
+                    {
+                        CupGroupId = group.Id, Season = season, CompetitionName = comp,
+                        HomeTeamId = h, AwayTeamId = a, ScheduledDate = dates[day], Round = "Group"
+                    });
+                }
+            }
+        }
+        await _db.SaveChangesAsync();
+    }
+
     /// <summary>Round-robin for odd-count teams (one bye per round).</summary>
     private List<List<(int Home, int Away)>> GenerateRoundRobinSchedule(List<int> teamIds)
     {
@@ -146,6 +191,7 @@ public class CupService
     public static List<DateTime> GetGroupStageDates(string comp)
     {
         if (comp == "NB I") return GetHungarianGroupStageDates();
+        if (comp == "Ligue Butagaz Énergie") return GetFrenchGroupStageDates();
         return GetRomanianGroupStageDates();
     }
 
@@ -192,6 +238,33 @@ public class CupService
         return result;
     }
 
+    private static List<DateTime> GetFrenchGroupStageDates()
+    {
+        var leagueDates = LeagueService.GetMatchweekDates("Ligue Butagaz Énergie");
+        var y = LeagueService.CurrentSeasonYear;
+
+        // 7 dates, strictly within Oct -> Feb (inclusive), avoiding Dec 15 – Jan 15 break,
+        // and avoiding being within 3 days of league matchdays (via GetWednesdaysInMonth filter).
+        var allWed = new List<DateTime>();
+        int[] months = [10, 11, 12, 1, 2];
+        foreach (var m in months)
+        {
+            int yr = m >= 10 ? y : y + 1;
+            allWed.AddRange(GetWednesdaysInMonth(yr, m, leagueDates)
+                .Where(d => !(d >= new DateTime(y, 12, 15) && d <= new DateTime(y + 1, 1, 15))));
+        }
+
+        // If not enough, fall back to any valid Wednesdays in that window.
+        if (allWed.Count <= 7) return allWed.Take(7).OrderBy(d => d).ToList();
+
+        // Spread 7 dates evenly across the available window.
+        var result = new List<DateTime>();
+        double step = (allWed.Count - 1) / 6.0;
+        for (int i = 0; i < 7; i++)
+            result.Add(allWed[(int)Math.Round(i * step)]);
+        return result.Distinct().OrderBy(d => d).Take(7).ToList();
+    }
+
     private static List<DateTime> GetWednesdaysInMonth(int year, int month, List<DateTime> leagueDates)
     {
         var result = new List<DateTime>();
@@ -203,6 +276,36 @@ public class CupService
                 result.Add(d);
         }
         return result;
+    }
+
+    public static DateTime GetFrenchSemiFinalDate()
+    {
+        var leagueDates = LeagueService.GetMatchweekDates("Ligue Butagaz Énergie");
+        var start = new DateTime(LeagueService.CurrentSeasonYear + 1, 4, 1);
+        var end = new DateTime(LeagueService.CurrentSeasonYear + 1, 4, 15);
+        for (var d = start; d <= end; d = d.AddDays(1))
+        {
+            if (d.DayOfWeek == DayOfWeek.Wednesday && leagueDates.All(ld => Math.Abs((d - ld).TotalDays) >= 3))
+                return d;
+        }
+        var fb = new DateTime(LeagueService.CurrentSeasonYear + 1, 4, 8);
+        while (fb.DayOfWeek != DayOfWeek.Wednesday) fb = fb.AddDays(1);
+        return fb;
+    }
+
+    public static DateTime GetFrenchFinalDate()
+    {
+        var leagueDates = LeagueService.GetMatchweekDates("Ligue Butagaz Énergie");
+        var start = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 15);
+        var end = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 31);
+        for (var d = start; d <= end; d = d.AddDays(1))
+        {
+            if (d.DayOfWeek == DayOfWeek.Wednesday && leagueDates.All(ld => Math.Abs((d - ld).TotalDays) >= 2))
+                return d;
+        }
+        var fb = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 21);
+        while (fb.DayOfWeek != DayOfWeek.Wednesday) fb = fb.AddDays(-1);
+        return fb;
     }
 
     public static DateTime GetQuarterFinalDate()
@@ -320,6 +423,39 @@ public class CupService
         await TryGenerateHungarianSemiFinalsAsync();
     }
 
+    public async Task TryGenerateFrenchSemiFinalsAsync()
+    {
+        const string comp = "Ligue Butagaz Énergie";
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupFixtures.AnyAsync(f => f.Season == season && f.Round == "SemiFinal" && f.CompetitionName == comp))
+            return;
+
+        var groupFixtures = await _db.CupFixtures.Where(f => f.Season == season && f.Round == "Group" && f.CompetitionName == comp).ToListAsync();
+        if (groupFixtures.Count == 0 || groupFixtures.Any(f => !f.IsPlayed)) return;
+
+        var groups = await _db.CupGroups.Include(g => g.Entries).ThenInclude(e => e.Team)
+            .Where(g => g.Season == season && g.CompetitionName == comp).ToListAsync();
+        if (groups.Count != 2) return;
+
+        var standings = new Dictionary<string, List<CupGroupEntry>>();
+        foreach (var g in groups)
+        {
+            standings[g.GroupName] = g.Entries.OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).ToList();
+            for (int i = 0; i < standings[g.GroupName].Count; i++) standings[g.GroupName][i].Rank = i + 1;
+        }
+
+        if (!standings.ContainsKey("A") || !standings.ContainsKey("B")) return;
+        if (standings["A"].Count < 4 || standings["B"].Count < 4) return;
+
+        var sfDate = GetFrenchSemiFinalDate();
+
+        // Home semifinals: A1 vs B4 and B2 vs A3 (uses all 4 qualifiers per group)
+        _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = standings["A"][0].TeamId, AwayTeamId = standings["B"][3].TeamId, ScheduledDate = sfDate, Round = "SemiFinal" });
+        _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = standings["B"][1].TeamId, AwayTeamId = standings["A"][2].TeamId, ScheduledDate = sfDate, Round = "SemiFinal" });
+
+        await _db.SaveChangesAsync();
+    }
+
     private async Task TryGenerateRomanianSemiFinalsAsync()
     {
         string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
@@ -371,6 +507,7 @@ public class CupService
     {
         await TryGenerateFinalsForCompAsync("Liga Florilor");
         await TryGenerateFinalsForCompAsync("NB I");
+        await TryGenerateFrenchFinalAsync();
     }
 
     private async Task TryGenerateFinalsForCompAsync(string comp)
@@ -388,6 +525,38 @@ public class CupService
 
         _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = Loser(sfFixtures[0]), AwayTeamId = Loser(sfFixtures[1]), ScheduledDate = day2, Round = "ThirdPlace", VenueName = venue });
         _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = Winner(sfFixtures[0]), AwayTeamId = Winner(sfFixtures[1]), ScheduledDate = day2, Round = "Final", VenueName = venue });
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task TryGenerateFrenchFinalAsync()
+    {
+        const string comp = "Ligue Butagaz Énergie";
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupFixtures.AnyAsync(f => f.Season == season && f.Round == "Final" && f.CompetitionName == comp))
+            return;
+
+        var sfFixtures = await _db.CupFixtures.Where(f => f.Season == season && f.Round == "SemiFinal" && f.CompetitionName == comp).OrderBy(f => f.Id).ToListAsync();
+        if (sfFixtures.Count != 2 || sfFixtures.Any(f => !f.IsPlayed)) return;
+
+        int Winner(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
+
+        var finalDate = GetFrenchFinalDate();
+
+        var venueTeam = (await _db.Teams.Where(t => t.CompetitionName == comp && t.StadiumCapacity >= 2000).ToListAsync())
+            .OrderBy(_ => _rng.Next()).FirstOrDefault();
+        string venue = venueTeam != null ? $"{venueTeam.StadiumName}, {venueTeam.City}" : "Accor Arena, Paris";
+
+        _db.CupFixtures.Add(new CupFixture
+        {
+            Season = season,
+            CompetitionName = comp,
+            HomeTeamId = Winner(sfFixtures[0]),
+            AwayTeamId = Winner(sfFixtures[1]),
+            ScheduledDate = finalDate,
+            Round = "Final",
+            VenueName = venue
+        });
+
         await _db.SaveChangesAsync();
     }
 

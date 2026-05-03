@@ -247,7 +247,12 @@ public partial class HomeViewModel : BaseViewModel
         
         bool hasCup = cupResults.Any(r => r.IsCupMatch && !hasSupercup);
         
-        string compCupName = competitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+        string compCupName = competitionName switch
+        {
+            "NB I" => "Magyar Kupa",
+            "Ligue Butagaz Énergie" => "Coupe de France",
+            _ => "Cupa României"
+        };
         string compSupercupName = competitionName == "NB I" ? "Szuperkupa" : "Supercupa României";
 
         if (leagueMatchweekIndex >= 0 && (hasCup || hasSupercup))

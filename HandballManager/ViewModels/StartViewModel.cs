@@ -53,7 +53,8 @@ public partial class StartViewModel : BaseViewModel
         Leagues = new List<LeagueInfo>
         {
             new() { Name = "Liga Florilor", Country = "Romania", Logo = "/Assets/leaguelogo/ligaflorilor.png" },
-            new() { Name = "NB I", Country = "Hungary", Logo = "/Assets/leaguelogo/nbi.png" }
+            new() { Name = "NB I", Country = "Hungary", Logo = "/Assets/leaguelogo/nbi.png" },
+            new() { Name = "Ligue Butagaz Énergie", Country = "France", Logo = "/Assets/leaguelogo/lfhdivision1.png" }
         };
         SelectedLeague = Leagues.First();
     }

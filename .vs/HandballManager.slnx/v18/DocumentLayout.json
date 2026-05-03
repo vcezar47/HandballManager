@@ -3,20 +3,80 @@
   "WorkspaceRootPath": "D:\\Github Desktop\\HandballManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\szombathely.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\szombathely.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\toulon_metropole.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\toulon_metropole.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\stella_saint_maur.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\stella_saint_maur.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\sambre_avesnois.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\sambre_avesnois.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\sahbph.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\sahbph.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\plan_de_cuques.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\plan_de_cuques.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\paris92.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\paris92.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\ogc_nice.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\ogc_nice.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\metz.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\metz.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\jda_dijon.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\jda_dijon.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\havre.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\havre.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\esbf_besancon.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\esbf_besancon.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\chambray_touraine.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\chambray_touraine.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\brest_bretagne.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\brest_bretagne.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\lfhdivision1\\achenheim_truchtersheim.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\lfhdivision1\\achenheim_truchtersheim.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\converters\\nationalitytoflagconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\nationalitytoflagconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\budaors.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\budaors.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\kisvarda.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\kisvarda.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\alba_fehervar.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\alba_fehervar.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\gyor.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\gyor.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\reputationlevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -25,228 +85,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\coachlicense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\coachlicense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\progressionphase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\progressionphase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\dvsc.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\dvsc.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\baia_mare.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\baia_mare.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\worldleaguesview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\worldleaguesview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\supercuphistoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\supercuphistoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\zalau.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\zalau.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\targu_jiu.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\targu_jiu.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\slatina.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\slatina.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\rapid_bucuresti.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\rapid_bucuresti.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\ramnicu_valcea.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\ramnicu_valcea.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\gloria_bistrita.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\gloria_bistrita.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\dunarea_braila.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\dunarea_braila.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\csm_galati.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\csm_galati.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\csm_bucuresti.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\csm_bucuresti.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\vasas_sc.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\vasas_sc.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\vaci_nkse.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\vaci_nkse.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\neka.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\neka.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\gyor.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\gyor.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\ferencvaros.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\ferencvaros.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\esztergomi.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\esztergomi.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\mosonmagyarovar.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\mosonmagyarovar.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\kozarmisleny_se.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\kozarmisleny_se.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\kisvarda.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\kisvarda.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\nbi\\dunaujvarosi_ka.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\nbi\\dunaujvarosi_ka.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\supercupdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\supercupdetailviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\past champions\\liga florilor\\champions.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\past champions\\liga florilor\\champions.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\past champions\\cupa romaniei\\cup_winners.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\past champions\\cupa romaniei\\cup_winners.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\homeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\homeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\leaguehistoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\leaguehistoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\leaguetableviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\leaguetableviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\competitionsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\competitionsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\rosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\rosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\converters\\ratingtocolorconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\ratingtocolorconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\converters\\teamlogopathconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\teamlogopathconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\playerdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\playerdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\teamrosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\teamrosterview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\squadselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\squadselectionview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\squadselectionviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\squadselectionviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\managercreationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\managercreationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\managercreationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\managercreationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\livematchviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\livematchviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\mainmenuview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\mainmenuview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\services\\livematchengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\livematchengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\livematchview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\livematchview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\services\\simulationengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\services\\simulationengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\livematchevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\livematchevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\c1d396b56c9708ed62e1957ff321c1e36bb29164854c4ed3452e852143018021\\CommandHelpers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\matchdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\matchdetailview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\clubinfoview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\clubinfoview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\viewmodels\\clubinfoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\viewmodels\\clubinfoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -256,32 +94,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 2,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Manager.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\Manager.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Models\\Manager.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\Manager.cs",
-              "RelativeToolTip": "HandballManager\\Models\\Manager.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAA+wAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-28T19:51:48.421Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 20,
               "Title": "CoachLicense.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\CoachLicense.cs",
               "RelativeDocumentMoniker": "HandballManager\\Models\\CoachLicense.cs",
@@ -289,723 +106,278 @@
               "RelativeToolTip": "HandballManager\\Models\\CoachLicense.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-28T23:24:25.151Z",
+              "WhenOpened": "2026-05-03T10:23:37.487Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "alba_fehervar.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\alba_fehervar.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\alba_fehervar.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\alba_fehervar.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\alba_fehervar.json",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAuwBgAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:08.209Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 19,
               "Title": "ReputationLevel.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\ReputationLevel.cs",
               "RelativeDocumentMoniker": "HandballManager\\Models\\ReputationLevel.cs",
               "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\ReputationLevel.cs",
               "RelativeToolTip": "HandballManager\\Models\\ReputationLevel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-28T23:24:18.139Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "budaors.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\budaors.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\budaors.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\budaors.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\budaors.json",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:03.888Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "NationalityToFlagConverter.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
-              "RelativeToolTip": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAAwCYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T19:31:04.171Z",
+              "WhenOpened": "2026-05-03T10:09:31.059Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "szombathely.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\szombathely.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\szombathely.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\szombathely.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\szombathely.json",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAUAAAAVAAAAAAAAAA==",
+              "Title": "toulon_metropole.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\toulon_metropole.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\toulon_metropole.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\toulon_metropole.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\toulon_metropole.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:29:03.01Z",
+              "WhenOpened": "2026-05-03T19:46:54.327Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "stella_saint_maur.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\stella_saint_maur.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\stella_saint_maur.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\stella_saint_maur.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\stella_saint_maur.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:46:52.353Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "sambre_avesnois.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\sambre_avesnois.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\sambre_avesnois.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\sambre_avesnois.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\sambre_avesnois.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:46:42.434Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "sahbph.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\sahbph.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\sahbph.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\sahbph.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\sahbph.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:46:31.36Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "plan_de_cuques.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\plan_de_cuques.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\plan_de_cuques.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\plan_de_cuques.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\plan_de_cuques.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:43:05.432Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ogc_nice.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\ogc_nice.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\ogc_nice.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\ogc_nice.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\ogc_nice.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:42:03.076Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "ProgressionPhase.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\ProgressionPhase.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Models\\ProgressionPhase.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\ProgressionPhase.cs",
-              "RelativeToolTip": "HandballManager\\Models\\ProgressionPhase.cs",
+              "Title": "metz.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\metz.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\metz.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\metz.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\metz.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-28T19:51:40.787Z",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:42:00.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "jda_dijon.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\jda_dijon.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\jda_dijon.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\jda_dijon.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\jda_dijon.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:41:58.513Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "dvsc.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\dvsc.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\dvsc.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\dvsc.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\dvsc.json",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
+              "Title": "havre.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\havre.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\havre.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\havre.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\havre.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:17:19.772Z",
+              "WhenOpened": "2026-05-03T19:41:56.363Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "MainViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\MainViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\MainViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\MainViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\MainViewModel.cs",
-              "ViewState": "AgIAAFwAAAAAAAAAAAAhwGwAAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T19:05:51.631Z"
+              "Title": "esbf_besancon.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\esbf_besancon.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\esbf_besancon.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\esbf_besancon.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\esbf_besancon.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T19:41:54.256Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "slatina.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\slatina.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\slatina.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\slatina.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\slatina.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAYAAAAAAAAAA==",
+              "DocumentIndex": 11,
+              "Title": "chambray_touraine.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\chambray_touraine.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\chambray_touraine.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\chambray_touraine.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\chambray_touraine.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:39:48.266Z"
+              "WhenOpened": "2026-05-03T19:41:53.138Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "rapid_bucuresti.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\rapid_bucuresti.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\rapid_bucuresti.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\rapid_bucuresti.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\rapid_bucuresti.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAVAAAAAAAAAA==",
+              "DocumentIndex": 12,
+              "Title": "brest_bretagne.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\brest_bretagne.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\brest_bretagne.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\brest_bretagne.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\brest_bretagne.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:38:01.416Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "brasov.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:49:30.099Z",
+              "WhenOpened": "2026-05-03T19:41:50.953Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "SupercupHistoryViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SupercupHistoryViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\SupercupHistoryViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SupercupHistoryViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\SupercupHistoryViewModel.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAYwA8AAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T19:01:17.349Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "baia_mare.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\baia_mare.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\baia_mare.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\baia_mare.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\baia_mare.json",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAkAAACvAQAAAAAAAA==",
+              "Title": "achenheim_truchtersheim.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\achenheim_truchtersheim.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\achenheim_truchtersheim.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\achenheim_truchtersheim.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\achenheim_truchtersheim.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:46:58.128Z"
+              "WhenOpened": "2026-05-03T19:41:48.768Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "WorldLeaguesView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\WorldLeaguesView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\WorldLeaguesView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\WorldLeaguesView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\WorldLeaguesView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-25T11:26:10.304Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "ramnicu_valcea.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\ramnicu_valcea.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\ramnicu_valcea.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\ramnicu_valcea.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\ramnicu_valcea.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAkAQAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "paris92.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\paris92.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LFHDivision1\\paris92.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LFHDivision1\\paris92.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LFHDivision1\\paris92.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T11:24:06.609Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "targu_jiu.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\targu_jiu.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\targu_jiu.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\targu_jiu.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\targu_jiu.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:42:07.262Z"
+              "WhenOpened": "2026-05-03T19:37:17.96Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 14,
-              "Title": "zalau.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\zalau.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\zalau.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\zalau.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\zalau.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACmAQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:44:18.023Z"
+              "Title": "NationalityToFlagConverter.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAQwDAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-03T19:26:30.929Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "gloria_bistrita.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\gloria_bistrita.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\gloria_bistrita.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\gloria_bistrita.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\gloria_bistrita.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAB7AQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T11:23:30.559Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "dunarea_braila.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\dunarea_braila.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\dunarea_braila.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\dunarea_braila.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\dunarea_braila.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAC7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:53:56.25Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "csm_galati.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_galati.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_galati.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_galati.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_galati.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:53:56.538Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "csm_bucuresti.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_bucuresti.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_bucuresti.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_bucuresti.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\csm_bucuresti.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACZAgAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:47:44.678Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "craiova.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABwAQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T10:51:47.062Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "vasas_sc.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\vasas_sc.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\vasas_sc.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\vasas_sc.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\vasas_sc.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAzAQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:31:51.075Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "vaci_nkse.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\vaci_nkse.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\vaci_nkse.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\vaci_nkse.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\vaci_nkse.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA3AQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:30:52.253Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "neka.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\neka.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\neka.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\neka.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\neka.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABBAQAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:26:30.046Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "esztergomi.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\esztergomi.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\esztergomi.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\esztergomi.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\esztergomi.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAADWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:11.467Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 15,
               "Title": "kisvarda.json",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\kisvarda.json",
               "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\kisvarda.json",
               "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\kisvarda.json",
               "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\kisvarda.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACIAAAAAAAAAA==",
+              "ViewState": "AgIAAIQCAAAAAAAAAAAwwI8CAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T21:21:56.249Z"
+              "WhenOpened": "2026-05-03T19:24:47.629Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "dunaujvarosi_ka.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\dunaujvarosi_ka.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\dunaujvarosi_ka.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\dunaujvarosi_ka.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\dunaujvarosi_ka.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAADrAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:10.584Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "ferencvaros.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\ferencvaros.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\ferencvaros.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\ferencvaros.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\ferencvaros.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAADAgAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:40:07.023Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 16,
               "Title": "gyor.json",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\gyor.json",
               "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\gyor.json",
               "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\gyor.json",
               "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\gyor.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAfAgAAAAAAAA==",
+              "ViewState": "AgIAAIQCAAAAAAAAAAAwwI8CAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:12.387Z"
+              "WhenOpened": "2026-05-03T19:24:24.598Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "kozarmisleny_se.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\kozarmisleny_se.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\kozarmisleny_se.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\kozarmisleny_se.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\kozarmisleny_se.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:17.072Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "mosonmagyarovar.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\mosonmagyarovar.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\NBI\\mosonmagyarovar.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\NBI\\mosonmagyarovar.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\NBI\\mosonmagyarovar.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T18:52:16.231Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "cup_winners.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\Past Champions\\Cupa Romaniei\\cup_winners.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\Past Champions\\Cupa Romaniei\\cup_winners.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\Past Champions\\Cupa Romaniei\\cup_winners.json",
-              "RelativeToolTip": "HandballManager\\Data\\Past Champions\\Cupa Romaniei\\cup_winners.json",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T19:00:40.253Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "champions.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\Past Champions\\Liga Florilor\\champions.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\Past Champions\\Liga Florilor\\champions.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\Past Champions\\Liga Florilor\\champions.json",
-              "RelativeToolTip": "HandballManager\\Data\\Past Champions\\Liga Florilor\\champions.json",
+              "DocumentIndex": 17,
+              "Title": "brasov.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-19T19:00:46.675Z"
+              "WhenOpened": "2026-05-03T11:05:23.098Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "SupercupDetailViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SupercupDetailViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\SupercupDetailViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SupercupDetailViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\SupercupDetailViewModel.cs",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T19:01:14.574Z"
+              "DocumentIndex": 18,
+              "Title": "craiova.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
+              "ViewState": "AgIAAI0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-03T11:03:43.204Z",
+              "EditorCaption": ""
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "HomeViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\HomeViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\HomeViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\HomeViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\HomeViewModel.cs",
-              "ViewState": "AgIAAEMCAAAAAAAAAAAhwE0CAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T19:05:49.075Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 38,
-              "Title": "LeagueHistoryViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LeagueHistoryViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\LeagueHistoryViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LeagueHistoryViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\LeagueHistoryViewModel.cs",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAswF0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T16:49:04.214Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "XamlReader.cs",
-              "DocumentMoniker": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs",
-              "ToolTip": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\ba71154a7b44d057354e94bf9136ff00912660e0c8e1435d76b141387af3b90b\\XamlReader.cs [Read Only]",
-              "ViewState": "AgIAAJ4BAAAAAAAAAAAUwKoBAAAAAAAAAQAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T16:40:35.605Z",
-              "EditorCaption": " [Read Only]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "LeagueTableViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LeagueTableViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\LeagueTableViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LeagueTableViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\LeagueTableViewModel.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAqwC8AAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T16:31:50.641Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "CompetitionsViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\CompetitionsViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\CompetitionsViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\CompetitionsViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\CompetitionsViewModel.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAawEAAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T16:30:18.267Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 44,
-              "Title": "TeamLogoPathConverter.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\TeamLogoPathConverter.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Converters\\TeamLogoPathConverter.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\TeamLogoPathConverter.cs",
-              "RelativeToolTip": "HandballManager\\Converters\\TeamLogoPathConverter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T19:30:59.885Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "RosterView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\RosterView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\RosterView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\RosterView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\RosterView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-12T20:10:03.69Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "RatingToColorConverter.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\RatingToColorConverter.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Converters\\RatingToColorConverter.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\RatingToColorConverter.cs",
-              "RelativeToolTip": "HandballManager\\Converters\\RatingToColorConverter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T20:15:53.162Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 45,
-              "Title": "PlayerDetailView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\PlayerDetailView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\PlayerDetailView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\PlayerDetailView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\PlayerDetailView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-12T20:13:42.86Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 46,
-              "Title": "TeamRosterView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\TeamRosterView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\TeamRosterView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\TeamRosterView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\TeamRosterView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-12T19:42:07.974Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 47,
-              "Title": "SquadSelectionView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\SquadSelectionView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\SquadSelectionView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\SquadSelectionView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\SquadSelectionView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-07T15:45:43.864Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 48,
-              "Title": "SquadSelectionViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SquadSelectionViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\SquadSelectionViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\SquadSelectionViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\SquadSelectionViewModel.cs",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAhwFwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T16:56:19.07Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 55,
-              "Title": "SimulationEngine.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Services\\SimulationEngine.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Services\\SimulationEngine.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Services\\SimulationEngine.cs",
-              "RelativeToolTip": "HandballManager\\Services\\SimulationEngine.cs",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAhwHAAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T18:43:32.944Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "ManagerCreationViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ManagerCreationViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\ManagerCreationViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ManagerCreationViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\ManagerCreationViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T16:11:35.721Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "ManagerCreationView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\ManagerCreationView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\ManagerCreationView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\ManagerCreationView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\ManagerCreationView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-12T16:11:39.733Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 53,
-              "Title": "LiveMatchEngine.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Services\\LiveMatchEngine.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Services\\LiveMatchEngine.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Services\\LiveMatchEngine.cs",
-              "RelativeToolTip": "HandballManager\\Services\\LiveMatchEngine.cs",
-              "ViewState": "AgIAAKQAAAAAAAAAAAAawL0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T15:57:20.78Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 51,
-              "Title": "LiveMatchViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LiveMatchViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\LiveMatchViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\LiveMatchViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\LiveMatchViewModel.cs",
-              "ViewState": "AgIAAHsAAAAAAAAAAAAhwIYAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T15:54:57.778Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 52,
-              "Title": "MainMenuView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MainMenuView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\MainMenuView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MainMenuView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\MainMenuView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-07T15:47:20.749Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 54,
-              "Title": "LiveMatchView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\LiveMatchView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\LiveMatchView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\LiveMatchView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\LiveMatchView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-04-07T15:36:23.815Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 56,
-              "Title": "LiveMatchEvent.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\LiveMatchEvent.cs",
-              "RelativeDocumentMoniker": "HandballManager\\Models\\LiveMatchEvent.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\LiveMatchEvent.cs",
-              "RelativeToolTip": "HandballManager\\Models\\LiveMatchEvent.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-07T15:36:06.258Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 57,
-              "Title": "CommandHelpers.cs",
-              "DocumentMoniker": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\c1d396b56c9708ed62e1957ff321c1e36bb29164854c4ed3452e852143018021\\CommandHelpers.cs",
-              "ToolTip": "C:\\Users\\Cezar\\AppData\\Local\\Temp\\.vsdbgsrc\\c1d396b56c9708ed62e1957ff321c1e36bb29164854c4ed3452e852143018021\\CommandHelpers.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAUwGIAAAArAAAAAQAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-06T18:15:36.277Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 58,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\App.xaml.cs",
-              "RelativeDocumentMoniker": "HandballManager\\App.xaml.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\App.xaml.cs",
-              "RelativeToolTip": "HandballManager\\App.xaml.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAArwCEAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T12:34:55.585Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 59,
-              "Title": "MatchDetailView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\MatchDetailView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\MatchDetailView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\MatchDetailView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-29T12:33:53.749Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 61,
-              "Title": "ClubInfoViewModel.cs",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ClubInfoViewModel.cs",
-              "RelativeDocumentMoniker": "HandballManager\\ViewModels\\ClubInfoViewModel.cs",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\ViewModels\\ClubInfoViewModel.cs",
-              "RelativeToolTip": "HandballManager\\ViewModels\\ClubInfoViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T12:20:24.795Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 60,
-              "Title": "ClubInfoView.xaml",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\ClubInfoView.xaml",
-              "RelativeDocumentMoniker": "HandballManager\\Views\\ClubInfoView.xaml",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\ClubInfoView.xaml",
-              "RelativeToolTip": "HandballManager\\Views\\ClubInfoView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-29T12:13:36.167Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             }
           ]
         }

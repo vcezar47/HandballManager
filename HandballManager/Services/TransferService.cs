@@ -8,18 +8,44 @@ public class TransferService
 {
     private readonly HandballDbContext _db;
     private static readonly Random Rng = new();
+    private const int BaselineWorldTeams = 12; // Original single-league baseline (Romania-only)
+
+    /// <summary>
+    /// Set this to false to disable all automated AI transfer activity (offers and AI-to-AI transfers).
+    /// </summary>
+    public static bool TransfersEnabled { get; set; } = true;
 
     public TransferService(HandballDbContext db)
     {
         _db = db;
     }
 
+    private async Task<double> GetWorldScaleFactorAsync()
+    {
+        int teams = await _db.Teams.CountAsync();
+        if (teams <= 0) return 1.0;
+        return Math.Max(1.0, teams / (double)BaselineWorldTeams);
+    }
+
     /// <summary>With small probability during transfer window, create an AI offer for a random user player.</summary>
     public async Task TryGenerateAiOfferAsync(DateTime gameDate)
     {
-        if (!LeagueService.IsWithinAnyTransferWindow(gameDate) || Rng.Next(100) >= 4) return;
+        if (!TransfersEnabled || !LeagueService.IsWithinAnyTransferWindow(gameDate)) return;
+
+        double scale = await GetWorldScaleFactorAsync();
+        int chancePct = (int)Math.Round(Math.Clamp(4 * scale, 4, 15)); // scale with world size, cap to avoid spam
+        if (Rng.Next(100) >= chancePct) return;
+
         var userTeam = await _db.Teams.Include(t => t.Players).FirstOrDefaultAsync(t => t.IsPlayerTeam);
-        if (userTeam?.Players.Count == 0) return;
+        if (userTeam == null || userTeam.Players.Count == 0) return;
+
+        // Avoid overwhelming the user with too many simultaneous offers
+        int maxPending = (int)Math.Round(Math.Clamp(4 * scale, 4, 12));
+        int pendingNow = await _db.TransferOffers
+            .Include(o => o.ForPlayer)
+            .CountAsync(o => o.Status == "Pending" && o.ForPlayer != null && o.ForPlayer.TeamId == userTeam.Id);
+        if (pendingNow >= maxPending) return;
+
         var player = userTeam!.Players[Rng.Next(userTeam.Players.Count)];
         var aiTeams = await _db.Teams.Where(t => !t.IsPlayerTeam).Select(t => t.Id).ToListAsync();
         if (aiTeams.Count == 0) return;
@@ -48,10 +74,13 @@ public class TransferService
     /// </summary>
     public async Task TryGenerateAiToAiTransfersAsync(DateTime gameDate)
     {
-        if (!LeagueService.IsWithinAnyTransferWindow(gameDate)) return;
+        if (!TransfersEnabled || !LeagueService.IsWithinAnyTransferWindow(gameDate)) return;
 
-        // ~20% chance per day that any AI activity happens at all
-        if (Rng.Next(100) >= 20) return;
+        double scale = await GetWorldScaleFactorAsync();
+
+        // Scale chance per day that any AI activity happens at all
+        int triggerPct = (int)Math.Round(Math.Clamp(20 * scale, 20, 80));
+        if (Rng.Next(100) >= triggerPct) return;
 
         var aiTeams = await _db.Teams
             .Where(t => !t.IsPlayerTeam)
@@ -60,8 +89,11 @@ public class TransferService
 
         if (aiTeams.Count < 2) return;
 
-        // 1 to 2 transfers per triggered day
-        int count = Rng.Next(1, 3);
+        // Scale transfers per triggered day with world size
+        int minPerDay = (int)Math.Round(Math.Clamp(1 * scale, 1, 6));
+        int maxPerDay = (int)Math.Round(Math.Clamp(2 * scale, 2, 10));
+        if (maxPerDay < minPerDay) maxPerDay = minPerDay;
+        int count = Rng.Next(minPerDay, maxPerDay + 1);
         for (int i = 0; i < count; i++)
         {
             // Pick a selling team that has players

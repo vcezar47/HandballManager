@@ -51,7 +51,12 @@ public partial class CupHistoryViewModel : BaseViewModel
             competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
         }
 
-        CupDisplayName = competitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+        CupDisplayName = competitionName switch
+        {
+            "NB I" => "Magyar Kupa",
+            "Ligue Butagaz Énergie" => "Coupe de France",
+            _ => "Cupa României"
+        };
         Title = $"{CupDisplayName} History";
 
         var records = await _db.CupWinnerRecords

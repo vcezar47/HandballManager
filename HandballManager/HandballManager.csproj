@@ -38,4 +38,10 @@
     <Resource Include="Assets\trophies\**\*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\InitialData\LFHDivision1\" />
+    <Folder Include="Data\Past Champions\LFH Division 1\" />
+    <Folder Include="Data\Past Champions\Coupe de France\" />
+  </ItemGroup>
+
 </Project>

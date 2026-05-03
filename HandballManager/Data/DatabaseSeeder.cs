@@ -81,6 +81,10 @@ public static class DatabaseSeeder
                     {
                         competitionName = "NB I";
                     }
+                    else if (file.Contains("LFHDivision1", StringComparison.OrdinalIgnoreCase))
+                    {
+                        competitionName = "Ligue Butagaz Énergie";
+                    }
                     teamData.CompetitionName = competitionName;
 
                     // Assign LogoPath based on fileName
@@ -114,6 +118,21 @@ public static class DatabaseSeeder
                         "neka.json" => "Hungary/neka.png",
                         "kozarmisleny_se.json" => "Hungary/kozarmisleny.png",
                         "dunaujvarosi_ka.json" => "Hungary/dunaujvaros.png",
+                        // French Teams (Ligue Butagaz Énergie)
+                        "achenheim_truchtersheim.json" => "France/achenheim.png",
+                        "brest_bretagne.json" => "France/brestbretagne.png",
+                        "chambray_touraine.json" => "France/chambray.png",
+                        "esbf_besancon.json" => "France/besancon.png",
+                        "havre.json" => "France/havre.png",
+                        "jda_dijon.json" => "France/dijon.png",
+                        "metz.json" => "France/metz.png",
+                        "ogc_nice.json" => "France/ogcnice.png",
+                        "paris92.json" => "France/paris92.png",
+                        "plan_de_cuques.json" => "France/plandecuques.png",
+                        "sahbph.json" => "France/sahbph.png",
+                        "sambre_avesnois.json" => "France/sambreavesnois.png",
+                        "stella_saint_maur.json" => "France/stellasaintmaur.png",
+                        "toulon_metropole.json" => "France/toulon.png",
                         _ => string.Empty
                     };
 
@@ -126,7 +145,12 @@ public static class DatabaseSeeder
                     // Handle StadiumImage prefixing
                     if (!string.IsNullOrEmpty(teamData.StadiumImage) && !teamData.StadiumImage.Contains("/"))
                     {
-                        string countryDir = competitionName == "NB I" ? "Hungary" : "Romania";
+                        string countryDir = competitionName switch
+                        {
+                            "NB I" => "Hungary",
+                            "Ligue Butagaz Énergie" => "France",
+                            _ => "Romania"
+                        };
                         teamData.StadiumImage = countryDir + "/" + teamData.StadiumImage;
                     }
 
@@ -401,6 +425,40 @@ public static class DatabaseSeeder
             catch (Exception ex) { Log($"Error seeding NBI champions: {ex.Message}"); }
         }
 
+        // Seed French Champions (Ligue Butagaz Énergie)
+        string frChampsFile = "";
+        var possibleFrPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Ligue Butagaz Énergie/champions.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Ligue Butagaz Énergie/champions.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Ligue Butagaz Énergie/champions.json")
+        };
+
+        foreach (var p in possibleFrPaths)
+        {
+            if (File.Exists(p)) { frChampsFile = p; break; }
+        }
+
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && !string.IsNullOrEmpty(frChampsFile))
+        {
+            try
+            {
+                var champsJson = File.ReadAllText(frChampsFile);
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (champsList != null)
+                {
+                    foreach (var r in champsList)
+                    {
+                        r.TeamId = GetTeamId(r.TeamName);
+                        r.CompetitionName = "Ligue Butagaz Énergie";
+                    }
+                    db.ChampionRecords.AddRange(champsList);
+                    Log($"Successfully seeded {champsList.Count} historical French champions.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding French champions: {ex.Message}"); }
+        }
+
         // Seed Cup Winners
         string cupWinnersFile = "";
         var possibleCupPaths = new[]
@@ -472,6 +530,40 @@ public static class DatabaseSeeder
                 }
             }
             catch (Exception ex) { Log($"Error seeding Magyar Kupa winners: {ex.Message}"); }
+        }
+
+        // Seed Coupe de France winners (stored under Ligue Butagaz Énergie competition key)
+        string cdfFile = "";
+        var possibleCdfPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Coupe de France/cup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Coupe de France/cup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Coupe de France/cup_winners.json")
+        };
+
+        foreach (var p in possibleCdfPaths)
+        {
+            if (File.Exists(p)) { cdfFile = p; break; }
+        }
+
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && !string.IsNullOrEmpty(cdfFile))
+        {
+            try
+            {
+                var cupJson = File.ReadAllText(cdfFile);
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (cupList != null)
+                {
+                    foreach (var r in cupList)
+                    {
+                        r.CompetitionName = "Ligue Butagaz Énergie";
+                        r.TeamId = GetTeamId(r.TeamName);
+                    }
+                    db.CupWinnerRecords.AddRange(cupList);
+                    Log($"Successfully seeded {cupList.Count} historical Coupe de France winners.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Coupe de France winners: {ex.Message}"); }
         }
 
         db.SaveChanges();

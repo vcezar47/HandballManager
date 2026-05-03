@@ -38,6 +38,9 @@ public partial class CompetitionsViewModel : BaseViewModel
 
     [ObservableProperty]
     private bool _isHungarianLeague;
+
+    [ObservableProperty]
+    private bool _isFrenchLeague;
     
     [ObservableProperty]
     private string _leagueLogoPath = "/Assets/leaguelogo/ligaflorilor.png";
@@ -72,27 +75,42 @@ public partial class CompetitionsViewModel : BaseViewModel
         CompetitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
         IsRomanianLeague = CompetitionName == "Liga Florilor";
         IsHungarianLeague = CompetitionName == "NB I";
+        IsFrenchLeague = CompetitionName == "Ligue Butagaz Énergie";
         
-        LeagueLogoPath = CompetitionName == "NB I" 
-            ? "/Assets/leaguelogo/nbi.png" 
-            : "/Assets/leaguelogo/ligaflorilor.png";
+        LeagueLogoPath = CompetitionName switch
+        {
+            "NB I" => "/Assets/leaguelogo/nbi.png",
+            "Ligue Butagaz Énergie" => "/Assets/leaguelogo/lfhdivision1.png",
+            _ => "/Assets/leaguelogo/ligaflorilor.png"
+        };
 
-        CupLogoPath = CompetitionName == "NB I"
-            ? "/Assets/leaguelogo/magyarkupa.png"
-            : "/Assets/leaguelogo/cuparomaniei.png";
+        CupLogoPath = CompetitionName switch
+        {
+            "NB I" => "/Assets/leaguelogo/magyarkupa.png",
+            "Ligue Butagaz Énergie" => "/Assets/leaguelogo/coupedefrance.png",
+            _ => "/Assets/leaguelogo/cuparomaniei.png"
+        };
         
         LeagueStandings = await _leagueService.GetStandingsAsync(CompetitionName);
         PlayerCupGroup = await _cupService.GetPlayerTeamGroupAsync();
 
         if (PlayerCupGroup != null)
         {
-            CupGroupTitle = CompetitionName == "NB I"
-                ? $"Magyar Kupa — Group {PlayerCupGroup.GroupName}"
-                : $"Cupa României — Group {PlayerCupGroup.GroupName}";
+            CupGroupTitle = CompetitionName switch
+            {
+                "NB I" => $"Magyar Kupa — Group {PlayerCupGroup.GroupName}",
+                "Ligue Butagaz Énergie" => $"Coupe de France — Group {PlayerCupGroup.GroupName}",
+                _ => $"Cupa României — Group {PlayerCupGroup.GroupName}"
+            };
         }
         else
         {
-            CupGroupTitle = CompetitionName == "NB I" ? "Magyar Kupa" : "Cupa României";
+            CupGroupTitle = CompetitionName switch
+            {
+                "NB I" => "Magyar Kupa",
+                "Ligue Butagaz Énergie" => "Coupe de France",
+                _ => "Cupa României"
+            };
         }
 
         if (IsRomanianLeague)

@@ -394,6 +394,7 @@ public class SimulationEngine
         // Try to advance the bracket after simulating
         await _cupService.TryGenerateQuarterFinalsAsync();
         await _cupService.TryGenerateFinalFourAsync();
+        await _cupService.TryGenerateFrenchSemiFinalsAsync();
         await _cupService.TryGenerateFinalsAsync();
 
         return results;
@@ -921,6 +922,18 @@ public class SimulationEngine
                 : (huCupFinal.HomeGoals == huCupFinal.AwayGoals && huCupFinal.HomePenaltyGoals > huCupFinal.AwayPenaltyGoals) ? huCupFinal.HomeTeam : huCupFinal.AwayTeam;
             if (huWinner != null)
                 _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = huWinner.Name, TeamId = huWinner.Id, CompetitionName = "NB I" });
+        }
+
+        // Record French cup winner
+        var frCupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam).Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr && f.CompetitionName == "Ligue Butagaz Énergie");
+        if (frCupFinal != null)
+        {
+            var frWinner = frCupFinal.HomeGoals > frCupFinal.AwayGoals ? frCupFinal.HomeTeam
+                : (frCupFinal.HomeGoals == frCupFinal.AwayGoals && frCupFinal.HomePenaltyGoals > frCupFinal.AwayPenaltyGoals) ? frCupFinal.HomeTeam : frCupFinal.AwayTeam;
+            if (frWinner != null)
+                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = frWinner.Name, TeamId = frWinner.Id, CompetitionName = "Ligue Butagaz Énergie" });
         }
 
         await _supercupService.GenerateNextSupercupAsync(sortedRomanianTeams, cupFinalists);

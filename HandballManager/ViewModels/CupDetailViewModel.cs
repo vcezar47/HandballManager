@@ -45,6 +45,9 @@ public partial class CupDetailViewModel : BaseViewModel
     private bool _isHungarianCup;
 
     [ObservableProperty]
+    private bool _isThirdPlaceGameEnabled = true;
+
+    [ObservableProperty]
     private string _competitionName = "Liga Florilor";
 
     public CupDetailViewModel(CupService cupService, HandballDbContext db, Action<Team>? onTeamSelected = null, Action<string>? onNavigateToHistory = null)
@@ -67,8 +70,19 @@ public partial class CupDetailViewModel : BaseViewModel
         }
 
         IsHungarianCup = CompetitionName == "NB I";
-        CupDisplayName = IsHungarianCup ? "Magyar Kupa" : "Cupa României";
-        CupLogoPath = IsHungarianCup ? "/Assets/leaguelogo/magyarkupa.png" : "/Assets/leaguelogo/cuparomaniei.png";
+        IsThirdPlaceGameEnabled = CompetitionName != "Ligue Butagaz Énergie";
+        CupDisplayName = CompetitionName switch
+        {
+            "NB I" => "Magyar Kupa",
+            "Ligue Butagaz Énergie" => "Coupe de France",
+            _ => "Cupa României"
+        };
+        CupLogoPath = CompetitionName switch
+        {
+            "NB I" => "/Assets/leaguelogo/magyarkupa.png",
+            "Ligue Butagaz Énergie" => "/Assets/leaguelogo/coupedefrance.png",
+            _ => "/Assets/leaguelogo/cuparomaniei.png"
+        };
         Title = CupDisplayName;
 
         AllGroups = await _cupService.GetAllGroupsAsync(CompetitionName);

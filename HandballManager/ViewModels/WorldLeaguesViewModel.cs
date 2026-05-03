@@ -29,7 +29,8 @@ public partial class WorldLeaguesViewModel : BaseViewModel
     public List<CompetitionInfo> AvailableCompetitions { get; } = new()
     {
         new CompetitionInfo { Name = "Liga Florilor", Country = "Romania", Flag = "/Assets/flags/romania.png" },
-        new CompetitionInfo { Name = "NB I",          Country = "Hungary",  Flag = "/Assets/flags/hungary.png"  }
+        new CompetitionInfo { Name = "NB I",          Country = "Hungary",  Flag = "/Assets/flags/hungary.png"  },
+        new CompetitionInfo { Name = "Ligue Butagaz Énergie", Country = "France", Flag = "/Assets/flags/france.png" }
     };
 
     // ── League table ───────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ public partial class WorldLeaguesViewModel : BaseViewModel
     // ── Romanian cups (right panel) ────────────────────────────────────────
     [ObservableProperty] private bool _isRomanianLeague;
     [ObservableProperty] private bool _isHungarianLeague;
+    [ObservableProperty] private bool _isFrenchLeague;
     [ObservableProperty] private CupGroup? _playerCupGroup;
     [ObservableProperty] private string _cupGroupTitle = "Cupa României";
     [ObservableProperty] private string _cupLogoPath = "/Assets/leaguelogo/cuparomaniei.png";
@@ -78,16 +80,23 @@ public partial class WorldLeaguesViewModel : BaseViewModel
     {
         IsRomanianLeague = competitionName == "Liga Florilor";
         IsHungarianLeague = competitionName == "NB I";
+        IsFrenchLeague = competitionName == "Ligue Butagaz Énergie";
 
-        LeagueLogoPath = competitionName == "NB I"
-            ? "/Assets/leaguelogo/nbi.png"
-            : "/Assets/leaguelogo/ligaflorilor.png";
+        LeagueLogoPath = competitionName switch
+        {
+            "NB I" => "/Assets/leaguelogo/nbi.png",
+            "Ligue Butagaz Énergie" => "/Assets/leaguelogo/lfhdivision1.png",
+            _ => "/Assets/leaguelogo/ligaflorilor.png"
+        };
 
-        CupLogoPath = competitionName == "NB I"
-            ? "/Assets/leaguelogo/magyarkupa.png"
-            : "/Assets/leaguelogo/cuparomaniei.png";
+        CupLogoPath = competitionName switch
+        {
+            "NB I" => "/Assets/leaguelogo/magyarkupa.png",
+            "Ligue Butagaz Énergie" => "/Assets/leaguelogo/coupedefrance.png",
+            _ => "/Assets/leaguelogo/cuparomaniei.png"
+        };
 
-        LeagueDisplayName = competitionName == "NB I" ? "NB I" : "Liga Florilor";
+        LeagueDisplayName = competitionName;
 
         Standings = await _leagueService.GetStandingsAsync(competitionName);
 
@@ -104,6 +113,13 @@ public partial class WorldLeaguesViewModel : BaseViewModel
             CupGroupTitle = PlayerCupGroup != null
                 ? $"Magyar Kupa — Group {PlayerCupGroup.GroupName}"
                 : "Magyar Kupa";
+            SupercupFixtures = [];
+        }
+        else if (competitionName == "Ligue Butagaz Énergie")
+        {
+            CupGroupTitle = PlayerCupGroup != null
+                ? $"Coupe de France — Group {PlayerCupGroup.GroupName}"
+                : "Coupe de France";
             SupercupFixtures = [];
         }
         else

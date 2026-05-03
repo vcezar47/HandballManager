@@ -426,35 +426,37 @@
                                 </TextBlock.Style>
                             </TextBlock>
 
-                            <!-- 3rd Place Match -->
-                            <TextBlock Text="3RD PLACE MATCH" FontSize="13" FontWeight="ExtraBold"
-                                       Foreground="#A0A8C0" FontFamily="Segoe UI" Margin="0,28,0,16"/>
-                            <Border Background="#1A2238" CornerRadius="12" Padding="20,12" Margin="0,0,0,8" 
-                                    HorizontalAlignment="Stretch"
-                                    Visibility="{Binding ThirdPlaceMatch, Converter={StaticResource NullToVis}}">
-                                <Grid DataContext="{Binding ThirdPlaceMatch}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                     <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                         <TextBlock Text="{Binding HomeTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                         <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="10,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                     </StackPanel>
-                                     <Border Grid.Column="1" Background="#16213E" CornerRadius="10" Padding="12,4" HorizontalAlignment="Center">
-                                         <TextBlock Text="{Binding ScoreDisplay}" Foreground="#A0A8C0" FontSize="16" FontWeight="Black" TextAlignment="Center"/>
-                                     </Border>
-                                     <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                         <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                         <TextBlock Text="{Binding AwayTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                     </StackPanel>
-                                 </Grid>
-                             </Border>
-                             <TextBlock Text="3rd place match will be determined after the semi-finals."
-                                        Foreground="#555577" FontStyle="Italic" FontFamily="Segoe UI" Margin="0,4,0,0"
-                                        Visibility="{Binding ThirdPlaceMatch, Converter={StaticResource NullToVis}, ConverterParameter=Invert}">
-                             </TextBlock>
+                            <!-- 3rd Place Match (not used for Coupe de France) -->
+                            <StackPanel Visibility="{Binding IsThirdPlaceGameEnabled, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="3RD PLACE MATCH" FontSize="13" FontWeight="ExtraBold"
+                                           Foreground="#A0A8C0" FontFamily="Segoe UI" Margin="0,28,0,16"/>
+                                <Border Background="#1A2238" CornerRadius="12" Padding="20,12" Margin="0,0,0,8" 
+                                        HorizontalAlignment="Stretch"
+                                        Visibility="{Binding ThirdPlaceMatch, Converter={StaticResource NullToVis}}">
+                                    <Grid DataContext="{Binding ThirdPlaceMatch}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                         <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                             <TextBlock Text="{Binding HomeTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                             <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="10,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                         </StackPanel>
+                                         <Border Grid.Column="1" Background="#16213E" CornerRadius="10" Padding="12,4" HorizontalAlignment="Center">
+                                             <TextBlock Text="{Binding ScoreDisplay}" Foreground="#A0A8C0" FontSize="16" FontWeight="Black" TextAlignment="Center"/>
+                                         </Border>
+                                         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                             <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogoPathConverter}}" Width="20" Height="20" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                             <TextBlock Text="{Binding AwayTeam.Name}" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                         </StackPanel>
+                                     </Grid>
+                                 </Border>
+                                 <TextBlock Text="3rd place match will be determined after the semi-finals."
+                                            Foreground="#555577" FontStyle="Italic" FontFamily="Segoe UI" Margin="0,4,0,0"
+                                            Visibility="{Binding ThirdPlaceMatch, Converter={StaticResource NullToVis}, ConverterParameter=Invert}">
+                                 </TextBlock>
+                            </StackPanel>
 
                             <!-- FINAL -->
                             <TextBlock Text="&#x1F3C6;  FINAL" FontSize="16" FontWeight="ExtraBold"

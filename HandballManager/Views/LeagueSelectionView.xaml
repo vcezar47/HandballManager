@@ -20,9 +20,9 @@
 
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="CHOOSE YOUR COMPETITION" Foreground="#E94560" HorizontalAlignment="Center"
-                       FontWeight="ExtraBold" FontSize="12" Margin="0,0,0,24"/>
+                       FontWeight="ExtraBold" FontSize="12" Margin="0,0,0,15"/>
 
-            <Grid HorizontalAlignment="Center" Margin="0,0,0,24">
+            <Grid HorizontalAlignment="Center" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -59,7 +59,7 @@
                 <ContentControl Grid.Column="1" Content="{Binding SelectedLeague}">
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
-                            <Border x:Name="LeagueCard" Background="#1E2A4A" CornerRadius="20" Width="320" Padding="30">
+                            <Border x:Name="LeagueCard" Background="#1E2A4A" CornerRadius="20" Width="450" Height="260" Padding="30,20">
                                 <Border.BorderBrush>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Color="#E94560" Offset="0"/>
@@ -70,13 +70,17 @@
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="25" Opacity="0.4" Color="#E94560" ShadowDepth="0"/>
                                 </Border.Effect>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <Image Source="{Binding Logo}" Height="140" Margin="0,0,0,20" 
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image Source="{Binding Logo}" Height="120" Margin="0,0,0,10" 
                                            HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="28" FontWeight="Black" 
-                                               HorizontalAlignment="Center" TextAlignment="Center"/>
+                                    <Grid Height="40" Width="390">
+                                        <Viewbox Stretch="Uniform">
+                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="24" FontWeight="Black"
+                                                       HorizontalAlignment="Center" TextAlignment="Center"/>
+                                        </Viewbox>
+                                    </Grid>
                                     <TextBlock Text="{Binding Country}" Foreground="#E94560" FontSize="16" FontWeight="Bold" 
-                                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

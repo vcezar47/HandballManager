@@ -44,6 +44,7 @@ public class LeagueService
     public static int GetMaxMatchweeks(string competitionName)
     {
         if (competitionName == "NB I") return 26;
+        if (competitionName == "Ligue Butagaz Énergie") return 26;
         return 22;
     }
 

@@ -603,6 +603,129 @@
                         </TextBlock>
                     </StackPanel>
                 </Border>
+
+                <!-- RIGHT: Coupe de France (FRANCE) -->
+                <Border Grid.Column="2" Visibility="{Binding IsFrenchLeague, Converter={StaticResource BoolToVis}}" CornerRadius="20" Background="#16213E" Padding="20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="30" Opacity="0.2" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <!-- Cup title → cup detail -->
+                        <Button Command="{Binding ViewCupDetailCommand}"
+                                Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0,0,0,16">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="{Binding DataContext.CupLogoPath, RelativeSource={RelativeSource AncestorType=UserControl}}" Width="28" Height="28"
+                                               Margin="0,0,12,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        <TextBlock Text="{Binding CupGroupTitle}" FontSize="20" FontWeight="Black"
+                                                   Foreground="White" VerticalAlignment="Center" x:Name="FrCupTitle"/>
+                                        <TextBlock Text="  ›" FontSize="20" FontWeight="Bold" Foreground="#666688" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="FrCupTitle" Property="Foreground" Value="#E94560"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Cup group table -->
+                        <DataGrid ItemsSource="{Binding PlayerCupGroup.Entries}"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  CanUserReorderColumns="False" GridLinesVisibility="None"
+                                  Background="Transparent" RowBackground="Transparent" BorderThickness="0"
+                                  FontFamily="Segoe UI" FontSize="13" Foreground="White"
+                                  ColumnHeaderHeight="36" RowHeight="36"
+                                  HeadersVisibility="Column" SelectionMode="Single" SelectionUnit="FullRow"
+                                  ColumnHeaderStyle="{StaticResource CompactHeaderStyle}"
+                                  RowStyle="{StaticResource CompactRowStyle}"
+                                  CellStyle="{StaticResource CompactCellStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding Rank}" Width="35">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Foreground" Value="#666688"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+
+                                <DataGridTemplateColumn Header="CLUB" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.ViewCupTeamCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
+                                                            <Image Source="{Binding Team.LogoPath, Converter={StaticResource TeamLogoPathConverter}}"
+                                                                   Width="18" Height="18" Margin="0,0,8,0"
+                                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                                            <TextBlock Text="{Binding Team.Name}" Foreground="White" FontWeight="Bold"
+                                                                       VerticalAlignment="Center" FontSize="12"/>
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn Header="P" Binding="{Binding Played}" Width="35">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#A0A8C0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+
+                                <DataGridTextColumn Header="GD" Binding="{Binding GoalDifference}" Width="40">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+
+                                <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="45">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontWeight" Value="Black"/>
+                                            <Setter Property="Foreground" Value="#E94560"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty state -->
+                        <TextBlock Text="Cup draw not yet available."
+                                   Foreground="#555577" FontFamily="Segoe UI" FontSize="14"
+                                   FontStyle="Italic" HorizontalAlignment="Center" Margin="0,20,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PlayerCupGroup}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Grid>
     </ScrollViewer>

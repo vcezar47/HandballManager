@@ -220,7 +220,7 @@ public partial class ManagerCreationViewModel : BaseViewModel
         "Romania" => "ROU", "Hungary" => "HUN", "Serbia" => "SRB", "Croatia" => "HRV",
         "France" => "FRA", "Denmark" => "DEN", "Norway" => "NOR", "Sweden" => "SWE",
         "Germany" => "GER", "Spain" => "ESP", "Netherlands" => "NED", "Poland" => "POL",
-        "Brazil" => "BRA", "Montenegro" => "MNE", "Slovenia" => "SLO",
+        "Brazil" => "BRA", "Montenegro" => "MNE", "Slovenia" => "SVN",
         "North Macedonia" => "MKD", "Czech Republic" => "CZE", "Russia" => "RUS",
         "Portugal" => "POR", "Austria" => "AUT",
         _ => "ROU"
