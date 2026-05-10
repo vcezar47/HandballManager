@@ -9,6 +9,7 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>HandballManager</RootNamespace>
     <ApplicationIcon>HandballManager.ico</ApplicationIcon>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,8 +41,10 @@
 
   <ItemGroup>
     <Folder Include="Data\InitialData\LFHDivision1\" />
-    <Folder Include="Data\Past Champions\LFH Division 1\" />
     <Folder Include="Data\Past Champions\Coupe de France\" />
+    <Folder Include="Data\Past Champions\Kvindeligaen\" />
+    <Folder Include="Data\Past Champions\Landspokalturnering\" />
+    <Folder Include="Data\Past Champions\Supercupa Romaniei\" />
   </ItemGroup>
 
 </Project>

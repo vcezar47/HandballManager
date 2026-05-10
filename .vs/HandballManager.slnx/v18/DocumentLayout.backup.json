@@ -3,20 +3,88 @@
   "WorkspaceRootPath": "D:\\Github Desktop\\HandballManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\brasov.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\converters\\nationalitytoflagconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\converters\\nationalitytoflagconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\ligaflorilor\\craiova.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\viborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\viborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\reputationlevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\reputationlevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\youthview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\youthsignview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\youthsignview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\transfernegotiationview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\transfernegotiationview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\views\\supercuphistoryview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\views\\supercuphistoryview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\sonderjyske.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\sonderjyske.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\skanderborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\skanderborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\silkeborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\silkeborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\ringkobing.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\ringkobing.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\odense.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\odense.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\nykobing.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\nykobing.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\kobenhavn.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\kobenhavn.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\ikast.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\ikast.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\hoj.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\hoj.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\hh_elite.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\hh_elite.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\esbjerg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\esbjerg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\bjerringbro.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\bjerringbro.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\data\\initialdata\\kvindeligaen\\aalborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\data\\initialdata\\kvindeligaen\\aalborg.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\coachlicense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\coachlicense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|d:\\github desktop\\handballmanager\\handballmanager\\models\\reputationlevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9A675A-41FF-3993-47CE-9231820EDCFB}|HandballManager\\HandballManager.csproj|solutionrelative:handballmanager\\models\\reputationlevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,21 +98,20 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 19,
               "Title": "CoachLicense.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\CoachLicense.cs",
               "RelativeDocumentMoniker": "HandballManager\\Models\\CoachLicense.cs",
               "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\CoachLicense.cs",
               "RelativeToolTip": "HandballManager\\Models\\CoachLicense.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-03T10:23:37.487Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 20,
               "Title": "ReputationLevel.cs",
               "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Models\\ReputationLevel.cs",
               "RelativeDocumentMoniker": "HandballManager\\Models\\ReputationLevel.cs",
@@ -53,33 +120,71 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-03T10:09:31.059Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "brasov.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\brasov.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-03T11:05:23.098Z",
+              "Title": "NationalityToFlagConverter.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "RelativeToolTip": "HandballManager\\Converters\\NationalityToFlagConverter.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAAwDMAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T11:15:41.088Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "craiova.json",
-              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "RelativeToolTip": "HandballManager\\Data\\InitialData\\LigaFlorilor\\craiova.json",
-              "ViewState": "AgIAAI0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-03T11:03:43.204Z",
+              "DocumentIndex": 2,
+              "Title": "YouthView.xaml.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\YouthView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthView.xaml.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\YouthView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\YouthView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T11:00:21.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "YouthSignView.xaml.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\YouthSignView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\YouthSignView.xaml.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\YouthSignView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\YouthSignView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T11:00:19.581Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TransferNegotiationView.xaml.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\TransferNegotiationView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\TransferNegotiationView.xaml.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\TransferNegotiationView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\TransferNegotiationView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T11:00:17.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SupercupHistoryView.xaml.cs",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\SupercupHistoryView.xaml.cs",
+              "RelativeDocumentMoniker": "HandballManager\\Views\\SupercupHistoryView.xaml.cs",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Views\\SupercupHistoryView.xaml.cs",
+              "RelativeToolTip": "HandballManager\\Views\\SupercupHistoryView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T11:00:08.471Z",
               "EditorCaption": ""
             },
             {
@@ -89,6 +194,175 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "viborg.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\viborg.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\viborg.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\viborg.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\viborg.json",
+              "ViewState": "AgIAADwAAAAAAAAAAAAIwEMAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:22:32.78Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "skanderborg.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\skanderborg.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\skanderborg.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\skanderborg.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\skanderborg.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:18:24.716Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "sonderjyske.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\sonderjyske.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\sonderjyske.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\sonderjyske.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\sonderjyske.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:18:24.037Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "silkeborg.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\silkeborg.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\silkeborg.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\silkeborg.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\silkeborg.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:16:33.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ringkobing.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\ringkobing.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\ringkobing.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\ringkobing.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\ringkobing.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:14:50.839Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "odense.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\odense.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\odense.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\odense.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\odense.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:13:11.308Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "nykobing.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\nykobing.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\nykobing.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\nykobing.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\nykobing.json",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:11:42.637Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ikast.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\ikast.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\ikast.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\ikast.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\ikast.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:08:13.546Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "kobenhavn.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\kobenhavn.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\kobenhavn.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\kobenhavn.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\kobenhavn.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:08:12.992Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "hoj.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\hoj.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\hoj.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\hoj.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\hoj.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:04:31.768Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "esbjerg.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\esbjerg.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\esbjerg.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\esbjerg.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\esbjerg.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:04:29.437Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "hh_elite.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\hh_elite.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\hh_elite.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\hh_elite.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\hh_elite.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T18:04:24.301Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "bjerringbro.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\bjerringbro.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\bjerringbro.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\bjerringbro.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\bjerringbro.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T17:55:55.071Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "aalborg.json",
+              "DocumentMoniker": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\aalborg.json",
+              "RelativeDocumentMoniker": "HandballManager\\Data\\InitialData\\Kvindeligaen\\aalborg.json",
+              "ToolTip": "D:\\Github Desktop\\HandballManager\\HandballManager\\Data\\InitialData\\Kvindeligaen\\aalborg.json",
+              "RelativeToolTip": "HandballManager\\Data\\InitialData\\Kvindeligaen\\aalborg.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-08T17:42:57.73Z"
             }
           ]
         }

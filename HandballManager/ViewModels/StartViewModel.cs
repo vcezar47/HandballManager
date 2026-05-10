@@ -54,7 +54,8 @@ public partial class StartViewModel : BaseViewModel
         {
             new() { Name = "Liga Florilor", Country = "Romania", Logo = "/Assets/leaguelogo/ligaflorilor.png" },
             new() { Name = "NB I", Country = "Hungary", Logo = "/Assets/leaguelogo/nbi.png" },
-            new() { Name = "Ligue Butagaz Énergie", Country = "France", Logo = "/Assets/leaguelogo/lfhdivision1.png" }
+            new() { Name = "Ligue Butagaz Énergie", Country = "France", Logo = "/Assets/leaguelogo/lfhdivision1.png" },
+            new() { Name = "Kvindeligaen", Country = "Denmark", Logo = "/Assets/leaguelogo/kvindeligaen.png" }
         };
         SelectedLeague = Leagues.First();
     }

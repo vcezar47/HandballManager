@@ -22,15 +22,30 @@ public partial class SupercupHistoryViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<TeamTitleSummary> _medalTable = new();
 
+    [ObservableProperty]
+    private string _archivePageTitle = "Supercupa României Archives";
+
     public SupercupHistoryViewModel(HandballDbContext db)
     {
         Title = "Supercup History";
         _db = db;
     }
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(string? competitionName = null)
     {
+        if (string.IsNullOrEmpty(competitionName))
+        {
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        }
+
+        ArchivePageTitle = competitionName == "Kvindeligaen"
+            ? "Bambuni Supercup Archives"
+            : "Supercupa României Archives";
+        Title = competitionName == "Kvindeligaen" ? "Bambuni Supercup History" : "Supercupa României History";
+
         var records = await _db.SupercupWinnerRecords
+            .Where(c => c.CompetitionName == competitionName)
             .OrderByDescending(c => c.Season)
             .ThenByDescending(c => c.Id)
             .ToListAsync();

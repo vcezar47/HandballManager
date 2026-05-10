@@ -35,9 +35,9 @@ public partial class App : Application
             var clock = new GameClock(LeagueService.GameSeasonStartDate);
             var scoutingService = new ScoutingService(clock);
 
-            // Seed historical winners and generate initial supercup and cup draw
-            supercupService.SeedHistoricalWinners();
+            // Historical supercup winners: DatabaseSeeder + JSON in Data/Past Champions
             await supercupService.InitializeInitialSupercupAsync();
+            await supercupService.InitializeDanishSupercupAsync();
             await cupService.GenerateCupAsync();
 
             // Build main VM and window

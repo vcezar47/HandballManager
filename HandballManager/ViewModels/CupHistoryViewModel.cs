@@ -55,6 +55,7 @@ public partial class CupHistoryViewModel : BaseViewModel
         {
             "NB I" => "Magyar Kupa",
             "Ligue Butagaz Énergie" => "Coupe de France",
+            "Kvindeligaen" => "Landspokalturnering",
             _ => "Cupa României"
         };
         Title = $"{CupDisplayName} History";

@@ -5,6 +5,9 @@ public class SupercupFixture
     public int Id { get; set; }
     public string Season { get; set; } = string.Empty;
 
+    /// <summary>League competition key, e.g. Liga Florilor (RO) or Kvindeligaen (DK).</summary>
+    public string CompetitionName { get; set; } = "Liga Florilor";
+
     public int HomeTeamId { get; set; }
     public Team? HomeTeam { get; set; }
     public int AwayTeamId { get; set; }

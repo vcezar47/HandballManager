@@ -41,6 +41,9 @@ public partial class CompetitionsViewModel : BaseViewModel
 
     [ObservableProperty]
     private bool _isFrenchLeague;
+
+    [ObservableProperty]
+    private bool _isDanishLeague;
     
     [ObservableProperty]
     private string _leagueLogoPath = "/Assets/leaguelogo/ligaflorilor.png";
@@ -76,11 +79,13 @@ public partial class CompetitionsViewModel : BaseViewModel
         IsRomanianLeague = CompetitionName == "Liga Florilor";
         IsHungarianLeague = CompetitionName == "NB I";
         IsFrenchLeague = CompetitionName == "Ligue Butagaz Énergie";
+        IsDanishLeague = CompetitionName == "Kvindeligaen";
         
         LeagueLogoPath = CompetitionName switch
         {
             "NB I" => "/Assets/leaguelogo/nbi.png",
             "Ligue Butagaz Énergie" => "/Assets/leaguelogo/lfhdivision1.png",
+            "Kvindeligaen" => "/Assets/leaguelogo/kvindeligaen.png",
             _ => "/Assets/leaguelogo/ligaflorilor.png"
         };
 
@@ -88,10 +93,14 @@ public partial class CompetitionsViewModel : BaseViewModel
         {
             "NB I" => "/Assets/leaguelogo/magyarkupa.png",
             "Ligue Butagaz Énergie" => "/Assets/leaguelogo/coupedefrance.png",
+            "Kvindeligaen" => "/Assets/leaguelogo/santandercup.png",
             _ => "/Assets/leaguelogo/cuparomaniei.png"
         };
         
-        LeagueStandings = await _leagueService.GetStandingsAsync(CompetitionName);
+        if (IsDanishLeague)
+            LeagueStandings = await _leagueService.GetKvindeligaenComputedRegularStandingsAsync();
+        else
+            LeagueStandings = await _leagueService.GetStandingsAsync(CompetitionName);
         PlayerCupGroup = await _cupService.GetPlayerTeamGroupAsync();
 
         if (PlayerCupGroup != null)
@@ -100,6 +109,7 @@ public partial class CompetitionsViewModel : BaseViewModel
             {
                 "NB I" => $"Magyar Kupa — Group {PlayerCupGroup.GroupName}",
                 "Ligue Butagaz Énergie" => $"Coupe de France — Group {PlayerCupGroup.GroupName}",
+                "Kvindeligaen" => $"Landspokalturnering — Group {PlayerCupGroup.GroupName}",
                 _ => $"Cupa României — Group {PlayerCupGroup.GroupName}"
             };
         }
@@ -109,17 +119,23 @@ public partial class CompetitionsViewModel : BaseViewModel
             {
                 "NB I" => "Magyar Kupa",
                 "Ligue Butagaz Énergie" => "Coupe de France",
+                "Kvindeligaen" => "Landspokalturnering",
                 _ => "Cupa României"
             };
         }
 
         if (IsRomanianLeague)
         {
-            var knockout = await _supercupService.GetKnockoutFixturesAsync();
+            var knockout = await _supercupService.GetKnockoutFixturesAsync("Liga Florilor");
             if (knockout.Any(f => f.Round == "Final" || f.Round == "ThirdPlace"))
                 SupercupFixtures = knockout.Where(f => f.Round == "Final" || f.Round == "ThirdPlace").ToList();
             else
                 SupercupFixtures = knockout.Where(f => f.Round == "SemiFinal").ToList();
+        }
+        else if (IsDanishLeague)
+        {
+            var dkKo = await _supercupService.GetKnockoutFixturesAsync("Kvindeligaen");
+            SupercupFixtures = dkKo.Where(f => f.Round == "Final").ToList();
         }
         else
         {

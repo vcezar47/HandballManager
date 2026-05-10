@@ -75,12 +75,14 @@ public partial class CupDetailViewModel : BaseViewModel
         {
             "NB I" => "Magyar Kupa",
             "Ligue Butagaz Énergie" => "Coupe de France",
+            "Kvindeligaen" => "Landspokalturnering",
             _ => "Cupa României"
         };
         CupLogoPath = CompetitionName switch
         {
             "NB I" => "/Assets/leaguelogo/magyarkupa.png",
             "Ligue Butagaz Énergie" => "/Assets/leaguelogo/coupedefrance.png",
+            "Kvindeligaen" => "/Assets/leaguelogo/santandercup.png",
             _ => "/Assets/leaguelogo/cuparomaniei.png"
         };
         Title = CupDisplayName;

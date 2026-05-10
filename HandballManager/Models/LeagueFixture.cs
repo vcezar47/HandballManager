@@ -13,5 +13,15 @@ public class LeagueFixture
     public Team HomeTeam { get; set; } = null!;
     public Team AwayTeam { get; set; } = null!;
     public string CompetitionName { get; set; } = "Liga Florilor";
+
+    /// <summary>Regular, ChampGroupA, ChampGroupB, Relegation, or KvBo3 (best-of-3 legs).</summary>
+    public string Phase { get; set; } = "Regular";
+
+    /// <summary>For Bo3: SF1, SF2, Third, Fin — groups legs of the same tie.</summary>
+    public string? PlayoffSeriesId { get; set; }
+
+    /// <summary>Leg 1–3 within a Bo3 series.</summary>
+    public int PlayoffLeg { get; set; }
+
     public MatchRecord? MatchRecord { get; set; }
 }

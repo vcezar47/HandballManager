@@ -54,13 +54,16 @@ public class SimulationEngine
         var results = new List<MatchRecord>();
         foreach (var fixture in fixtures)
         {
-            var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, matchweek);
+            bool standings = !(fixture.CompetitionName == LeagueService.KvindeligaenCompetition && fixture.Phase == "KvBo3");
+            var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, matchweek,
+                updateLeagueStandings: standings, forceWinner: !standings);
             results.Add(result);
             fixture.IsPlayed = true;
             fixture.MatchRecord = result;
         }
 
         await _db.SaveChangesAsync();
+        await _leagueService.AfterKvindeligaenLeagueDayAsync(LeagueService.GetMatchweekDate(matchweek, competitionName));
         return results;
     }
 
@@ -82,13 +85,16 @@ public class SimulationEngine
 
                 foreach (var fixture in fixtures)
                 {
-                    var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, mw);
+                    bool standings = !(fixture.CompetitionName == LeagueService.KvindeligaenCompetition && fixture.Phase == "KvBo3");
+                    var result = await SimulateMatchInternalAsync(fixture.HomeTeamId, fixture.AwayTeamId, mw,
+                        updateLeagueStandings: standings, forceWinner: !standings);
                     fixture.IsPlayed = true;
                     fixture.MatchRecord = result;
                 }
             }
         }
         await _db.SaveChangesAsync();
+        await _leagueService.AfterKvindeligaenLeagueDayAsync(date);
     }
 
     /// <summary>
@@ -203,8 +209,12 @@ public class SimulationEngine
         {
             leagueFix.IsPlayed = true;
             leagueFix.MatchRecord = record;
-            await UpdateLeagueEntryAsync(engine.HomeTeam.Id, engine.HomeScore, engine.AwayScore);
-            await UpdateLeagueEntryAsync(engine.AwayTeam.Id, engine.AwayScore, engine.HomeScore);
+            bool dkBo3 = leagueFix.CompetitionName == LeagueService.KvindeligaenCompetition && leagueFix.Phase == "KvBo3";
+            if (!dkBo3)
+            {
+                await UpdateLeagueEntryAsync(engine.HomeTeam.Id, engine.HomeScore, engine.AwayScore);
+                await UpdateLeagueEntryAsync(engine.AwayTeam.Id, engine.AwayScore, engine.HomeScore);
+            }
         }
         else if (isCup && cupFix != null)
         {
@@ -442,7 +452,8 @@ public class SimulationEngine
                     {
                         Season = fixture.Season,
                         TeamName = winner.Name,
-                        TeamId = winner.Id
+                        TeamId = winner.Id,
+                        CompetitionName = fixture.CompetitionName
                     });
                 }
             }
@@ -459,7 +470,8 @@ public class SimulationEngine
         int homeTeamId, int awayTeamId, int matchweek,
         bool isCupMatch = false, string? cupRound = null,
         DateTime? playedOnOverride = null, bool isNeutralVenue = false,
-        string? venueName = null)
+        string? venueName = null, bool updateLeagueStandings = true,
+        bool forceWinner = false)
     {
         var homeTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == homeTeamId);
         var awayTeam = await _db.Teams.Include(t => t.Players).Include(t => t.Manager).FirstAsync(t => t.Id == awayTeamId);
@@ -533,9 +545,11 @@ public class SimulationEngine
         record.HomeGoals = record.MatchEvents.Count(e => e.TeamId == homeTeamId && e.EventType == "Goal");
         record.AwayGoals = record.MatchEvents.Count(e => e.TeamId == awayTeamId && e.EventType == "Goal");
 
-        // Cup knockout matches (Supercup, Cup Final 4, etc.) can't end in a draw
-        if (isCupMatch && cupRound != null && cupRound != "Group" && !cupRound.StartsWith("Group")
-            && record.HomeGoals == record.AwayGoals)
+        // Cup knockout matches or forced-winner league matches (playoffs) can't end in a draw
+        bool canDraw = !forceWinner;
+        if (isCupMatch && (cupRound == "Group" || cupRound?.StartsWith("Group") == true)) canDraw = true;
+
+        if (!canDraw && record.HomeGoals == record.AwayGoals)
         {
             // --- Phase 1: Overtime (2 x 5 minutes) ---
             record.WasDecidedByOvertime = true;
@@ -581,7 +595,7 @@ public class SimulationEngine
         record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Shots > 0));
 
         // Only update league standings for league matches
-        if (!isCupMatch)
+        if (!isCupMatch && updateLeagueStandings)
         {
             await UpdateLeagueEntryAsync(homeTeamId, record.HomeGoals, record.AwayGoals);
             await UpdateLeagueEntryAsync(awayTeamId, record.AwayGoals, record.HomeGoals);
@@ -830,6 +844,17 @@ public class SimulationEngine
         }
     }
 
+    /// <summary>
+    /// Simulates a single Kvindeligaen playoff fixture (used by the Bo3 completion loop).
+    /// Does not rely on matchweek-date calendar lookup, since these fixtures are generated dynamically.
+    /// </summary>
+    public async Task<MatchRecord> SimulateKvindeligaenPlayoffFixtureAsync(
+        int homeTeamId, int awayTeamId, int round, bool updateLeagueStandings)
+    {
+        return await SimulateMatchInternalAsync(homeTeamId, awayTeamId, round,
+            updateLeagueStandings: updateLeagueStandings, forceWinner: true);
+    }
+
     private async Task UpdateLeagueEntryAsync(int teamId, int goalsFor, int goalsAgainst)
     {
         var entry = await _db.LeagueEntries.FirstOrDefaultAsync(e => e.TeamId == teamId);
@@ -863,8 +888,25 @@ public class SimulationEngine
 
         // Determine Champions for each competition before wiping entries
         var competitions = allEntries.Select(e => e.CompetitionName).Distinct().ToList();
+        string seasonStrChamp = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
         foreach (var comp in competitions)
         {
+            if (comp == LeagueService.KvindeligaenCompetition)
+            {
+                var dkChamp = await _leagueService.GetKvindeligaenPlayoffChampionTeamAsync(seasonStrChamp);
+                if (dkChamp != null)
+                {
+                    _db.ChampionRecords.Add(new ChampionRecord
+                    {
+                        Season = seasonStrChamp,
+                        TeamName = dkChamp.Name,
+                        TeamId = dkChamp.Id,
+                        CompetitionName = comp
+                    });
+                }
+                continue;
+            }
+
             var winnerEntry = allEntries
                 .Where(e => e.CompetitionName == comp)
                 .OrderByDescending(e => e.Points)
@@ -876,7 +918,7 @@ public class SimulationEngine
             {
                 var champRecord = new ChampionRecord
                 {
-                    Season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}",
+                    Season = seasonStrChamp,
                     TeamName = winnerEntry.Team.Name,
                     TeamId = winnerEntry.Team.Id,
                     CompetitionName = comp
@@ -907,7 +949,10 @@ public class SimulationEngine
             var cupWinner = roCupFinal.HomeGoals > roCupFinal.AwayGoals ? roCupFinal.HomeTeam
                 : (roCupFinal.HomeGoals == roCupFinal.AwayGoals && roCupFinal.HomePenaltyGoals > roCupFinal.AwayPenaltyGoals) ? roCupFinal.HomeTeam : roCupFinal.AwayTeam;
             if (cupWinner != null)
-                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = cupWinner.Name, TeamId = cupWinner.Id, CompetitionName = "Liga Florilor" });
+            {
+                if (!await _db.CupWinnerRecords.AnyAsync(r => r.Season == seasonStrChamp && r.CompetitionName == "Liga Florilor"))
+                    _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = seasonStrChamp, TeamName = cupWinner.Name, TeamId = cupWinner.Id, CompetitionName = "Liga Florilor" });
+            }
             if (roCupFinal.HomeTeam != null) cupFinalists.Add(roCupFinal.HomeTeam);
             if (roCupFinal.AwayTeam != null) cupFinalists.Add(roCupFinal.AwayTeam);
         }
@@ -921,7 +966,10 @@ public class SimulationEngine
             var huWinner = huCupFinal.HomeGoals > huCupFinal.AwayGoals ? huCupFinal.HomeTeam
                 : (huCupFinal.HomeGoals == huCupFinal.AwayGoals && huCupFinal.HomePenaltyGoals > huCupFinal.AwayPenaltyGoals) ? huCupFinal.HomeTeam : huCupFinal.AwayTeam;
             if (huWinner != null)
-                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = huWinner.Name, TeamId = huWinner.Id, CompetitionName = "NB I" });
+            {
+                if (!await _db.CupWinnerRecords.AnyAsync(r => r.Season == seasonStrChamp && r.CompetitionName == "NB I"))
+                    _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = seasonStrChamp, TeamName = huWinner.Name, TeamId = huWinner.Id, CompetitionName = "NB I" });
+            }
         }
 
         // Record French cup winner
@@ -933,10 +981,28 @@ public class SimulationEngine
             var frWinner = frCupFinal.HomeGoals > frCupFinal.AwayGoals ? frCupFinal.HomeTeam
                 : (frCupFinal.HomeGoals == frCupFinal.AwayGoals && frCupFinal.HomePenaltyGoals > frCupFinal.AwayPenaltyGoals) ? frCupFinal.HomeTeam : frCupFinal.AwayTeam;
             if (frWinner != null)
-                _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = currentDate.Year.ToString(), TeamName = frWinner.Name, TeamId = frWinner.Id, CompetitionName = "Ligue Butagaz Énergie" });
+            {
+                if (!await _db.CupWinnerRecords.AnyAsync(r => r.Season == seasonStrChamp && r.CompetitionName == "Ligue Butagaz Énergie"))
+                    _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = seasonStrChamp, TeamName = frWinner.Name, TeamId = frWinner.Id, CompetitionName = "Ligue Butagaz Énergie" });
+            }
+        }
+
+        var dkCupFinal = await _db.CupFixtures
+            .Include(f => f.HomeTeam).Include(f => f.AwayTeam)
+            .FirstOrDefaultAsync(f => f.Round == "Final" && f.IsPlayed && f.Season == currentSeasonStr && f.CompetitionName == LeagueService.KvindeligaenCompetition);
+        if (dkCupFinal != null)
+        {
+            var dkCw = dkCupFinal.HomeGoals > dkCupFinal.AwayGoals ? dkCupFinal.HomeTeam
+                : (dkCupFinal.HomeGoals == dkCupFinal.AwayGoals && dkCupFinal.HomePenaltyGoals > dkCupFinal.AwayPenaltyGoals) ? dkCupFinal.HomeTeam : dkCupFinal.AwayTeam;
+            if (dkCw != null)
+            {
+                if (!await _db.CupWinnerRecords.AnyAsync(r => r.Season == seasonStrChamp && r.CompetitionName == LeagueService.KvindeligaenCompetition))
+                    _db.CupWinnerRecords.Add(new CupWinnerRecord { Season = seasonStrChamp, TeamName = dkCw.Name, TeamId = dkCw.Id, CompetitionName = LeagueService.KvindeligaenCompetition });
+            }
         }
 
         await _supercupService.GenerateNextSupercupAsync(sortedRomanianTeams, cupFinalists);
+        await _supercupService.GenerateNextDanishSupercupAsync(_leagueService);
         await _cupService.ClearSeasonDataAsync();
         // ------------------------------------------
 

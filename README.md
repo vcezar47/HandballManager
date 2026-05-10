@@ -1,4 +1,4 @@
-# Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="15">
+# Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="45">
 
 ## About the Game
 
@@ -23,12 +23,12 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * <img src="HandballManager/Assets/flags/hungary.png" height="15"> **Hungary Women's Handball Cup (Magyar Kupa)**
 * <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball League (Ligue Butagaz Energie)**
 * <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball Cup (Coupe de France)**
-
-## Upcoming Competitions
-
 * <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball League (Kvindeligaen)**
 * <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball Cup (Landspokalturnering)**
 * <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball SuperCup**
+
+## Upcoming Competitions
+
 * <img src="HandballManager/Assets/flags/norway.png" height="15"> **Norway Women's Handball League (REMA 1000-ligaen, Women)**
 * <img src="HandballManager/Assets/flags/norway.png" height="15"> **Norway Women's Handball Cup**
 * <img src="HandballManager/Assets/flags/germany.png" height="15"> **Germany Women's Handball League (Women Bundesliga)**
@@ -51,12 +51,12 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * **In-depth match simulation (time-outs, substitutions etc.)**
 * **UI Improvements**
 * **----- 29.04.2026 Late April Update -----**
-* **Hungary Women's Handball League (NB I) added**
-* **Hungary Women's Handball Cup (Magyar Kupa) added**
+* **Hungary competitions added (League & Cup)**
 * **----- 03.05.2026 Early May Competitions Update -----**
-* **France Women's Handball League (Ligue Butagaz Energie)**
-* **France Women's Handball Cup (Coupe de France)**
+* **France competitions added (League & Cup)**
 * **Added realistic budgets to all clubs**
+* **----- 10.05.2026 May Competitions Update -----**
+* **Denmark competitions added (League, Cup & SuperCup)**
 
 ## Upcoming Features
 

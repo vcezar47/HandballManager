@@ -13,6 +13,7 @@ public class NationalityToFlagConverter : IValueConverter
         { "BRA", "brazil.png" },
         { "CRO", "croatia.png" },
         { "DEN", "denmark.png" },
+        { "DNK", "denmark.png" },
         { "FRA", "france.png" },
         { "HUN", "hungary.png" },
         { "JPN", "japan.png" },
@@ -46,7 +47,9 @@ public class NationalityToFlagConverter : IValueConverter
         { "EGY", "egypt.png" },
         { "BEL", "belgium.png" },
         { "CGO", "congo.png" },
-        { "GUI", "guinea.png" }
+        { "GUI", "guinea.png" },
+        { "FRO", "faroeislands.png" },
+        { "GBR", "gibraltar.png" }
     };
 
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)

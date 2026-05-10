@@ -105,7 +105,7 @@ public partial class MainViewModel : BaseViewModel
         ScoutingVM = new ScoutingViewModel(db, clock, scouting, NavigateToPlayerDetail, _transferService, OpenTransferNegotiation);
         LeagueHistoryVM = new LeagueHistoryViewModel(db);
         CupHistoryVM = new CupHistoryViewModel(db);
-        SupercupDetailVM = new SupercupDetailViewModel(supercupService, NavigateToTeamRoster, async () => await NavigateToSupercupHistoryAsync());
+        SupercupDetailVM = new SupercupDetailViewModel(supercupService, NavigateToTeamRoster, NavigateToSupercupHistoryFromDetailAsync);
         SupercupHistoryVM = new SupercupHistoryViewModel(db);
         FinancesVM = new FinancesViewModel(db);
         ContractsVM = new ContractsViewModel(db, clock);
@@ -118,7 +118,7 @@ public partial class MainViewModel : BaseViewModel
             onNavigateToLeagueDetail: async (comp) => await NavigateToLeagueDetailAsync(comp),
             onNavigateToLeagueHistory: async (comp) => await NavigateToLeagueHistoryAsync(comp),
             onNavigateToCupDetail: async (comp) => await NavigateToCupDetailAsync(comp),
-            onNavigateToSupercupDetail: async () => await NavigateToSupercupDetailAsync());
+            onNavigateToSupercupDetail: async () => await NavigateToSupercupDetailAsync(WorldLeaguesVM?.SelectedCompetition ?? "Liga Florilor"));
 
         _currentViewModel = MainMenuVM;
 
@@ -387,16 +387,30 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToSupercupDetailAsync()
+    private async Task NavigateToSupercupDetailAsync(string? competitionName = null)
     {
-        await SupercupDetailVM.InitializeAsync();
+        if (string.IsNullOrEmpty(competitionName))
+        {
+            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+            competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        }
+
+        await SupercupDetailVM.InitializeAsync(competitionName);
         NavigateTo(SupercupDetailVM);
+    }
+
+    private async Task NavigateToSupercupHistoryFromDetailAsync()
+    {
+        await SupercupHistoryVM.InitializeAsync(SupercupDetailVM.ActiveCompetition);
+        NavigateTo(SupercupHistoryVM);
     }
 
     [RelayCommand]
     private async Task NavigateToSupercupHistoryAsync()
     {
-        await SupercupHistoryVM.InitializeAsync();
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+        var competitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
+        await SupercupHistoryVM.InitializeAsync(competitionName);
         NavigateTo(SupercupHistoryVM);
     }
 

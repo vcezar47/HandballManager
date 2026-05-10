@@ -163,6 +163,7 @@
                                 </Button.Style>
                             </Button>
 
+                            <!-- 
                             <Button Width="160" Height="50" Margin="14,0,0,0"
                                     Foreground="White" FontSize="12" FontWeight="Black"
                                     Command="{Binding SimulateToEndOfSeasonCommand}"
@@ -208,6 +209,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            -->
                             
                             <StackPanel Orientation="Horizontal" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" Margin="20,0,0,0">
                                 <TextBlock Text="&#x231B;" Foreground="#A0A8C0" VerticalAlignment="Center" FontSize="18"/>
@@ -294,6 +296,16 @@
                                     <Button Command="{Binding DataContext.ViewMatchDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding Id}"
                                             Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="IsEnabled" Value="True"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsUnplayedPlaceholder}" Value="True">
+                                                        <Setter Property="IsEnabled" Value="False"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
                                                 <Border Background="#1A2238" CornerRadius="12" Padding="25,15" Margin="0,0,0,10" x:Name="MatchBorder">
@@ -313,11 +325,7 @@
                                                                    Foreground="White" FontSize="16" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"/>
                                                         
                                                         <Border Grid.Column="1" Background="#16213E" CornerRadius="10" Padding="12,6" HorizontalAlignment="Center">
-                                                            <TextBlock Foreground="#E94560" FontSize="18" FontWeight="Black" TextAlignment="Center">
-                                                                <Run Text="{Binding HomeGoals}"/>
-                                                                <Run Text=" : "/>
-                                                                <Run Text="{Binding AwayGoals}"/>
-                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding DashboardScoreDisplay}" Foreground="#E94560" FontSize="18" FontWeight="Black" TextAlignment="Center"/>
                                                         </Border>
                                                         
                                                         <TextBlock Grid.Column="2" Text="{Binding AwayTeamName}" 
@@ -326,6 +334,9 @@
                                                     <TextBlock Text="{Binding CupRound, StringFormat='{}&#x1F3C6; {0}'}" Foreground="#FFD700" FontSize="10" FontWeight="Bold"
                                                                HorizontalAlignment="Center" Margin="0,8,0,0"
                                                                Visibility="{Binding IsCupMatch, Converter={StaticResource BoolToVis}}"/>
+                                                    <TextBlock Text="{Binding LeagueSubtitle}" Foreground="#38BDF8" FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center" Margin="0,6,0,0"
+                                                               Visibility="{Binding LeagueSubtitle, Converter={StaticResource NullToVis}}"/>
                                                     </StackPanel>
                                                 </Border>
                                                 <ControlTemplate.Triggers>

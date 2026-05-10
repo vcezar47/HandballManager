@@ -85,6 +85,10 @@ public static class DatabaseSeeder
                     {
                         competitionName = "Ligue Butagaz Énergie";
                     }
+                    else if (file.Contains("Kvindeligaen", StringComparison.OrdinalIgnoreCase))
+                    {
+                        competitionName = "Kvindeligaen";
+                    }
                     teamData.CompetitionName = competitionName;
 
                     // Assign LogoPath based on fileName
@@ -133,6 +137,21 @@ public static class DatabaseSeeder
                         "sambre_avesnois.json" => "France/sambreavesnois.png",
                         "stella_saint_maur.json" => "France/stellasaintmaur.png",
                         "toulon_metropole.json" => "France/toulon.png",
+                        // Kvindeligaen (Denmark)
+                        "aalborg.json" => "Denmark/ehaalborg.png",
+                        "bjerringbro.json" => "Denmark/bjerringbro.png",
+                        "esbjerg.json" => "Denmark/esbjerg.png",
+                        "hh_elite.json" => "Denmark/hhelite.png",
+                        "hoj.json" => "Denmark/hoj.png",
+                        "ikast.json" => "Denmark/ikast.png",
+                        "kobenhavn.json" => "Denmark/kobenhavn.png",
+                        "nykobing.json" => "Denmark/nykobing.png",
+                        "odense.json" => "Denmark/odense.png",
+                        "ringkobing.json" => "Denmark/ringkobing.png",
+                        "silkeborg.json" => "Denmark/silkeborg.png",
+                        "skanderborg.json" => "Denmark/skanderborg.png",
+                        "sonderjyske.json" => "Denmark/sonderjyske.png",
+                        "viborg.json" => "Denmark/viborg.png",
                         _ => string.Empty
                     };
 
@@ -149,6 +168,7 @@ public static class DatabaseSeeder
                         {
                             "NB I" => "Hungary",
                             "Ligue Butagaz Énergie" => "France",
+                            "Kvindeligaen" => "Denmark",
                             _ => "Romania"
                         };
                         teamData.StadiumImage = countryDir + "/" + teamData.StadiumImage;
@@ -353,6 +373,13 @@ public static class DatabaseSeeder
                 "HCM Baia Mare" => allTeams.FirstOrDefault(x => x.Name.Contains("Baia Mare"))?.Id ?? 0,
                 "Chimistul Râmnicu Vâlcea" or "Oltchim Râmnicu Vâlcea" => allTeams.FirstOrDefault(x => x.Name.Contains("Vâlcea"))?.Id ?? 0,
                 "Silcotub Zalău" => allTeams.FirstOrDefault(x => x.Name.Contains("Zalău"))?.Id ?? 0,
+                "FC Midtjylland Håndbold" or "Herning-Ikast Håndbold" => allTeams.FirstOrDefault(x => x.CompetitionName == "Kvindeligaen" && x.Name.Contains("Ikast"))?.Id ?? 0,
+                "Viborg HK" => allTeams.FirstOrDefault(x => x.Name.Contains("Viborg"))?.Id ?? 0,
+                "Team Esbjerg" => allTeams.FirstOrDefault(x => x.Name.Contains("Esbjerg"))?.Id ?? 0,
+                "Odense Håndbold" => allTeams.FirstOrDefault(x => x.Name.Contains("Odense"))?.Id ?? 0,
+                "København Håndbold" => allTeams.FirstOrDefault(x => x.Name.Contains("København") || x.Name.Contains("Kobenhavn"))?.Id ?? 0,
+                "Nykøbing Falster Håndboldklub" => allTeams.FirstOrDefault(x => x.Name.Contains("Nykøbing") || x.Name.Contains("Nykobing"))?.Id ?? 0,
+                "Bjerringbro FH" => allTeams.FirstOrDefault(x => x.Name.Contains("Bjerringbro"))?.Id ?? 0,
                 _ => 0
             };
         }
@@ -457,6 +484,38 @@ public static class DatabaseSeeder
                 }
             }
             catch (Exception ex) { Log($"Error seeding French champions: {ex.Message}"); }
+        }
+
+        // Kvindeligaen champions
+        string dkChampsFile = "";
+        var possibleDkChampsPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Kvindeligaen/champions.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Kvindeligaen/champions.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Kvindeligaen/champions.json")
+        };
+        foreach (var p in possibleDkChampsPaths)
+        {
+            if (File.Exists(p)) { dkChampsFile = p; break; }
+        }
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkChampsFile))
+        {
+            try
+            {
+                var json = File.ReadAllText(dkChampsFile);
+                var list = JsonSerializer.Deserialize<List<ChampionRecord>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (list != null)
+                {
+                    foreach (var r in list)
+                    {
+                        r.TeamId = GetTeamId(r.TeamName);
+                        r.CompetitionName = "Kvindeligaen";
+                    }
+                    db.ChampionRecords.AddRange(list);
+                    Log($"Successfully seeded {list.Count} Kvindeligaen champions.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Kvindeligaen champions: {ex.Message}"); }
         }
 
         // Seed Cup Winners
@@ -564,6 +623,104 @@ public static class DatabaseSeeder
                 }
             }
             catch (Exception ex) { Log($"Error seeding Coupe de France winners: {ex.Message}"); }
+        }
+
+        // Landspokalturnering (Danish cup, keyed by Kvindeligaen)
+        string dkCupFile = "";
+        var possibleDkCupPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Landspokalturnering/cup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Landspokalturnering/cup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Landspokalturnering/cup_winners.json")
+        };
+        foreach (var p in possibleDkCupPaths)
+        {
+            if (File.Exists(p)) { dkCupFile = p; break; }
+        }
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkCupFile))
+        {
+            try
+            {
+                var cupJson = File.ReadAllText(dkCupFile);
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (cupList != null)
+                {
+                    foreach (var r in cupList)
+                    {
+                        r.CompetitionName = "Kvindeligaen";
+                        r.TeamId = GetTeamId(r.TeamName);
+                    }
+                    db.CupWinnerRecords.AddRange(cupList);
+                    Log($"Successfully seeded {cupList.Count} Landspokalturnering cup winners.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Danish cup winners: {ex.Message}"); }
+        }
+
+        // Supercupa României (Liga Florilor — historical finals calendar year stored as Season string)
+        string roScFile = "";
+        var possibleRoScPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Supercupa Romaniei/supercup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Supercupa Romaniei/supercup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Supercupa Romaniei/supercup_winners.json")
+        };
+        foreach (var p in possibleRoScPaths)
+        {
+            if (File.Exists(p)) { roScFile = p; break; }
+        }
+
+        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Liga Florilor") && !string.IsNullOrEmpty(roScFile))
+        {
+            try
+            {
+                var roScJson = File.ReadAllText(roScFile);
+                var roScList = JsonSerializer.Deserialize<List<SupercupWinnerRecord>>(roScJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (roScList != null)
+                {
+                    foreach (var r in roScList)
+                    {
+                        r.CompetitionName = "Liga Florilor";
+                        r.TeamId = GetTeamId(r.TeamName);
+                    }
+
+                    db.SupercupWinnerRecords.AddRange(roScList);
+                    Log($"Successfully seeded {roScList.Count} Supercupa României winners.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Romanian supercup winners: {ex.Message}"); }
+        }
+
+        // Bambuni Supercup (women's — Kvindeligaen key)
+        string dkScFile = "";
+        var possibleDkScPaths = new[]
+        {
+            Path.Combine(jsonPath, "../Past Champions/Bambuni Supercup/supercup_winners.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Bambuni Supercup/supercup_winners.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Bambuni Supercup/supercup_winners.json")
+        };
+        foreach (var p in possibleDkScPaths)
+        {
+            if (File.Exists(p)) { dkScFile = p; break; }
+        }
+        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkScFile))
+        {
+            try
+            {
+                var scJson = File.ReadAllText(dkScFile);
+                var scList = JsonSerializer.Deserialize<List<SupercupWinnerRecord>>(scJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (scList != null)
+                {
+                    foreach (var r in scList)
+                    {
+                        r.CompetitionName = "Kvindeligaen";
+                        r.TeamId = GetTeamId(r.TeamName);
+                    }
+                    db.SupercupWinnerRecords.AddRange(scList);
+                    Log($"Successfully seeded {scList.Count} Bambuni Supercup winners.");
+                }
+            }
+            catch (Exception ex) { Log($"Error seeding Danish supercup winners: {ex.Message}"); }
         }
 
         db.SaveChanges();

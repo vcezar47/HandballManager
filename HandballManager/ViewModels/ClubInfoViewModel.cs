@@ -123,6 +123,7 @@ public partial class ClubInfoViewModel : BaseViewModel
         {
             "NB I" => "NB I",
             "Ligue Butagaz Énergie" => "Ligue Butagaz Énergie",
+            "Kvindeligaen" => "Kvindeligaen",
             _ => "Liga Florilor"
         };
         string leagueTrophyImg = leagueComp switch
@@ -150,7 +151,7 @@ public partial class ClubInfoViewModel : BaseViewModel
         }
 
         // 2. Domestic cup trophies
-        if (leagueComp == "Liga Florilor" || leagueComp == "NB I" || leagueComp == "Ligue Butagaz Énergie")
+        if (leagueComp == "Liga Florilor" || leagueComp == "NB I" || leagueComp == "Ligue Butagaz Énergie" || leagueComp == "Kvindeligaen")
         {
             int cupTitles = await _db.CupWinnerRecords
                 .CountAsync(r => r.CompetitionName == leagueComp && teamNamesToMatch.Contains(r.TeamName));
@@ -162,6 +163,7 @@ public partial class ClubInfoViewModel : BaseViewModel
                     {
                         "NB I" => "Magyar Kupa",
                         "Ligue Butagaz Énergie" => "Coupe de France",
+                        "Kvindeligaen" => "Landspokalturnering",
                         _ => "Cupa României"
                     },
                     ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
@@ -169,16 +171,15 @@ public partial class ClubInfoViewModel : BaseViewModel
                 });
             }
 
-            // 3. Supercupa României Trophies
-            if (leagueComp == "Liga Florilor")
+            if (leagueComp == "Liga Florilor" || leagueComp == "Kvindeligaen")
             {
                 int supercupTitles = await _db.SupercupWinnerRecords
-                    .CountAsync(r => teamNamesToMatch.Contains(r.TeamName));
+                    .CountAsync(r => r.CompetitionName == leagueComp && teamNamesToMatch.Contains(r.TeamName));
                 if (supercupTitles > 0)
                 {
                     Trophies.Add(new TrophyViewModel
                     {
-                        Name = "Supercupa României",
+                        Name = leagueComp == "Kvindeligaen" ? "Bambuni Supercup" : "Supercupa României",
                         ImagePath = "pack://application:,,,/Assets/trophies/placeholdertrophy.png",
                         Count = supercupTitles
                     });

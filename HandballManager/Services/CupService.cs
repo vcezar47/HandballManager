@@ -21,6 +21,7 @@ public class CupService
         await GenerateRomanianCupAsync();
         await GenerateHungarianCupAsync();
         await GenerateFrenchCupAsync();
+        await GenerateDanishCupAsync();
     }
 
     private async Task GenerateRomanianCupAsync()
@@ -152,6 +153,49 @@ public class CupService
         await _db.SaveChangesAsync();
     }
 
+    private async Task GenerateDanishCupAsync()
+    {
+        string comp = LeagueService.KvindeligaenCompetition;
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupGroups.AnyAsync(g => g.Season == season && g.CompetitionName == comp))
+            return;
+
+        var teamIds = await _db.Teams.Where(t => t.CompetitionName == comp).Select(t => t.Id).ToListAsync();
+        if (teamIds.Count < 14) return;
+        var shuffled = teamIds.OrderBy(_ => _rng.Next()).ToList();
+
+        string[] groupNames = ["A", "B"];
+        var groups = new List<CupGroup>();
+        for (int g = 0; g < 2; g++)
+        {
+            var group = new CupGroup { GroupName = groupNames[g], Season = season, CompetitionName = comp };
+            foreach (var tid in shuffled.Skip(g * 7).Take(7))
+                group.Entries.Add(new CupGroupEntry { TeamId = tid });
+            groups.Add(group);
+            _db.CupGroups.Add(group);
+        }
+        await _db.SaveChangesAsync();
+
+        var dates = GetDanishGroupStageDates();
+        foreach (var group in groups)
+        {
+            var ids = group.Entries.Select(e => e.TeamId).ToList();
+            var schedule = GenerateRoundRobinSchedule(ids);
+            for (int day = 0; day < schedule.Count && day < dates.Count; day++)
+            {
+                foreach (var (h, a) in schedule[day])
+                {
+                    _db.CupFixtures.Add(new CupFixture
+                    {
+                        CupGroupId = group.Id, Season = season, CompetitionName = comp,
+                        HomeTeamId = h, AwayTeamId = a, ScheduledDate = dates[day], Round = "Group"
+                    });
+                }
+            }
+        }
+        await _db.SaveChangesAsync();
+    }
+
     /// <summary>Round-robin for odd-count teams (one bye per round).</summary>
     private List<List<(int Home, int Away)>> GenerateRoundRobinSchedule(List<int> teamIds)
     {
@@ -192,7 +236,31 @@ public class CupService
     {
         if (comp == "NB I") return GetHungarianGroupStageDates();
         if (comp == "Ligue Butagaz Énergie") return GetFrenchGroupStageDates();
+        if (comp == LeagueService.KvindeligaenCompetition) return GetDanishGroupStageDates();
         return GetRomanianGroupStageDates();
+    }
+
+    private static List<DateTime> GetDanishGroupStageDates()
+    {
+        var leagueDates = LeagueService.GetMatchweekDates(LeagueService.KvindeligaenCompetition);
+        var y = LeagueService.CurrentSeasonYear;
+        var allWed = new List<DateTime>();
+        int[] months = [10, 11, 12, 1, 2, 3, 4];
+        foreach (var m in months)
+        {
+            int yr = m >= 10 ? y : y + 1;
+            var fromMonth = GetWednesdaysInMonth(yr, m, leagueDates)
+                .Where(d => !(d >= new DateTime(y, 12, 15) && d <= new DateTime(y + 1, 1, 15)));
+            if (m == 4)
+                fromMonth = fromMonth.Where(d => d.Day <= 16);
+            allWed.AddRange(fromMonth);
+        }
+        if (allWed.Count <= 7) return allWed.OrderBy(d => d).Take(7).ToList();
+        var result = new List<DateTime>();
+        double step = (allWed.Count - 1) / 6.0;
+        for (int i = 0; i < 7; i++)
+            result.Add(allWed[(int)Math.Round(i * step)]);
+        return result.Distinct().OrderBy(d => d).Take(7).ToList();
     }
 
     private static List<DateTime> GetRomanianGroupStageDates()
@@ -327,7 +395,29 @@ public class CupService
     {
         var leagueDates = LeagueService.GetMatchweekDates(comp);
         var searchStart = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 5);
-        var searchEnd = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 25);
+        var searchEnd = new DateTime(LeagueService.CurrentSeasonYear + 1, 6, 8);
+
+        // Kvindeligaen playoff slots occupy every Wed and Sat, so use Mon-Tue pairs
+        // to guarantee no overlap with league dates.
+        if (comp == LeagueService.KvindeligaenCompetition)
+        {
+            for (var d = searchStart; d <= searchEnd; d = d.AddDays(1))
+            {
+                if (d.DayOfWeek == DayOfWeek.Monday)
+                {
+                    var day1 = d; var day2 = d.AddDays(1);
+                    // Ensure at least 1 day gap from any league date
+                    if (leagueDates.All(ld => Math.Abs((day1 - ld).TotalDays) >= 1 && Math.Abs((day2 - ld).TotalDays) >= 1))
+                        return (day1, day2);
+                }
+            }
+            // Fallback: first Monday in the window
+            var fb = searchStart;
+            while (fb.DayOfWeek != DayOfWeek.Monday) fb = fb.AddDays(1);
+            return (fb, fb.AddDays(1));
+        }
+
+        // Other competitions: original Wed-Thu logic
         for (var d = searchStart; d <= searchEnd; d = d.AddDays(1))
         {
             if (d.DayOfWeek == DayOfWeek.Wednesday)
@@ -337,9 +427,9 @@ public class CupService
                     return (day1, day2);
             }
         }
-        var fb = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 14);
-        while (fb.DayOfWeek != DayOfWeek.Wednesday) fb = fb.AddDays(-1);
-        return (fb, fb.AddDays(1));
+        var fbOther = new DateTime(LeagueService.CurrentSeasonYear + 1, 5, 14);
+        while (fbOther.DayOfWeek != DayOfWeek.Wednesday) fbOther = fbOther.AddDays(-1);
+        return (fbOther, fbOther.AddDays(1));
     }
 
     // ─── Queries ───────────────────────────────────────────────────────
@@ -421,6 +511,7 @@ public class CupService
         await TryGenerateRomanianSemiFinalsAsync();
         // Hungarian: Group → SF (no QF)
         await TryGenerateHungarianSemiFinalsAsync();
+        await TryGenerateDanishSemiFinalsAsync();
     }
 
     public async Task TryGenerateFrenchSemiFinalsAsync()
@@ -508,6 +599,7 @@ public class CupService
         await TryGenerateFinalsForCompAsync("Liga Florilor");
         await TryGenerateFinalsForCompAsync("NB I");
         await TryGenerateFrenchFinalAsync();
+        await TryGenerateDanishFinalsAsync();
     }
 
     private async Task TryGenerateFinalsForCompAsync(string comp)
@@ -525,6 +617,79 @@ public class CupService
 
         _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = Loser(sfFixtures[0]), AwayTeamId = Loser(sfFixtures[1]), ScheduledDate = day2, Round = "ThirdPlace", VenueName = venue });
         _db.CupFixtures.Add(new CupFixture { Season = season, CompetitionName = comp, HomeTeamId = Winner(sfFixtures[0]), AwayTeamId = Winner(sfFixtures[1]), ScheduledDate = day2, Round = "Final", VenueName = venue });
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task TryGenerateDanishSemiFinalsAsync()
+    {
+        string comp = LeagueService.KvindeligaenCompetition;
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupFixtures.AnyAsync(f => f.Season == season && f.Round == "SemiFinal" && f.CompetitionName == comp))
+            return;
+
+        var groupFixtures = await _db.CupFixtures.Where(f => f.Season == season && f.Round == "Group" && f.CompetitionName == comp).ToListAsync();
+        if (groupFixtures.Count == 0 || groupFixtures.Any(f => !f.IsPlayed)) return;
+
+        var groups = await _db.CupGroups.Include(g => g.Entries).ThenInclude(e => e.Team)
+            .Where(g => g.Season == season && g.CompetitionName == comp).ToListAsync();
+        var standings = new Dictionary<string, List<CupGroupEntry>>();
+        foreach (var g in groups)
+        {
+            standings[g.GroupName] = g.Entries.OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).ToList();
+            for (int i = 0; i < standings[g.GroupName].Count; i++) standings[g.GroupName][i].Rank = i + 1;
+        }
+
+        if (!standings.ContainsKey("A") || !standings.ContainsKey("B")) return;
+        if (standings["A"].Count < 2 || standings["B"].Count < 2) return;
+
+        var (day1, _) = GetFinalFourDates(comp);
+        var venueTeam = (await _db.Teams.Where(t => t.CompetitionName == comp && t.StadiumCapacity > 1500).ToListAsync())
+            .OrderBy(_ => _rng.Next()).FirstOrDefault();
+        string venue = venueTeam != null ? $"{venueTeam.StadiumName}, {venueTeam.City}" : "Sydbank Arena, Odense";
+
+        _db.CupFixtures.Add(new CupFixture
+        {
+            Season = season, CompetitionName = comp,
+            HomeTeamId = standings["A"][0].TeamId, AwayTeamId = standings["B"][1].TeamId,
+            ScheduledDate = day1, Round = "SemiFinal", VenueName = venue
+        });
+        _db.CupFixtures.Add(new CupFixture
+        {
+            Season = season, CompetitionName = comp,
+            HomeTeamId = standings["B"][0].TeamId, AwayTeamId = standings["A"][1].TeamId,
+            ScheduledDate = day1, Round = "SemiFinal", VenueName = venue
+        });
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task TryGenerateDanishFinalsAsync()
+    {
+        string comp = LeagueService.KvindeligaenCompetition;
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
+        if (await _db.CupFixtures.AnyAsync(f => f.Season == season && f.Round == "Final" && f.CompetitionName == comp))
+            return;
+
+        var sfFixtures = await _db.CupFixtures.Where(f => f.Season == season && f.Round == "SemiFinal" && f.CompetitionName == comp)
+            .OrderBy(f => f.Id).ToListAsync();
+        if (sfFixtures.Count != 2 || sfFixtures.Any(f => !f.IsPlayed)) return;
+
+        var (_, day2) = GetFinalFourDates(comp);
+        string venue = sfFixtures[0].VenueName ?? "Sydbank Arena, Odense";
+        int Winner(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
+        int Loser(CupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.AwayTeamId : f.HomeTeamId;
+
+        _db.CupFixtures.Add(new CupFixture
+        {
+            Season = season, CompetitionName = comp,
+            HomeTeamId = Loser(sfFixtures[0]), AwayTeamId = Loser(sfFixtures[1]),
+            ScheduledDate = day2, Round = "ThirdPlace", VenueName = venue
+        });
+        _db.CupFixtures.Add(new CupFixture
+        {
+            Season = season, CompetitionName = comp,
+            HomeTeamId = Winner(sfFixtures[0]), AwayTeamId = Winner(sfFixtures[1]),
+            ScheduledDate = day2, Round = "Final", VenueName = venue
+        });
         await _db.SaveChangesAsync();
     }
 

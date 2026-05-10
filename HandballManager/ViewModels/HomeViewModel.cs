@@ -127,22 +127,23 @@ public partial class HomeViewModel : BaseViewModel
     {
         var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
         string comp = playerTeam?.CompetitionName ?? "Liga Florilor";
+        string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
 
-        var leagueDates = LeagueService.GetMatchweekDates(comp).ToList();
+        int maxRound = await _db.LeagueFixtures
+            .Where(f => f.Season == season && f.CompetitionName == comp)
+            .MaxAsync(f => (int?)f.Round) ?? 0;
+
+        // Ensure we at least show dates up to maxRound (handles dynamic playoffs)
+        var leagueDates = LeagueService.GetMatchweekDates(comp).Take(maxRound).Select(d => d.Date);
         var allDates = new HashSet<DateTime>(leagueDates);
 
-        // Add cup and supercup dates for the relevant competition
         var cupDates = await _cupService.GetAllCupDatesAsync(comp);
-        var supercupDates = await _supercupService.GetAllDatesAsync();
-        
         foreach (var cd in cupDates) allDates.Add(cd.Date);
-        // Only Romanian Supercup exists currently
-        if (comp == "Liga Florilor")
-        {
-            foreach (var sd in supercupDates) allDates.Add(sd.Date);
-        }
 
-        _allEventDates = allDates.OrderBy(d => d).ToList();
+        foreach (var f in await _supercupService.GetKnockoutFixturesAsync(comp))
+            allDates.Add(f.ScheduledDate.Date);
+
+        _allEventDates = allDates.OrderBy(d => d.Date).ToList();
     }
 
     private async Task LoadMatchweekResultsAsync(string competitionName = "Liga Florilor")
@@ -151,15 +152,31 @@ public partial class HomeViewModel : BaseViewModel
 
         var date = _allEventDates[_viewedEventIndex];
 
-        // Get league results for this date (by matchweek)
-        var leagueMatchweekIndex = LeagueService.GetMatchweekDates(competitionName).IndexOf(date);
+        var leagueCalendar = LeagueService.GetMatchweekDates(competitionName);
+        var leagueMatchweekIndex = leagueCalendar.FindIndex(d => d.Date == date.Date);
         var leagueResults = new List<MatchRecord>();
         if (leagueMatchweekIndex >= 0)
         {
             var matchweek = leagueMatchweekIndex + 1;
-            leagueResults = await _leagueService.GetResultsForMatchweekAsync(matchweek, competitionName);
-            
-            // Add unplayed league fixtures as stubs
+
+            if (string.Equals(competitionName, LeagueService.KvindeligaenCompetition, StringComparison.Ordinal))
+            {
+                var playedLeagueFx = await _db.LeagueFixtures
+                    .Include(f => f.MatchRecord)
+                    .Where(f => f.IsPlayed && f.MatchRecord != null && f.MatchRecord.PlayedOn.Date == date.Date && f.CompetitionName == competitionName)
+                    .OrderBy(f => f.MatchRecordId)
+                    .ToListAsync();
+                    
+                foreach (var f in playedLeagueFx)
+                {
+                    var m = f.MatchRecord!;
+                    m.LeagueSubtitle = LeagueService.FormatKvindeligaenFixtureListSubtitle(f.Phase, f.Round, f.PlayoffSeriesId, f.PlayoffLeg);
+                    leagueResults.Add(m);
+                }
+            }
+            else
+                leagueResults = await _leagueService.GetResultsForMatchweekAsync(matchweek, competitionName);
+
             var unplayedLeague = await _leagueService.GetFixturesForRoundAsync(matchweek, competitionName);
             foreach (var f in unplayedLeague.Where(f => !f.IsPlayed))
             {
@@ -175,8 +192,12 @@ public partial class HomeViewModel : BaseViewModel
                     HomeGoals = 0,
                     AwayGoals = 0,
                     IsCupMatch = false,
+                    IsUnplayedPlaceholder = true,
                     PlayedOn = date,
-                    MatchweekNumber = matchweek
+                    MatchweekNumber = matchweek,
+                    LeagueSubtitle = string.Equals(competitionName, LeagueService.KvindeligaenCompetition, StringComparison.Ordinal)
+                        ? LeagueService.FormatKvindeligaenFixtureListSubtitle(f.Phase, f.Round, f.PlayoffSeriesId, f.PlayoffLeg)
+                        : null
                 });
             }
         }
@@ -209,15 +230,16 @@ public partial class HomeViewModel : BaseViewModel
                 HomeGoals = 0,
                 AwayGoals = 0,
                 IsCupMatch = true,
+                IsUnplayedPlaceholder = true,
                 CupRound = f.Round == "Group" ? $"Group {f.CupGroup?.GroupName}" : f.Round,
                 PlayedOn = f.ScheduledDate
             });
         }
         
-        if (competitionName == "Liga Florilor")
+        if (competitionName == "Liga Florilor" || competitionName == "Kvindeligaen")
         {
             var unplayedSupercupFixtures = await _supercupService.GetFixturesForDateAsync(date);
-            foreach (var f in unplayedSupercupFixtures.Where(f => !f.IsPlayed))
+            foreach (var f in unplayedSupercupFixtures.Where(f => !f.IsPlayed && f.CompetitionName == competitionName))
             {
                 cupResults.Add(new MatchRecord
                 {
@@ -231,6 +253,7 @@ public partial class HomeViewModel : BaseViewModel
                     HomeGoals = 0,
                     AwayGoals = 0,
                     IsCupMatch = true,
+                    IsUnplayedPlaceholder = true,
                     CupRound = f.Round == "SemiFinal" ? "Supercup Semi-Final" : (f.Round == "Final" ? "Supercup Final" : "Supercup 3rd Place"),
                     PlayedOn = f.ScheduledDate
                 });
@@ -243,7 +266,8 @@ public partial class HomeViewModel : BaseViewModel
         bool hasSupercup = cupResults.Any(r => r.IsCupMatch && 
             (r.CupRound?.Contains("Supercup", StringComparison.OrdinalIgnoreCase) == true || 
              r.CupRound?.Contains("Szuperkupa", StringComparison.OrdinalIgnoreCase) == true ||
-             r.CupRound?.Contains("Supercupa", StringComparison.OrdinalIgnoreCase) == true));
+             r.CupRound?.Contains("Supercupa", StringComparison.OrdinalIgnoreCase) == true ||
+             r.CupRound?.Contains("Bambuni", StringComparison.OrdinalIgnoreCase) == true));
         
         bool hasCup = cupResults.Any(r => r.IsCupMatch && !hasSupercup);
         
@@ -251,17 +275,39 @@ public partial class HomeViewModel : BaseViewModel
         {
             "NB I" => "Magyar Kupa",
             "Ligue Butagaz Énergie" => "Coupe de France",
+            "Kvindeligaen" => "Landspokalturnering",
             _ => "Cupa României"
         };
-        string compSupercupName = competitionName == "NB I" ? "Szuperkupa" : "Supercupa României";
+        string compSupercupName = competitionName switch
+        {
+            "NB I" => "Szuperkupa",
+            "Kvindeligaen" => "Bambuni Supercup",
+            _ => "Supercupa României"
+        };
+
+        string leagueCaption = "";
+        if (leagueMatchweekIndex >= 0)
+        {
+            int mwSlot = leagueMatchweekIndex + 1;
+            if (string.Equals(competitionName, LeagueService.KvindeligaenCompetition, StringComparison.Ordinal))
+            {
+                var sampleFx = await _leagueService.GetFixturesForRoundAsync(mwSlot, competitionName);
+                var sample = sampleFx.FirstOrDefault();
+                leagueCaption = sample != null
+                    ? LeagueService.FormatKvindeligaenLeagueBanner(sample.Round, sample.Phase, sample.PlayoffSeriesId, sample.PlayoffLeg)
+                    : $"Kvindeligaen — Round {mwSlot}";
+            }
+            else
+                leagueCaption = $"Matchweek {mwSlot}";
+        }
 
         if (leagueMatchweekIndex >= 0 && (hasCup || hasSupercup))
         {
             string tournamentPart = hasSupercup ? compSupercupName : compCupName;
-            MatchweekDateText = $"Matchweek {leagueMatchweekIndex + 1} + {tournamentPart} • {date:dddd, MMM d, yyyy}";
+            MatchweekDateText = $"{leagueCaption} + {tournamentPart} • {date:dddd, MMM d, yyyy}";
         }
         else if (leagueMatchweekIndex >= 0)
-            MatchweekDateText = $"Matchweek {leagueMatchweekIndex + 1} • {date:dddd, MMM d, yyyy}";
+            MatchweekDateText = $"{leagueCaption} • {date:dddd, MMM d, yyyy}";
         else if (hasSupercup)
             MatchweekDateText = $"{compSupercupName} • {date:dddd, MMM d, yyyy}";
         else if (hasCup)
@@ -288,7 +334,7 @@ public partial class HomeViewModel : BaseViewModel
             ? await _cupService.GetFixtureForTeamOnDateAsync(playerTeam.Id, _nextCupDateForTeam.Value)
             : null;
 
-        _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync();
+        _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync(playerTeam.CompetitionName);
         _nextSupercupDateForTeam = await _supercupService.GetNextSupercupDateForTeamAsync(playerTeam.Id);
         
         var supercupFixtureForTeam = _nextSupercupDateForTeam.HasValue
@@ -451,7 +497,7 @@ public partial class HomeViewModel : BaseViewModel
 
         if (IsSeasonOver)
         {
-            var unlockDate = new DateTime(CurrentDate.Year, 6, 10);
+            var unlockDate = new DateTime(CurrentDate.Year, 6, 30);
             CanBeginNewSeason = CurrentDate.Date >= unlockDate;
 
             if (CurrentDate.Date >= unlockDate)
@@ -559,7 +605,7 @@ public partial class HomeViewModel : BaseViewModel
 
             // Walk forward day by day, simulating every league on every matchday,
             // until no unplayed fixtures remain in ANY competition.
-            var seasonEndCeiling = new DateTime(LeagueService.CurrentSeasonYear + 1, 6, 1);
+            var seasonEndCeiling = new DateTime(LeagueService.CurrentSeasonYear + 1, 6, 30);
 
             while (CurrentDate < seasonEndCeiling)
             {
@@ -584,6 +630,22 @@ public partial class HomeViewModel : BaseViewModel
                     await _simulationEngine.SimulateCupFixturesAsync(CurrentDate);
             }
 
+            // Kvindeligaen Bo3 playoff completion: legs are generated dynamically
+            // after each round is played, so the day-by-day loop above may exit
+            // before all series (semi-finals, final, 3rd place) are created and played.
+            // Keep simulating until every Kvindeligaen fixture is done.
+            for (int kvAttempt = 0; kvAttempt < 30; kvAttempt++)
+            {
+                bool kvLeft = await _db.LeagueFixtures.AnyAsync(f =>
+                    f.Season == season && !f.IsPlayed
+                    && f.CompetitionName == LeagueService.KvindeligaenCompetition);
+                if (!kvLeft) break;
+
+                // Reuse the normal simulation path (which calls AfterKvindeligaenLeagueDayAsync internally)
+                await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
+                await _db.SaveChangesAsync();
+            }
+
             // Finalise UI state
             await BuildAllEventDatesAsync();
             await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
@@ -591,7 +653,9 @@ public partial class HomeViewModel : BaseViewModel
 
             if (_allEventDates.Count > 0)
             {
-                _viewedEventIndex = _allEventDates.Count - 1;
+                var exact = _allEventDates.FindIndex(d => d.Date == CurrentDate.Date);
+                _viewedEventIndex = exact >= 0 ? exact : _allEventDates.FindLastIndex(d => d.Date <= CurrentDate.Date);
+                if (_viewedEventIndex < 0) _viewedEventIndex = _allEventDates.Count - 1;
                 await LoadMatchweekResultsAsync(competitionName);
             }
         }
@@ -620,7 +684,7 @@ public partial class HomeViewModel : BaseViewModel
                 if (playerFixture == null)
                 {
                     await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate.Value.Date);
-                    _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync();
+                    _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync(playerTeam!.CompetitionName);
                 }
                 else break;
             }
@@ -657,6 +721,7 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     private async Task ViewMatchDetailAsync(int matchId)
     {
+        if (matchId <= 0) return;
         await _onNavigateToMatchDetail(matchId);
     }
 

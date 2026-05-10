@@ -33,6 +33,14 @@ public class YouthIntakeService
         "Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau",
         "Simon", "Laurent", "Lefebvre", "Michel", "Garcia", "David", "Bertrand", "Roux", "Vincent", "Fournier"
     ];
+    private static readonly string[] DnkFirstNames = [
+        "Emma", "Ida", "Freja", "Clara", "Alma", "Sofie", "Laura", "Anna", "Maja", "Astrid",
+        "Julie", "Caroline", "Michelle", "Louise", "Sarah", "Mette", "Anne", "Maria", "Helle", "Karen"
+    ];
+    private static readonly string[] DnkLastNames = [
+        "Nielsen", "Jensen", "Hansen", "Pedersen", "Andersen", "Christensen", "Larsen", "Sørensen",
+        "Rasmussen", "Jørgensen", "Petersen", "Madsen", "Kristensen", "Olsen", "Thomsen", "Holm", "Knudsen"
+    ];
     private static readonly string[] Positions = ["GK", "LW", "RW", "LB", "RB", "CB", "Pivot"];
 
     public YouthIntakeService(HandballDbContext db)
@@ -78,9 +86,11 @@ public class YouthIntakeService
         "Hungary" => "HUN",
         "Romania" => "ROU",
         "France" => "FRA",
+        "Denmark" => "DNK",
         "HUN" => "HUN",
         "ROU" => "ROU",
         "FRA" => "FRA",
+        "DNK" => "DNK",
         _ => "ROU"
     };
 
@@ -91,12 +101,14 @@ public class YouthIntakeService
         {
             "HUN" => HunFirstNames,
             "FRA" => FraFirstNames,
+            "DNK" => DnkFirstNames,
             _ => RouFirstNames
         };
         string[] lastNamesPool = isoCode switch
         {
             "HUN" => HunLastNames,
             "FRA" => FraLastNames,
+            "DNK" => DnkLastNames,
             _ => RouLastNames
         };
 

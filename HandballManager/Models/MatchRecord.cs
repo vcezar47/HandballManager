@@ -27,6 +27,15 @@ public class MatchRecord
     public List<MatchEvent> MatchEvents { get; set; } = [];
     public List<MatchPlayerStat> PlayerStats { get; set; } = [];
 
+    /// <summary>UI-only stub for fixtures not played yet (avoids displaying 0–0 as a result).</summary>
+    public bool IsUnplayedPlaceholder { get; set; }
+
+    /// <summary>Optional subtitle shown under fixture rows on the home dashboard (e.g. Kvindeligaen phase).</summary>
+    public string? LeagueSubtitle { get; set; }
+
+    /// <summary>Short score row for dashboards (shows "vs" for scheduled fixtures).</summary>
+    public string DashboardScoreDisplay => IsUnplayedPlaceholder ? "vs" : $"{HomeGoals} – {AwayGoals}";
+
     public string Result {
         get {
             string res = $"{HomeTeamName} {HomeGoals} – {AwayGoals} {AwayTeamName}";
