@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 
@@ -6,19 +5,21 @@ namespace HandballManager.ViewModels;
 
 public partial class MainMenuViewModel : BaseViewModel
 {
-    private readonly Func<Task> _onStartGame;
+    private readonly Func<Task> _onNewGame;
+    private readonly Func<Task> _onLoadGame;
 
-    public MainMenuViewModel(Func<Task> onStartGame)
+    public MainMenuViewModel(Func<Task> onNewGame, Func<Task> onLoadGame)
     {
         Title = "Main Menu";
-        _onStartGame = onStartGame;
+        _onNewGame = onNewGame;
+        _onLoadGame = onLoadGame;
     }
 
     [RelayCommand]
-    private async Task StartGame()
-    {
-        await _onStartGame();
-    }
+    private async Task NewGame() => await _onNewGame();
+
+    [RelayCommand]
+    private async Task LoadGame() => await _onLoadGame();
 
     [RelayCommand]
     private void QuitGame()

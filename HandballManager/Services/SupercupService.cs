@@ -244,15 +244,17 @@ public class SupercupService
     {
         string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
 
-        if (await _db.SupercupFixtures.AnyAsync(f => f.Season == season && f.Round == "Final"))
-            return;
-
         var sfFixtures = await _db.SupercupFixtures
             .Where(f => f.Season == season && f.Round == "SemiFinal")
             .OrderBy(f => f.Id)
             .ToListAsync();
 
         if (sfFixtures.Count != 2 || sfFixtures.Any(f => !f.IsPlayed))
+            return;
+
+        string compName = sfFixtures[0].CompetitionName;
+
+        if (await _db.SupercupFixtures.AnyAsync(f => f.Season == season && f.CompetitionName == compName && f.Round == "Final"))
             return;
 
         var (_, sunday) = GetSupercupDates(LeagueService.CurrentSeasonYear);
@@ -262,7 +264,6 @@ public class SupercupService
         int Winner(SupercupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.HomeTeamId : f.AwayTeamId;
         int Loser(SupercupFixture f) => (f.HomeGoals > f.AwayGoals || (f.HomeGoals == f.AwayGoals && f.HomePenaltyGoals > f.AwayPenaltyGoals)) ? f.AwayTeamId : f.HomeTeamId;
 
-        string compName = sfFixtures[0].CompetitionName;
         _db.SupercupFixtures.Add(new SupercupFixture
         {
             Season = season,

@@ -109,6 +109,11 @@ public partial class LiveMatchViewModel : BaseViewModel
                 _engine.StartExtraTime();
                 MatchPhaseLabel = "Extra Time - 1st Half";
                 SyncVisuals();
+                // Extra time begins automatically (no user prompt), so resume the
+                // clock — otherwise the stopwatch stopped above leaves the ET
+                // first-half frozen until the user manually toggles pause.
+                _lastTotalSeconds = _stopwatch.Elapsed.TotalSeconds;
+                _stopwatch.Start();
                 return;
             }
 

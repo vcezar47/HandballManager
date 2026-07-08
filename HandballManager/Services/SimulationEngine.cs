@@ -13,12 +13,24 @@ public class SimulationEngine
     private readonly CupService _cupService;
     private readonly SupercupService _supercupService;
     private readonly LeagueService _leagueService;
+    private readonly FacilityService _facilityService;
     private readonly Random _rng = new();
     private const int PossessionsPerTeam = 55;
     private DateTime _lastDailyProgressionDate;
     private DateTime _lastWeeklyWageDate;
 
-    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService, LeagueService leagueService)
+    // Exposed so the save system can persist and restore this non-DB bookkeeping.
+    public DateTime LastDailyProgressionDate => _lastDailyProgressionDate;
+    public DateTime LastWeeklyWageDate => _lastWeeklyWageDate;
+
+    /// <summary>Restores progression/wage cursors after loading a saved game.</summary>
+    public void RestoreProgressionDates(DateTime lastDailyProgression, DateTime lastWeeklyWage)
+    {
+        _lastDailyProgressionDate = lastDailyProgression.Date;
+        _lastWeeklyWageDate = lastWeeklyWage.Date;
+    }
+
+    public SimulationEngine(HandballDbContext db, PlayerProgressionService progression, TransferService transferService, YouthIntakeService youthIntakeService, CupService cupService, SupercupService supercupService, LeagueService leagueService, FacilityService facilityService)
     {
         _db = db;
         _progression = progression;
@@ -27,6 +39,7 @@ public class SimulationEngine
         _cupService = cupService;
         _supercupService = supercupService;
         _leagueService = leagueService;
+        _facilityService = facilityService;
         _lastDailyProgressionDate = LeagueService.GameSeasonStartDate;
         _lastWeeklyWageDate = LeagueService.GameSeasonStartDate;
     }
@@ -310,6 +323,7 @@ public class SimulationEngine
         await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
         await _transferService.TryGenerateAiOfferAsync(currentDate);
         await _transferService.TryGenerateAiToAiTransfersAsync(currentDate);
+        await _facilityService.ProcessFacilityCompletionsAsync(currentDate);
 
         var allPlayers = await _db.Players.Include(p => p.Team).ThenInclude(t => t!.Manager).ToListAsync();
         foreach (var player in allPlayers)
@@ -319,6 +333,13 @@ public class SimulationEngine
             {
                 // Range: 0.7 (attribute 0) to 1.3 (attribute 20)
                 youthFactor = 0.7 + (player.Team.Manager.YouthDevelopment / 20.0) * 0.6;
+            }
+
+            // Apply training facility multiplier
+            if (player.Team != null)
+            {
+                int trainingLevel = Math.Clamp(player.Team.TrainingFacilityLevel, 0, Models.FacilityLevel.MaxLevel);
+                youthFactor *= Models.FacilityLevel.TrainingMultipliers[trainingLevel];
             }
 
             _progression.ProcessDailyProgression(player, daysSinceLast, youthFactor);
@@ -636,6 +657,11 @@ public class SimulationEngine
             .ThenByDescending(p => p.Finishing)
             .Take(5).ToList();
 
+        // Fallback if a side has no outfield players (avoids modulo-by-zero below).
+        if (homeShooters.Count == 0) homeShooters = homeTeam.Players.Take(5).ToList();
+        if (awayShooters.Count == 0) awayShooters = awayTeam.Players.Take(5).ToList();
+        if (homeShooters.Count == 0 || awayShooters.Count == 0) return;
+
         // Best GK for each team
         var homeGK = homeTeam.Players.FirstOrDefault(p => p.Position == "GK") ?? homeTeam.Players.OrderByDescending(p => p.Reflexes).First();
         var awayGK = awayTeam.Players.FirstOrDefault(p => p.Position == "GK") ?? awayTeam.Players.OrderByDescending(p => p.Reflexes).First();
@@ -817,33 +843,6 @@ public class SimulationEngine
         return players.Any() ? players.Average(p => (p.Marking + p.Tackling + p.Positioning + p.Strength + p.Aggression + p.Anticipation) / 6.0) : 10;
     }
 
-    private void CalculateMatchRatings(MatchRecord record, Team home, Team away, Dictionary<int, MatchPlayerStat> stats)
-    {
-        foreach (var p in home.Players.Concat(away.Players))
-        {
-            if (!stats.TryGetValue(p.Id, out var stat)) continue;
-
-            double baseRating = 6.0;
-            // Contribution bonuses
-            baseRating += stat.Goals * 0.4;
-            baseRating += stat.Assists * 0.3;
-            baseRating += stat.Saves * 0.25;
-
-            // Attribute influence (did they play well relative to their quality?)
-            baseRating += (p.Overall100 / 25.0) - 2.0; // -2 to +2 based on quality
-
-            // Result bonus/penalty
-            bool isHome = p.TeamId == home.Id;
-            int myGoals = isHome ? record.HomeGoals : record.AwayGoals;
-            int oppGoals = isHome ? record.AwayGoals : record.HomeGoals;
-
-            if (myGoals > oppGoals) baseRating += 0.5;
-            else if (myGoals < oppGoals) baseRating -= 0.3;
-
-            stat.Rating = Math.Clamp(baseRating + (_rng.NextDouble() - 0.5), 4.0, 10.0);
-        }
-    }
-
     /// <summary>
     /// Simulates a single Kvindeligaen playoff fixture (used by the Bo3 completion loop).
     /// Does not rely on matchweek-date calendar lookup, since these fixtures are generated dynamically.
@@ -1001,6 +1000,8 @@ public class SimulationEngine
             }
         }
 
+        await DistributePrizeMoneyAsync(currentDate, seasonStrChamp, allEntries);
+
         await _supercupService.GenerateNextSupercupAsync(sortedRomanianTeams, cupFinalists);
         await _supercupService.GenerateNextDanishSupercupAsync(_leagueService);
         await _cupService.ClearSeasonDataAsync();
@@ -1024,6 +1025,21 @@ public class SimulationEngine
         _db.MatchPlayerStats.RemoveRange(allMatchStats);
         _db.MatchEvents.RemoveRange(allMatchEvents);
         _db.MatchRecords.RemoveRange(allMatchRecords);
+
+        // Purge retired players now that the season's match data (which referenced
+        // them) has been wiped. Nothing in the UI displays retired players, so this
+        // keeps the Players table from growing unbounded over a long save. Also drop
+        // any dangling transfer offers/pending moves that pointed at them.
+        var retiredPlayers = await _db.Players.IgnoreQueryFilters().Where(p => p.IsRetired).ToListAsync();
+        if (retiredPlayers.Count > 0)
+        {
+            var retiredIds = retiredPlayers.Select(p => p.Id).ToList();
+            var deadOffers = await _db.TransferOffers.Where(o => retiredIds.Contains(o.ForPlayerId)).ToListAsync();
+            var deadPending = await _db.PendingTransfers.Where(t => retiredIds.Contains(t.PlayerId)).ToListAsync();
+            _db.TransferOffers.RemoveRange(deadOffers);
+            _db.PendingTransfers.RemoveRange(deadPending);
+            _db.Players.RemoveRange(retiredPlayers);
+        }
 
         // Stale youth and other cleanups
         await _youthIntakeService.RemoveStaleIntakeAsync(currentDate);
@@ -1186,10 +1202,121 @@ public class SimulationEngine
 
         await _db.SaveChangesAsync();
     }
-}
 
-// Extension to avoid compilation error if I forget a field
-public static class PlayerExtensions
-{
-    public static int Reflexes_Placeholder(this Player p) => (p.Agility + p.Anticipation) / 2;
+    private async Task DistributePrizeMoneyAsync(DateTime currentDate, string seasonStr, List<LeagueEntry> allEntries)
+    {
+        var allTeams = await _db.Teams.ToListAsync();
+
+        // 1. League Prize Money
+        var comps = allEntries.Select(e => e.CompetitionName).Distinct().ToList();
+        foreach (var comp in comps)
+        {
+            List<Team> sortedTeams = new();
+            if (comp == LeagueService.KvindeligaenCompetition)
+            {
+                // DK: 1st=Champ, 2nd=FinalLoser, 3rd/4th from ThirdPlace playoff, rest from standings.
+                var champ = await _leagueService.GetKvindeligaenPlayoffChampionTeamAsync(seasonStr);
+                var runnerUp = await _leagueService.GetKvindeligaenPlayoffFinalLoserTeamAsync(seasonStr);
+                var thirdFixture = await _db.LeagueFixtures.Include(f => f.MatchRecord).Where(f => f.Season == seasonStr && f.CompetitionName == comp && f.PlayoffSeriesId == "THIRD" && f.IsPlayed && f.MatchRecord != null).OrderByDescending(f => f.PlayoffLeg).ToListAsync();
+                Team? third = null, fourth = null;
+                if (thirdFixture.Count > 0)
+                {
+                    var ids = thirdFixture.SelectMany(f => new[] { f.HomeTeamId, f.AwayTeamId }).Distinct().ToList();
+                    int w1 = 0, w2 = 0;
+                    foreach(var f in thirdFixture)
+                    {
+                        var r = f.MatchRecord!;
+                        bool homeWins = r.HomeGoals > r.AwayGoals || (r.HomeGoals == r.AwayGoals && r.HomePenaltyGoals > r.AwayPenaltyGoals);
+                        if (homeWins && f.HomeTeamId == ids[0]) w1++;
+                        else if (!homeWins && f.AwayTeamId == ids[0]) w1++;
+                        else w2++;
+                    }
+                    if (w1 >= 2 || w2 >= 2)
+                    {
+                        third = allTeams.FirstOrDefault(t => t.Id == (w1 > w2 ? ids[0] : ids[1]));
+                        fourth = allTeams.FirstOrDefault(t => t.Id == (w1 > w2 ? ids[1] : ids[0]));
+                    }
+                }
+                var otherEntries = allEntries.Where(e => e.CompetitionName == comp).OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).Select(e => e.Team!).ToList();
+                if (champ != null) sortedTeams.Add(champ);
+                if (runnerUp != null) sortedTeams.Add(runnerUp);
+                if (third != null) sortedTeams.Add(third);
+                if (fourth != null) sortedTeams.Add(fourth);
+                foreach(var t in otherEntries)
+                    if (!sortedTeams.Any(st => st.Id == t.Id)) sortedTeams.Add(t);
+            }
+            else
+            {
+                sortedTeams = allEntries.Where(e => e.CompetitionName == comp).OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).Select(e => e.Team!).ToList();
+            }
+
+            for (int i = 0; i < sortedTeams.Count; i++)
+            {
+                int rank = i + 1;
+                decimal prize = 0;
+                if (comp == "Liga Florilor") prize = rank == 1 ? 150000 : rank <= 4 ? 80000 : rank <= 8 ? 40000 : 10000;
+                else if (comp == "NB I") prize = rank == 1 ? 150000 : rank <= 4 ? 100000 : rank <= 8 ? 50000 : 15000;
+                else if (comp == "Ligue Butagaz Énergie") prize = rank == 1 ? 100000 : rank <= 4 ? 75000 : rank <= 8 ? 40000 : 10000;
+                else if (comp == LeagueService.KvindeligaenCompetition) prize = rank == 1 ? 100000 : rank <= 4 ? 85000 : rank <= 8 ? 35000 : 10000;
+
+                if (prize > 0)
+                {
+                    sortedTeams[i].ClubBalance += prize;
+                    sortedTeams[i].TransferBudget += prize;
+                    _db.Transactions.Add(new Transaction { TeamId = sortedTeams[i].Id, Amount = prize, Date = currentDate, Description = $"League {rank}{(rank == 1 ? "st" : rank == 2 ? "nd" : rank == 3 ? "rd" : "th")} place prize money", Type = "PrizeMoney" });
+                    if (sortedTeams[i].IsPlayerTeam)
+                        _db.NewsItems.Add(new NewsItem { Title = "League Prize Money Received", Body = $"The club has received {prize:N0} € in prize money for finishing {rank} in the league.", PublishedAt = currentDate, NewsType = "Finance" });
+                }
+            }
+        }
+
+        // 2. Cup Prize Money
+        var cupFinals = await _db.CupFixtures.Include(f => f.HomeTeam).Include(f => f.AwayTeam).Where(f => f.Season == seasonStr && (f.Round == "Final" || f.Round == "ThirdPlace") && f.IsPlayed).ToListAsync();
+        foreach (var c in comps)
+        {
+            var final = cupFinals.FirstOrDefault(f => f.CompetitionName == c && f.Round == "Final");
+            var thirdMatch = cupFinals.FirstOrDefault(f => f.CompetitionName == c && f.Round == "ThirdPlace");
+
+            decimal firstPrize = c == "Liga Florilor" ? 50000 : c == "NB I" ? 50000 : c == "Ligue Butagaz Énergie" ? 40000 : 45000;
+            decimal secondPrize = c == "Liga Florilor" ? 25000 : c == "NB I" ? 25000 : c == "Ligue Butagaz Énergie" ? 20000 : 20000;
+            decimal thirdPrize = 10000;
+            decimal fourthPrize = 5000;
+
+            if (final != null && final.HomeTeam != null && final.AwayTeam != null)
+            {
+                bool homeWon = final.HomeGoals > final.AwayGoals || (final.HomeGoals == final.AwayGoals && final.HomePenaltyGoals > final.AwayPenaltyGoals);
+                var winner = homeWon ? final.HomeTeam : final.AwayTeam;
+                var loser = homeWon ? final.AwayTeam : final.HomeTeam;
+
+                winner.ClubBalance += firstPrize;
+                winner.TransferBudget += firstPrize;
+                loser.ClubBalance += secondPrize;
+                loser.TransferBudget += secondPrize;
+
+                _db.Transactions.Add(new Transaction { TeamId = winner.Id, Amount = firstPrize, Date = currentDate, Description = "Cup Winner prize money", Type = "PrizeMoney" });
+                _db.Transactions.Add(new Transaction { TeamId = loser.Id, Amount = secondPrize, Date = currentDate, Description = "Cup Runner-Up prize money", Type = "PrizeMoney" });
+                
+                if (winner.IsPlayerTeam) _db.NewsItems.Add(new NewsItem { Title = "Cup Prize Money", Body = $"Received {firstPrize:N0} € for winning the cup.", PublishedAt = currentDate, NewsType = "Finance" });
+                if (loser.IsPlayerTeam) _db.NewsItems.Add(new NewsItem { Title = "Cup Prize Money", Body = $"Received {secondPrize:N0} € for reaching the cup final.", PublishedAt = currentDate, NewsType = "Finance" });
+            }
+
+            if (thirdMatch != null && thirdMatch.HomeTeam != null && thirdMatch.AwayTeam != null)
+            {
+                bool homeWon = thirdMatch.HomeGoals > thirdMatch.AwayGoals || (thirdMatch.HomeGoals == thirdMatch.AwayGoals && thirdMatch.HomePenaltyGoals > thirdMatch.AwayPenaltyGoals);
+                var winner = homeWon ? thirdMatch.HomeTeam : thirdMatch.AwayTeam;
+                var loser = homeWon ? thirdMatch.AwayTeam : thirdMatch.HomeTeam;
+
+                winner.ClubBalance += thirdPrize;
+                winner.TransferBudget += thirdPrize;
+                loser.ClubBalance += fourthPrize;
+                loser.TransferBudget += fourthPrize;
+
+                _db.Transactions.Add(new Transaction { TeamId = winner.Id, Amount = thirdPrize, Date = currentDate, Description = "Cup 3rd place prize money", Type = "PrizeMoney" });
+                _db.Transactions.Add(new Transaction { TeamId = loser.Id, Amount = fourthPrize, Date = currentDate, Description = "Cup 4th place prize money", Type = "PrizeMoney" });
+                
+                if (winner.IsPlayerTeam) _db.NewsItems.Add(new NewsItem { Title = "Cup Prize Money", Body = $"Received {thirdPrize:N0} € for 3rd place in the cup.", PublishedAt = currentDate, NewsType = "Finance" });
+                if (loser.IsPlayerTeam) _db.NewsItems.Add(new NewsItem { Title = "Cup Prize Money", Body = $"Received {fourthPrize:N0} € for 4th place in the cup.", PublishedAt = currentDate, NewsType = "Finance" });
+            }
+        }
+    }
 }

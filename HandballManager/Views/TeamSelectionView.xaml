@@ -193,9 +193,15 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Content="← BACK" Command="{Binding GoBackCommand}"
+                            <Button Command="{Binding GoBackCommand}"
                                     HorizontalAlignment="Center" Margin="0,10,0,0"
                                     Background="Transparent" Foreground="#666688" BorderThickness="0" Cursor="Hand" FontSize="12" FontWeight="Bold">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="/Assets/icons/left_arrow.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="BACK" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button.Content>
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Style.Triggers>

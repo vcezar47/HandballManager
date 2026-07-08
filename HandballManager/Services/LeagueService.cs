@@ -212,6 +212,13 @@ public class LeagueService
         _matchweekDatesCache.Clear(); // Invalidate cache so it regenerates for the new year
     }
 
+    /// <summary>Restores the season year when loading a saved game (or resetting for a new one) and clears the date cache.</summary>
+    public static void RestoreSeasonYear(int year)
+    {
+        CurrentSeasonYear = year;
+        _matchweekDatesCache.Clear();
+    }
+
     private static DateTime FirstSaturdayOnOrAfter(DateTime date)
     {
         int daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)date.DayOfWeek + 7) % 7;

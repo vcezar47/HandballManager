@@ -1,49 +1,19 @@
 using System.Windows;
-using HandballManager.Data;
-using HandballManager.Services;
 using HandballManager.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace HandballManager;
 
 public partial class App : Application
 {
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
         try
         {
-            // Bootstrap DB
-            var db = new HandballDbContext();
-            await db.Database.EnsureDeletedAsync();
-            await db.Database.EnsureCreatedAsync();
-            DatabaseSeeder.Seed(db);
-
-            var teamCount = await db.Teams.CountAsync();
-            // Optional: Uncomment for debugging
-            // MessageBox.Show($"Database initialized on {db.DbPath}. Loaded {teamCount} teams.");
-
-            // Build services
-            var leagueService = new LeagueService(db);
-            var progressionService = new PlayerProgressionService();
-            var transferService = new TransferService(db);
-            var youthIntakeService = new YouthIntakeService(db);
-            var cupService = new CupService(db);
-            var supercupService = new SupercupService(db);
-            var simulationEngine = new SimulationEngine(db, progressionService, transferService, youthIntakeService, cupService, supercupService, leagueService);
-            var clock = new GameClock(LeagueService.GameSeasonStartDate);
-            var scoutingService = new ScoutingService(clock);
-
-            // Historical supercup winners: DatabaseSeeder + JSON in Data/Past Champions
-            await supercupService.InitializeInitialSupercupAsync();
-            await supercupService.InitializeDanishSupercupAsync();
-            await cupService.GenerateCupAsync();
-
-            // Build main VM and window
-            var mainVm = new MainViewModel(db, leagueService, simulationEngine, clock, scoutingService, transferService, youthIntakeService, cupService, supercupService);
-            await mainVm.InitializeAsync();
-
+            // The shell opens on the main menu. The working database is only created/
+            // seeded when the player chooses New Game, and replaced when they Load.
+            var mainVm = new MainViewModel();
             var mainWindow = new MainWindow { DataContext = mainVm };
             mainWindow.Show();
         }
@@ -51,7 +21,7 @@ public partial class App : Application
         {
             var msg = ex.Message;
             if (ex.InnerException != null) msg += $"\n\nInner: {ex.InnerException.Message}";
-            
+
             MessageBox.Show($"Startup Error: {msg}\n\n{ex.StackTrace}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown();
         }

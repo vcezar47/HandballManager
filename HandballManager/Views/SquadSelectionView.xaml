@@ -190,8 +190,10 @@
                                                 <TextBlock Text="{Binding Player.Name}" 
                                                            Foreground="White" 
                                                            FontSize="15" FontWeight="Black" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Player.Overall100, StringFormat='{}⭐ {0}'}" 
-                                                           Foreground="#A0A8C0" FontSize="11" FontWeight="Bold" Margin="0,2,0,0"/>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,0,0">
+                                                    <Image Source="/Assets/icons/star_rating.png" Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Player.Overall100}" Foreground="#A0A8C0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                </StackPanel>
                                             </StackPanel>
 
                                             <!-- Right: shirt number circle -->
@@ -290,11 +292,13 @@
                                                     </TextBlock>
                                                     
                                                     <!-- Fixed Overall -->
-                                                    <TextBlock Grid.Column="2" 
-                                                               Text="{Binding Player.Overall100, StringFormat='⭐{0}'}"
-                                                               Foreground="#A0A8C0" FontSize="11" FontWeight="Bold"
+                                                    <StackPanel Grid.Column="2" 
+                                                               Orientation="Horizontal"
                                                                VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                               Visibility="{Binding Player, Converter={StaticResource NullToVis}}"/>
+                                                               Visibility="{Binding Player, Converter={StaticResource NullToVis}}">
+                                                        <Image Source="/Assets/icons/star_rating.png" Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Player.Overall100}" Foreground="#A0A8C0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -344,7 +348,9 @@
                     </TextBlock>
                     
                     <!-- Global Hint -->
-                    <TextBlock Text=" ← select a slot above first" Foreground="#94A3B8" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center" FontStyle="Italic">
+                    <StackPanel Orientation="Horizontal" Margin="6,0,0,0" VerticalAlignment="Center">
+                        <Image Source="/Assets/icons/left_arrow.png" Width="16" Height="16" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="select a slot above first" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" FontStyle="Italic">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -359,7 +365,8 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                    </TextBlock>
+                        </TextBlock>
+                    </StackPanel>
                 </StackPanel>
 
                 <Border Grid.Row="4" Background="#16213E" CornerRadius="12" Padding="12">
@@ -394,7 +401,10 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="{Binding Position}" Foreground="#E94560" FontWeight="Bold" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Overall100, StringFormat='{}⭐ {0}'}" Foreground="#A0A8C0" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <Image Source="/Assets/icons/star_rating.png" Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Overall100}" Foreground="#A0A8C0" VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </Grid>
                                 </Button>
                             </DataTemplate>

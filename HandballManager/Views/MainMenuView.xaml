@@ -100,8 +100,8 @@
 
             <!-- Buttons -->
             <StackPanel>
-                <!-- START GAME -->
-                <Button Command="{Binding StartGameCommand}" Style="{StaticResource MenuButtonStyle}">
+                <!-- NEW GAME -->
+                <Button Command="{Binding NewGameCommand}" Style="{StaticResource MenuButtonStyle}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Border" CornerRadius="10">
@@ -115,8 +115,8 @@
                                     <DropShadowEffect BlurRadius="18" Opacity="0.4" Color="#E94560" ShadowDepth="4"/>
                                 </Border.Effect>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="▶  " Foreground="White" FontSize="14" VerticalAlignment="Center"/>
-                                    <TextBlock Text="START GAME" Foreground="White" FontSize="17" FontWeight="Black"
+                                    <Image Source="/Assets/icons/play.png" Width="14" Height="14" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="NEW GAME" Foreground="White" FontSize="17" FontWeight="Black"
                                                FontFamily="Segoe UI" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
@@ -126,6 +126,31 @@
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="Border" Property="Opacity" Value="0.75"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!-- LOAD GAME -->
+                <Button Command="{Binding LoadGameCommand}" Style="{StaticResource MenuButtonStyle}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Border" CornerRadius="10" Background="#16233F"
+                                    BorderBrush="#294066" BorderThickness="1">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image Source="/Assets/icons/load_game.png" Width="16" Height="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="LOAD GAME" Foreground="#CBD5E1" FontSize="16" FontWeight="Bold"
+                                               FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#1B2E52"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="#3A5578"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#12223F"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

@@ -43,9 +43,12 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding Position}" Foreground="#38BDF8" FontWeight="Black" FontSize="9" HorizontalAlignment="Center"/>
                                 <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,2"/>
-                                <TextBlock Text="{Binding LiveRating, StringFormat='{}★ {0:F1}'}" 
-                                           Foreground="{Binding LiveRating, Converter={StaticResource RatingToColor}}" 
-                                           FontWeight="Black" FontSize="11" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Image Source="/Assets/icons/star_rating.png" Width="10" Height="10" Margin="0,0,3,0"/>
+                                    <TextBlock Text="{Binding LiveRating, StringFormat='{}{0:F1}'}"
+                                               Foreground="{Binding LiveRating, Converter={StaticResource RatingToColor}}"
+                                               FontWeight="Black" FontSize="11"/>
+                                </StackPanel>
                                 <Grid Margin="0,6,0,0">
                                     <Border Background="#111827" Height="4" CornerRadius="2"/>
                                     <ProgressBar Minimum="0" Maximum="100" Value="{Binding EnergyPercent}" Height="4" BorderThickness="0" Background="Transparent" Foreground="#10B981"/>
@@ -228,7 +231,10 @@
                                         <StackPanel>
                                             <Grid>
                                                 <TextBlock Text="{Binding Position}" Foreground="#9CA3AF" FontWeight="Bold" FontSize="9"/>
-                                                <TextBlock Text="{Binding LiveRating, StringFormat='{}{0:F1} ★'}" Foreground="White" FontWeight="Bold" FontSize="9" HorizontalAlignment="Right"/>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <TextBlock Text="{Binding LiveRating, StringFormat='{}{0:F1}'}" Foreground="White" FontWeight="Bold" FontSize="9"/>
+                                                    <Image Source="/Assets/icons/star_rating.png" Width="8" Height="8" Margin="3,0,0,0"/>
+                                                </StackPanel>
                                             </Grid>
                                             <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,3" TextTrimming="CharacterEllipsis"/>
                                             <ProgressBar Minimum="0" Maximum="100" Value="{Binding EnergyPercent}" Height="3" BorderThickness="0" Foreground="#EF4444" Background="#111827"/>

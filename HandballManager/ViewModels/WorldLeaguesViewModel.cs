@@ -103,7 +103,12 @@ public partial class WorldLeaguesViewModel : BaseViewModel
 
         LeagueDisplayName = competitionName;
 
-        Standings = await _leagueService.GetStandingsAsync(competitionName);
+        // For Kvindeligaen, always show the regular-season table in the overview.
+        // The generic GetStandingsAsync reads from LeagueEntries which accumulate points
+        // from all phases (regular season + group stages), producing a mixed/incorrect table.
+        Standings = competitionName == LeagueService.KvindeligaenCompetition
+            ? await _leagueService.GetKvindeligaenComputedRegularStandingsAsync()
+            : await _leagueService.GetStandingsAsync(competitionName);
 
         // Load cup data for both countries
         PlayerCupGroup = await _cupService.GetPlayerTeamGroupAsync(competitionName);

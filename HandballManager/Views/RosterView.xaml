@@ -58,9 +58,8 @@
                                                             </Grid.ColumnDefinitions>
                                                             <ContentPresenter Grid.Column="0" Margin="10,0,0,0"
                                                                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="1" Text="▾" Foreground="#A0A8C0"
-                                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                       FontSize="10"/>
+                                                            <Image Grid.Column="1" Source="/Assets/icons/dropdown.png" Width="10" Height="10"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Grid>
                                                     </Border>
                                                 </ControlTemplate>
@@ -277,7 +276,7 @@
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <TextBlock Text="👤" Foreground="#666688" Margin="0,0,10,0" FontSize="16"/>
+                                                <Image Source="/Assets/icons/profile.png" Width="16" Height="16" Margin="0,0,10,0"/>
                                                 <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </ControlTemplate>

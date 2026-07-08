@@ -67,9 +67,13 @@
                                    Foreground="#E94560" FontFamily="Segoe UI"
                                    Margin="0,0,0,12" HorizontalAlignment="Center"/>
 
-                        <TextBlock Text="{Binding NextMatchInfo}" FontSize="28"
-                                   FontWeight="Black" Foreground="White" FontFamily="Segoe UI"
-                                   Margin="0,0,0,10" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                            <Image Source="/Assets/icons/trophy.png" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsNextMatchTrophyEvent, Converter={StaticResource BoolToVis}}"/>
+                            <TextBlock Text="{Binding NextMatchInfo}" FontSize="28"
+                                       FontWeight="Black" Foreground="White" FontFamily="Segoe UI"
+                                       TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
                             <Border Background="#162A46" CornerRadius="14" Padding="12,6" Margin="0,0,10,0" BorderBrush="#1E3A5F" BorderThickness="1">
@@ -80,10 +84,9 @@
                             </Border>
                         </StackPanel>
 
-                        <TextBlock Text="{Binding NextCupMatchInfo}" FontSize="13" Foreground="#FFD700" FontWeight="Bold" FontFamily="Segoe UI"
-                                   HorizontalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsCupMatchday}" Value="True">
@@ -91,8 +94,10 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                            </StackPanel.Style>
+                            <Image Source="/Assets/icons/trophy.png" Width="14" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding NextCupMatchInfo}" FontSize="13" Foreground="#FFD700" FontWeight="Bold" FontFamily="Segoe UI"/>
+                        </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button Content="ADVANCE DAY" Width="170" Height="50"
@@ -163,7 +168,7 @@
                                 </Button.Style>
                             </Button>
 
-                            <!-- 
+                            <!--
                             <Button Width="160" Height="50" Margin="14,0,0,0"
                                     Foreground="White" FontSize="12" FontWeight="Black"
                                     Command="{Binding SimulateToEndOfSeasonCommand}"
@@ -212,7 +217,7 @@
                             -->
                             
                             <StackPanel Orientation="Horizontal" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" Margin="20,0,0,0">
-                                <TextBlock Text="&#x231B;" Foreground="#A0A8C0" VerticalAlignment="Center" FontSize="18"/>
+                                <Image Source="/Assets/icons/hourglass.png" Width="16" Height="16" VerticalAlignment="Center"/>
                                 <TextBlock Text="Calculating..." Foreground="#A0A8C0" FontSize="14"
                                            VerticalAlignment="Center" Margin="10,0,0,0"/>
                             </StackPanel>
@@ -256,18 +261,20 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Button Grid.Column="0" Content="◀" 
+                            <Button Grid.Column="0"
                                     Command="{Binding ChangeMatchweekCommand}" CommandParameter="-1"
-                                    Background="Transparent" Foreground="#666688" FontSize="20" BorderThickness="0" Cursor="Hand">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Foreground" Value="White"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
+                                    Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                <Image Source="/Assets/icons/left_arrow.png" Width="16" Height="16" Opacity="0.6">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
                             </Button>
                             
                             <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -275,18 +282,20 @@
                                            FontSize="14" FontWeight="Black" Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
                             </StackPanel>
 
-                            <Button Grid.Column="2" Content="▶" 
+                            <Button Grid.Column="2"
                                     Command="{Binding ChangeMatchweekCommand}" CommandParameter="1"
-                                    Background="Transparent" Foreground="#666688" FontSize="20" BorderThickness="0" Cursor="Hand">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Foreground" Value="White"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
+                                    Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                <Image Source="/Assets/icons/right_arrow.png" Width="16" Height="16" Opacity="0.6">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
                             </Button>
                         </Grid>
 
@@ -331,9 +340,11 @@
                                                         <TextBlock Grid.Column="2" Text="{Binding AwayTeamName}" 
                                                                    Foreground="White" FontSize="16" FontWeight="Bold" TextAlignment="Left" VerticalAlignment="Center"/>
                                                     </Grid>
-                                                    <TextBlock Text="{Binding CupRound, StringFormat='{}&#x1F3C6; {0}'}" Foreground="#FFD700" FontSize="10" FontWeight="Bold"
-                                                               HorizontalAlignment="Center" Margin="0,8,0,0"
-                                                               Visibility="{Binding IsCupMatch, Converter={StaticResource BoolToVis}}"/>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                                               Visibility="{Binding IsCupMatch, Converter={StaticResource BoolToVis}}">
+                                                        <Image Source="/Assets/icons/trophy.png" Width="10" Height="10" Margin="0,0,4,0"/>
+                                                        <TextBlock Text="{Binding CupRound}" Foreground="#FFD700" FontSize="10" FontWeight="Bold"/>
+                                                    </StackPanel>
                                                     <TextBlock Text="{Binding LeagueSubtitle}" Foreground="#38BDF8" FontSize="10" FontWeight="SemiBold"
                                                                HorizontalAlignment="Center" Margin="0,6,0,0"
                                                                Visibility="{Binding LeagueSubtitle, Converter={StaticResource NullToVis}}"/>

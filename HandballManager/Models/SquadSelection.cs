@@ -64,5 +64,10 @@ public class SquadSelection
         {
             Substitutes.Add(extra);
         }
+
+        // Guarantee every position key exists (a roster with fewer healthy players
+        // than positions would otherwise leave keys missing, which callers index directly).
+        foreach (var pos in pTypes)
+            if (!StartingLineup.ContainsKey(pos)) StartingLineup[pos] = null;
     }
 }

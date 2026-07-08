@@ -27,9 +27,9 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Back button -->
-                <Button Grid.Column="0" Content="← BACK" 
+                <Button Grid.Column="0"
                         Command="{Binding DataContext.NavigateToHomeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                        Background="#334155" Foreground="White" FontWeight="Bold" Padding="12,6" 
+                        Background="#334155" Foreground="White" FontWeight="Bold" Padding="12,6"
                         Margin="0,0,20,0" VerticalAlignment="Center" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -38,6 +38,10 @@
                             </Border>
                         </ControlTemplate>
                     </Button.Template>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/icons/left_arrow.png" Width="12" Height="12" Margin="0,0,6,0"/>
+                        <TextBlock Text="BACK"/>
+                    </StackPanel>
                 </Button>
 
                 <!-- Home Logo Placeholder -->

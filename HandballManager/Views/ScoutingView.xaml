@@ -112,7 +112,7 @@
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <TextBlock Text="👤" Foreground="#666688" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center"/>
+                                                <Image Source="/Assets/icons/profile.png" Width="16" Height="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                                                 <TextBlock Text="  •  " Foreground="#444466" Margin="4,0,0,0" VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding TeamName}" Foreground="#A0A8C0" FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>

@@ -269,8 +269,14 @@ public class TransferService
         if (fee > 0)
         {
             if (fromTeam != null)
+            {
                 fromTeam.ClubBalance += fee;
+                fromTeam.TransferBudget += fee;
+                _db.Transactions.Add(new Transaction { TeamId = fromTeamId, Amount = fee, Date = gameDate ?? DateTime.Now, Description = $"Transfer fee received for {playerName}", Type = "Transfer" });
+            }
             toTeam.ClubBalance -= fee;
+            toTeam.TransferBudget -= fee;
+            _db.Transactions.Add(new Transaction { TeamId = toTeamId, Amount = -fee, Date = gameDate ?? DateTime.Now, Description = $"Transfer fee paid for {playerName}", Type = "Transfer" });
         }
 
         // Generate transfer news

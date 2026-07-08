@@ -46,6 +46,7 @@ public partial class ClubInfoViewModel : BaseViewModel
     private readonly HandballDbContext _db;
     private readonly ScoutingService _scouting;
     private readonly TransferService _transferService;
+    private readonly FacilityService _facilityService;
     private readonly GameClock _clock;
     private readonly Action<Player> _onPlayerSelected;
     private readonly Action<int, string> _onNegotiateTransfer;
@@ -60,16 +61,35 @@ public partial class ClubInfoViewModel : BaseViewModel
     [ObservableProperty]
     private Manager? _manager; // Added Manager property
 
+    // ── Facility properties ────────────────────────────────────────────────
+    [ObservableProperty] private bool _isPlayerTeam;
+    [ObservableProperty] private string _trainingFacilityLabel = "";
+    [ObservableProperty] private string _trainingFacilityColour = "#8888AA";
+    [ObservableProperty] private string _trainingFacilityDescription = "";
+    [ObservableProperty] private string _trainingUpgradeCostText = "";
+    [ObservableProperty] private bool _canUpgradeTraining;
+    [ObservableProperty] private bool _isTrainingUpgrading;
+    [ObservableProperty] private string _trainingCompletionText = "";
+    [ObservableProperty] private int _trainingFacilityLevel;
 
+    [ObservableProperty] private string _youthFacilityLabel = "";
+    [ObservableProperty] private string _youthFacilityColour = "#8888AA";
+    [ObservableProperty] private string _youthFacilityDescription = "";
+    [ObservableProperty] private string _youthUpgradeCostText = "";
+    [ObservableProperty] private bool _canUpgradeYouth;
+    [ObservableProperty] private bool _isYouthUpgrading;
+    [ObservableProperty] private string _youthCompletionText = "";
+    [ObservableProperty] private int _youthFacilityLevel;
 
     public ObservableCollection<TrophyViewModel> Trophies { get; } = new();
 
-    // Modified constructor to include MainViewModel
-    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer, MainViewModel mainVm)
+    // Modified constructor to include FacilityService
+    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, FacilityService facilityService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer, MainViewModel mainVm)
     {
         _db = db;
         _scouting = scouting;
         _transferService = transferService;
+        _facilityService = facilityService;
         _clock = clock;
         _onPlayerSelected = onPlayerSelected;
         _onNegotiateTransfer = onNegotiateTransfer;
@@ -85,6 +105,39 @@ public partial class ClubInfoViewModel : BaseViewModel
         }
     }
 
+    [RelayCommand]
+    private async Task UpgradeTrainingFacility()
+    {
+        if (Team == null || !Team.IsPlayerTeam) return;
+        var (success, message) = await _facilityService.UpgradeFacilityAsync(Team.Id, Services.FacilityType.Training, _clock.CurrentDate);
+        if (success)
+        {
+            // Reload team from DB to pick up changes
+            await _db.Entry(Team).ReloadAsync();
+            RefreshFacilityProperties();
+        }
+        else
+        {
+            System.Windows.MessageBox.Show(message, "Upgrade Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+        }
+    }
+
+    [RelayCommand]
+    private async Task UpgradeYouthFacility()
+    {
+        if (Team == null || !Team.IsPlayerTeam) return;
+        var (success, message) = await _facilityService.UpgradeFacilityAsync(Team.Id, Services.FacilityType.Youth, _clock.CurrentDate);
+        if (success)
+        {
+            await _db.Entry(Team).ReloadAsync();
+            RefreshFacilityProperties();
+        }
+        else
+        {
+            System.Windows.MessageBox.Show(message, "Upgrade Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+        }
+    }
+
     public async Task InitializeAsync(int teamId)
     {
         Team = await _db.Teams
@@ -93,11 +146,11 @@ public partial class ClubInfoViewModel : BaseViewModel
 
         if (Team == null) return;
 
+        IsPlayerTeam = Team.IsPlayerTeam;
+
         // Load Manager
         await _db.Entry(Team).Reference(t => t.Manager).LoadAsync();
         Manager = Team.Manager;
-
-
 
         // Initialize Squad VM
         SquadVM = new TeamRosterViewModel(_db, teamId, _scouting, _onPlayerSelected, _transferService, _clock, _onNegotiateTransfer);
@@ -105,7 +158,64 @@ public partial class ClubInfoViewModel : BaseViewModel
 
         // Load Trophies
         await LoadTrophiesAsync();
+
+        // Refresh facility display
+        RefreshFacilityProperties();
     }
+
+    private void RefreshFacilityProperties()
+    {
+        if (Team == null) return;
+
+        // Training
+        TrainingFacilityLevel = Team.TrainingFacilityLevel;
+        TrainingFacilityLabel = FacilityLevel.GetLabel(Team.TrainingFacilityLevel);
+        TrainingFacilityColour = FacilityLevel.GetColour(Team.TrainingFacilityLevel);
+        TrainingFacilityDescription = Team.TrainingFacilityLevel >= 0 && Team.TrainingFacilityLevel <= FacilityLevel.MaxLevel
+            ? FacilityLevel.TrainingDescriptions[Team.TrainingFacilityLevel] : "";
+        IsTrainingUpgrading = Team.TrainingFacilityUpgradeCompleteDate != null;
+
+        if (Team.TrainingFacilityLevel >= FacilityLevel.MaxLevel)
+        {
+            TrainingUpgradeCostText = "MAX LEVEL";
+            CanUpgradeTraining = false;
+        }
+        else
+        {
+            decimal cost = FacilityLevel.GetTrainingCost(Team.TrainingFacilityLevel);
+            TrainingUpgradeCostText = $"{cost:N0} €";
+            CanUpgradeTraining = IsPlayerTeam && !IsTrainingUpgrading && !IsYouthUpgrading && Team.ClubBalance >= cost;
+        }
+
+        TrainingCompletionText = IsTrainingUpgrading
+            ? $"Completing: {Team.TrainingFacilityUpgradeCompleteDate:d MMM yyyy}"
+            : "";
+
+        // Youth
+        YouthFacilityLevel = Team.YouthFacilityLevel;
+        YouthFacilityLabel = FacilityLevel.GetLabel(Team.YouthFacilityLevel);
+        YouthFacilityColour = FacilityLevel.GetColour(Team.YouthFacilityLevel);
+        YouthFacilityDescription = Team.YouthFacilityLevel >= 0 && Team.YouthFacilityLevel <= FacilityLevel.MaxLevel
+            ? FacilityLevel.YouthDescriptions[Team.YouthFacilityLevel] : "";
+        IsYouthUpgrading = Team.YouthFacilityUpgradeCompleteDate != null;
+
+        if (Team.YouthFacilityLevel >= FacilityLevel.MaxLevel)
+        {
+            YouthUpgradeCostText = "MAX LEVEL";
+            CanUpgradeYouth = false;
+        }
+        else
+        {
+            decimal cost = FacilityLevel.GetYouthCost(Team.YouthFacilityLevel);
+            YouthUpgradeCostText = $"{cost:N0} €";
+            CanUpgradeYouth = IsPlayerTeam && !IsTrainingUpgrading && !IsYouthUpgrading && Team.ClubBalance >= cost;
+        }
+
+        YouthCompletionText = IsYouthUpgrading
+            ? $"Completing: {Team.YouthFacilityUpgradeCompleteDate:d MMM yyyy}"
+            : "";
+    }
+
 
     private async Task LoadTrophiesAsync()
     {

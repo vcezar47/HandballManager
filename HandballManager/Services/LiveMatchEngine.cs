@@ -171,7 +171,11 @@ public class LiveMatchEngine
 
         var attackers = attSquad.StartingLineup.Values.Where(p => p != null && p.Position != "GK").ToList();
         var defenders = defSquad.StartingLineup.Values.Where(p => p != null && p.Position != "GK").ToList();
-        var gk = defSquad.StartingLineup["GK"];
+        var gk = defSquad.StartingLineup.GetValueOrDefault("GK");
+
+        // A malformed lineup (too few healthy players) can leave a side with no
+        // outfield players. Bail out safely instead of crashing on Average()/indexing.
+        if (attackers.Count == 0 || defenders.Count == 0) { TogglePossession(); return; }
 
         if (gk == null) { TogglePossession(); return; }
 

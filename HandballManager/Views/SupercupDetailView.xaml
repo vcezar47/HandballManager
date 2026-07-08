@@ -111,8 +111,10 @@
                             </StackPanel>
 
                             <!-- FINAL -->
-                            <TextBlock Text="&#x1F3C6;  FINAL" FontSize="16" FontWeight="ExtraBold"
-                                       Foreground="#FFD700" FontFamily="Segoe UI" Margin="0,28,0,16"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,28,0,16">
+                                <Image Source="/Assets/icons/trophy.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="FINAL" FontSize="16" FontWeight="ExtraBold" Foreground="#FFD700" FontFamily="Segoe UI"/>
+                            </StackPanel>
                             <Border CornerRadius="16" Padding="24,16" Margin="0,0,0,8" 
                                     HorizontalAlignment="Stretch"
                                     Visibility="{Binding FinalMatch, Converter={StaticResource NullToVis}}">

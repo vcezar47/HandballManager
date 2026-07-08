@@ -37,6 +37,7 @@
     <Resource Include="Assets\teamlogo\**\*" />
     <Resource Include="Assets\stadiums\**\*" />
     <Resource Include="Assets\trophies\**\*" />
+    <Resource Include="Assets\icons\**\*" />
   </ItemGroup>
 
   <ItemGroup>

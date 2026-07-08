@@ -160,8 +160,7 @@
 
                     <!-- Back / Forward controls -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-                        <Button Content="←"
-                                Width="34" Height="28"
+                        <Button Width="34" Height="28"
                                 Margin="0,0,4,0"
                                 Background="#1A3055" Foreground="#38BDF8"
                                 BorderThickness="0" Cursor="Hand"
@@ -170,12 +169,12 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="0">
-                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                                        <Image x:Name="Icon" Source="/Assets/icons/left_arrow.png" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsEnabled" Value="False">
                                             <Setter TargetName="Bd" Property="Background" Value="#111827"/>
-                                            <Setter Property="Foreground" Value="#2A3050"/>
+                                            <Setter TargetName="Icon" Property="Opacity" Value="0.3"/>
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="#1E4A7A"/>
@@ -184,8 +183,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button Content="→"
-                                Width="34" Height="28"
+                        <Button Width="34" Height="28"
                                 Background="#1A3055" Foreground="#38BDF8"
                                 BorderThickness="0" Cursor="Hand"
                                 Command="{Binding NavigateForwardCommand}"
@@ -193,12 +191,12 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="0">
-                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                                        <Image x:Name="Icon" Source="/Assets/icons/right_arrow.png" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsEnabled" Value="False">
                                             <Setter TargetName="Bd" Property="Background" Value="#111827"/>
-                                            <Setter Property="Foreground" Value="#2A3050"/>
+                                            <Setter TargetName="Icon" Property="Opacity" Value="0.3"/>
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="#1E4A7A"/>
@@ -212,30 +210,78 @@
 
                 <!-- Nav links -->
                 <StackPanel DockPanel.Dock="Top" Margin="8,0">
-                    <Button Content="🏠  Home"          Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToHomeCommand}" Tag="HomeViewModel"/>
-                    <Button Content="👤  Profile"       Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToProfileCommand}" Tag="ManagerDetailViewModel"/>
-                    <Button Content="🛡️  Club Info"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToClubInfoCommand}" Tag="ClubInfoViewModel,TeamRosterViewModel"/>
-                    <Button Content="👥  Roster"        Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToRosterCommand}" Tag="RosterViewModel"/>
-                    <Button Content="📊  Competitions"  Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToCompetitionsCommand}" 
-                            Tag="CompetitionsViewModel,LeagueTableViewModel,CupDetailViewModel,SupercupDetailViewModel,LeagueHistoryViewModel,CupHistoryViewModel,SupercupHistoryViewModel"/>
-                    <Button Content="🌍  World Leagues" Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToWorldLeaguesCommand}" Tag="WorldLeaguesViewModel"/>
-                    <Button Content="🔍  Scouting"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToScoutingCommand}" Tag="ScoutingViewModel"/>
-                    <Button Content="💰  Finances"      Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToFinancesCommand}" Tag="FinancesViewModel"/>
-                    <Button Content="📄  Contracts"    Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToContractsCommand}" Tag="ContractsViewModel,ContractRenewalViewModel"/>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToHomeCommand}" Tag="HomeViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/home.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Home" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToProfileCommand}" Tag="ManagerDetailViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/profile.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Profile" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToClubInfoCommand}" Tag="ClubInfoViewModel,TeamRosterViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/club.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Club Info" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToRosterCommand}" Tag="RosterViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/team.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Roster" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToCompetitionsCommand}"
+                            Tag="CompetitionsViewModel,LeagueTableViewModel,CupDetailViewModel,SupercupDetailViewModel,LeagueHistoryViewModel,CupHistoryViewModel,SupercupHistoryViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/standings.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Competitions" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToWorldLeaguesCommand}" Tag="WorldLeaguesViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/globe.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="World Leagues" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToScoutingCommand}" Tag="ScoutingViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/search.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Scouting" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToFinancesCommand}" Tag="FinancesViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/money.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Finances" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavButton}"
+                            Command="{Binding NavigateToContractsCommand}" Tag="ContractsViewModel,ContractRenewalViewModel">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/contract.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Contracts" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                     <!-- Transfers button with pending offer badge -->
                     <Button Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToTransfersCommand}" Tag="TransfersViewModel,TransferNegotiationViewModel">
                         <Grid>
-                            <TextBlock Text="⇌  Transfers" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Assets/icons/transfer.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="Transfers" VerticalAlignment="Center"/>
+                            </StackPanel>
                             <Border HorizontalAlignment="Right" VerticalAlignment="Top"
                                     Background="#E94560" CornerRadius="8" Padding="5,1"
                                     Margin="0,-6,-23,0" MinWidth="18"
@@ -250,7 +296,10 @@
                     <Button Style="{StaticResource NavButton}"
                             Command="{Binding NavigateToNewsCommand}" Tag="NewsViewModel">
                         <Grid>
-                            <TextBlock Text="📰  News" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Assets/icons/news.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="News" VerticalAlignment="Center"/>
+                            </StackPanel>
                             <Border HorizontalAlignment="Right" VerticalAlignment="Top"
                                     Background="#E94560" CornerRadius="8" Padding="5,1"
                                     Margin="0,-4,-23,0" MinWidth="18"
@@ -277,18 +326,21 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                        <TextBlock Text="🌟  Youth" VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsYouthIntakeActive}" Value="True">
-                                            <Setter Property="Foreground" Value="#FFD700"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="/Assets/icons/youth_stars.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="Youth" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsYouthIntakeActive}" Value="True">
+                                                <Setter Property="Foreground" Value="#FFD700"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
 
@@ -301,7 +353,75 @@
 
         <!-- Main content area -->
         <Border Grid.Column="1" Background="#1A1A2E">
-            <ContentControl Content="{Binding CurrentViewModel}" Margin="0"/>
+            <Grid>
+                <ContentControl Content="{Binding CurrentViewModel}" Margin="0"/>
+
+                <!-- In-game action bar (Save / Exit to Main Menu) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="0,16,20,0" Panel.ZIndex="10"
+                            Visibility="{Binding ShowGameChrome, Converter={StaticResource BoolToVis}}">
+                    <StackPanel.Resources>
+                        <Style x:Key="ChromeButton" TargetType="Button">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Height" Value="34"/>
+                            <Setter Property="Margin" Value="8,0,0,0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="8" Background="#16213E"
+                                                BorderBrush="#2A3A5A" BorderThickness="1" Padding="12,0">
+                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#1E2E4E"/>
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#3A5578"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#12223F"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <Button Command="{Binding SaveGameCommand}" Style="{StaticResource ChromeButton}" ToolTip="Save game (choose a file the first time)">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/save_game.png" Width="15" Height="15" Margin="0,0,7,0"/>
+                            <TextBlock Text="Save" Foreground="#CBD5E1" FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                            <!-- Unsaved indicator dot -->
+                            <Ellipse Width="7" Height="7" Fill="#E94560" Margin="7,0,0,0" VerticalAlignment="Center"
+                                     Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BoolToVis}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding ExitToMainMenuCommand}" Style="{StaticResource ChromeButton}" ToolTip="Exit to Main Menu">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/icons/exit.png" Width="15" Height="15" Margin="0,0,7,0"/>
+                            <TextBlock Text="Exit" Foreground="#CBD5E1" FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Transient toast (e.g. "Game saved") -->
+                <Border HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,22,0,0" Panel.ZIndex="20"
+                        Background="#16213E" CornerRadius="10" Padding="18,10"
+                        BorderBrush="#294066" BorderThickness="1"
+                        Visibility="{Binding HasToast, Converter={StaticResource BoolToVis}}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="22" Opacity="0.45" ShadowDepth="4" Color="Black"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/icons/save_game.png" Width="14" Height="14" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TransientMessage}" Foreground="White" FontSize="13"
+                                   FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </Window>

@@ -201,7 +201,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
-                                            <TextBlock Text="&#x1F3C6;" Margin="0,0,10,0" FontSize="14" VerticalAlignment="Center"/>
+                                            <Image Source="/Assets/icons/trophy.png" Width="14" Height="14" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                             <TextBlock Text="{Binding TeamName}" Foreground="White" FontWeight="Bold"
                                                        FontFamily="Segoe UI" VerticalAlignment="Center"/>
                                         </StackPanel>

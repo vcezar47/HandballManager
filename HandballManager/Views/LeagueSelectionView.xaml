@@ -35,9 +35,10 @@
                         Background="Transparent" BorderThickness="0" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <TextBlock Text="◀" FontSize="40" Foreground="#E94560" Opacity="0.8">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
+                            <Image Source="/Assets/icons/left_arrow.png" Width="40" Height="40" Opacity="0.8"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image.Style>
+                                    <Style TargetType="Image">
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Opacity" Value="1"/>
@@ -49,8 +50,8 @@
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                                </Image.Style>
+                            </Image>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
@@ -93,9 +94,10 @@
                         Background="Transparent" BorderThickness="0" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <TextBlock Text="▶" FontSize="40" Foreground="#E94560" Opacity="0.8">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
+                            <Image Source="/Assets/icons/right_arrow.png" Width="40" Height="40" Opacity="0.8"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image.Style>
+                                    <Style TargetType="Image">
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Opacity" Value="1"/>
@@ -107,8 +109,8 @@
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                                </Image.Style>
+                            </Image>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>

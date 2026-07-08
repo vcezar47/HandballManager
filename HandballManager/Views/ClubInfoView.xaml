@@ -11,6 +11,9 @@
     <UserControl.Resources>
         <converters:TeamLogoPathConverter x:Key="TeamLogoPathConverter"/>
         <converters:StadiumImagePathConverter x:Key="StadiumImagePathConverter"/>
+        <converters:LevelToOpacityConverter x:Key="LevelToOpacityConverter"/>
+        <converters:EqualityToVisibilityConverter x:Key="EqualityToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
         <Style x:Key="TabHeaderStyle" TargetType="TabItem">
             <Setter Property="Template">
@@ -233,6 +236,307 @@
                                 </Border>
                             </Grid>
                         </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- FACILITIES TAB -->
+            <TabItem Header="FACILITIES" Style="{StaticResource TabHeaderStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Card 1: Training Facilities -->
+                        <Border Grid.Column="0" Background="#16213E" CornerRadius="20" Padding="30">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="30" Opacity="0.1" ShadowDepth="5"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Image Grid.Row="0" Source="/Assets/icons/training.png" Width="48" Height="48" HorizontalAlignment="Center" Margin="0,0,0,15" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                                <TextBlock Grid.Row="1" Text="TRAINING FACILITIES" FontSize="18" FontWeight="Black" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                                <Border Grid.Row="2" Background="{Binding TrainingFacilityColour}" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                    <TextBlock Text="{Binding TrainingFacilityLabel}" Foreground="White" FontSize="14" FontWeight="ExtraBold"/>
+                                </Border>
+
+                                <TextBlock Grid.Row="3" Text="{Binding TrainingFacilityDescription}" Foreground="#8888AA" FontSize="14" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Height="65" Margin="0,0,0,15"/>
+
+                                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=0}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=1}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=2}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=3}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=4}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=5}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding TrainingFacilityColour}" Opacity="{Binding TrainingFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=6}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="5" Visibility="{Binding IsPlayerTeam, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Separator Background="#1A264F" Height="1" Margin="0,0,0,25"/>
+
+                                <Grid>
+                                    <!-- Max Level -->
+                                    <StackPanel Visibility="{Binding TrainingFacilityLevel, Converter={StaticResource EqualityToVisibilityConverter}, ConverterParameter=6}" HorizontalAlignment="Center">
+                                        <TextBlock Text="MAXIMUM LEVEL REACHED" Foreground="#84CC16" FontSize="16" FontWeight="Black" HorizontalAlignment="Center" Margin="0,10"/>
+                                    </StackPanel>
+
+                                    <!-- Under max level -->
+                                    <Grid>
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding TrainingFacilityLevel}" Value="6">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+
+                                        <!-- If Upgrading -->
+                                        <StackPanel Visibility="{Binding IsTrainingUpgrading, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                                <Ellipse Width="10" Height="10" Fill="#F59E0B" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Style.Triggers>
+                                                                <EventTrigger RoutedEvent="Loaded">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.3" To="1.0" Duration="0:0:1"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                                <TextBlock Text="UPGRADE IN PROGRESS" Foreground="#F59E0B" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding TrainingCompletionText}" Foreground="#8888AA" FontSize="13" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <!-- If Not Upgrading -->
+                                        <Grid>
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsTrainingUpgrading}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                                    <TextBlock Text="Upgrade Cost: " Foreground="#8888AA" FontSize="14" FontWeight="Medium" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding TrainingUpgradeCostText}" Foreground="White" FontSize="16" FontWeight="Black" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                                
+                                                <Button Content="Upgrade Facility" Command="{Binding UpgradeTrainingFacilityCommand}"
+                                                        IsEnabled="{Binding CanUpgradeTraining}"
+                                                        Background="#E94560" Foreground="White" FontWeight="Bold"
+                                                        FontSize="14" Padding="25,12" Cursor="Hand" BorderThickness="0" HorizontalAlignment="Center">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#FF5E7E"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsEnabled" Value="False">
+                                                                    <Setter Property="Background" Value="#2D3748"/>
+                                                                    <Setter Property="Foreground" Value="#555577"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+                                                <!-- Helper message for disabled buttons -->
+                                                <TextBlock Foreground="#666688" FontSize="11" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,8,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding CanUpgradeTraining}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="Only one upgrade can run at a time. Requires sufficient club balance."/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Card 2: Youth Academy -->
+                        <Border Grid.Column="2" Background="#16213E" CornerRadius="20" Padding="30">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="30" Opacity="0.1" ShadowDepth="5"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Image Grid.Row="0" Source="/Assets/icons/youth_academy.png" Width="48" Height="48" HorizontalAlignment="Center" Margin="0,0,0,15" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                                <TextBlock Grid.Row="1" Text="YOUTH ACADEMY" FontSize="18" FontWeight="Black" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                                <Border Grid.Row="2" Background="{Binding YouthFacilityColour}" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                    <TextBlock Text="{Binding YouthFacilityLabel}" Foreground="White" FontSize="14" FontWeight="ExtraBold"/>
+                                </Border>
+
+                                <TextBlock Grid.Row="3" Text="{Binding YouthFacilityDescription}" Foreground="#8888AA" FontSize="14" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Height="65" Margin="0,0,0,15"/>
+
+                                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=0}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=1}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=2}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=3}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=4}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=5}"/>
+                                    <Ellipse Width="12" Height="12" Margin="5,0" Fill="{Binding YouthFacilityColour}" Opacity="{Binding YouthFacilityLevel, Converter={StaticResource LevelToOpacityConverter}, ConverterParameter=6}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="5" Visibility="{Binding IsPlayerTeam, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Separator Background="#1A264F" Height="1" Margin="0,0,0,25"/>
+
+                                <Grid>
+                                    <!-- Max Level -->
+                                    <StackPanel Visibility="{Binding YouthFacilityLevel, Converter={StaticResource EqualityToVisibilityConverter}, ConverterParameter=6}" HorizontalAlignment="Center">
+                                        <TextBlock Text="MAXIMUM LEVEL REACHED" Foreground="#84CC16" FontSize="16" FontWeight="Black" HorizontalAlignment="Center" Margin="0,10"/>
+                                    </StackPanel>
+
+                                    <!-- Under max level -->
+                                    <Grid>
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding YouthFacilityLevel}" Value="6">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+
+                                        <!-- If Upgrading -->
+                                        <StackPanel Visibility="{Binding IsYouthUpgrading, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                                <Ellipse Width="10" Height="10" Fill="#F59E0B" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Style.Triggers>
+                                                                <EventTrigger RoutedEvent="Loaded">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.3" To="1.0" Duration="0:0:1"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                                <TextBlock Text="UPGRADE IN PROGRESS" Foreground="#F59E0B" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding YouthCompletionText}" Foreground="#8888AA" FontSize="13" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <!-- If Not Upgrading -->
+                                        <Grid>
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsYouthUpgrading}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                                    <TextBlock Text="Upgrade Cost: " Foreground="#8888AA" FontSize="14" FontWeight="Medium" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding YouthUpgradeCostText}" Foreground="White" FontSize="16" FontWeight="Black" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                                
+                                                <Button Content="Upgrade Academy" Command="{Binding UpgradeYouthFacilityCommand}"
+                                                        IsEnabled="{Binding CanUpgradeYouth}"
+                                                        Background="#E94560" Foreground="White" FontWeight="Bold"
+                                                        FontSize="14" Padding="25,12" Cursor="Hand" BorderThickness="0" HorizontalAlignment="Center">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#FF5E7E"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsEnabled" Value="False">
+                                                                    <Setter Property="Background" Value="#2D3748"/>
+                                                                    <Setter Property="Foreground" Value="#555577"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+                                                <!-- Helper message for disabled buttons -->
+                                                <TextBlock Foreground="#666688" FontSize="11" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,8,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding CanUpgradeYouth}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="Only one upgrade can run at a time. Requires sufficient club balance."/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

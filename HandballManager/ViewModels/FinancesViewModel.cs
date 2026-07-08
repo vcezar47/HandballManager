@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using HandballManager.Data;
 using HandballManager.Models;
 using System;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace HandballManager.ViewModels;
 
@@ -22,6 +24,9 @@ public partial class FinancesViewModel : BaseViewModel
 
     [ObservableProperty]
     private decimal _clubBalance;
+
+    [ObservableProperty]
+    private ObservableCollection<Transaction> _transactions = new();
 
     // Minimums so the team doesn't go entirely bankrupt in one area
     private readonly decimal _minTransferBudget = 10000;
@@ -54,6 +59,19 @@ public partial class FinancesViewModel : BaseViewModel
         WageBudget = _originalWageBudget;
         ClubBalance = _team.ClubBalance;
         BudgetSliderValue = 50.0; 
+
+        Transactions.Clear();
+        var teamTransactions = _db.Transactions
+            .Where(t => t.TeamId == _team.Id)
+            .OrderByDescending(t => t.Date)
+            .ThenByDescending(t => t.Id)
+            .Take(50)
+            .ToList();
+            
+        foreach (var tr in teamTransactions)
+        {
+            Transactions.Add(tr);
+        }
     }
 
     // When the slider changes, adjust the budgets

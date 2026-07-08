@@ -80,16 +80,28 @@
                     Command="{Binding SetTabCommand}"
                     CommandParameter="All"/>
 
-            <Button Content="⇌  Transfers"
-                    Style="{StaticResource TabBtnTransfers}"
+            <Button Style="{StaticResource TabBtnTransfers}"
                     Margin="0,0,8,0"
                     Command="{Binding SetTabCommand}"
-                    CommandParameter="Transfers"/>
+                    CommandParameter="Transfers">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Assets/icons/transfer.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Transfers" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
 
-            <Button Content="🏁  Retirements"
-                    Style="{StaticResource TabBtnRetirements}"
+            <Button Style="{StaticResource TabBtnRetirements}"
                     Command="{Binding SetTabCommand}"
-                    CommandParameter="Retirements"/>
+                    CommandParameter="Retirements">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Assets/icons/retirement.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Retirements" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
         </StackPanel>
 
         <!-- News feed -->
@@ -123,21 +135,21 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="📋"/>
+                                    <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Source" Value="/Assets/icons/clipboard.png"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding NewsType}" Value="Transfer">
-                                                        <Setter Property="Text" Value="⇌"/>
+                                                        <Setter Property="Source" Value="/Assets/icons/transfer.png"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding NewsType}" Value="RetirementAnnouncement">
-                                                        <Setter Property="Text" Value="🏁"/>
+                                                        <Setter Property="Source" Value="/Assets/icons/retirement.png"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                        </Image.Style>
+                                    </Image>
                                 </Border>
 
                                 <!-- Content -->

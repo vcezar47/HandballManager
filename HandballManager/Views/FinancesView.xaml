@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             xmlns:conv="clr-namespace:HandballManager.Converters"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:FinancesViewModel}">
+    
+    <UserControl.Resources>
+        <conv:AmountToColorConverter x:Key="AmountToColorConverter"/>
+    </UserControl.Resources>
     
     <Grid Margin="30">
         <Grid.RowDefinitions>
@@ -61,8 +66,14 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             
-                            <TextBlock Grid.Column="0" Text="← Move to Wage Budget" Foreground="#E94560" FontSize="12" FontWeight="Bold" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Column="2" Text="Move to Transfer Budget →" Foreground="#4ECDC4" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Image Source="/Assets/icons/left_arrow.png" Width="12" Height="12" Margin="0,0,6,0"/>
+                                <TextBlock Text="Move to Wage Budget" Foreground="#E94560" FontSize="12" FontWeight="Bold"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="Move to Transfer Budget" Foreground="#4ECDC4" FontSize="12" FontWeight="Bold"/>
+                                <Image Source="/Assets/icons/right_arrow.png" Width="12" Height="12" Margin="6,0,0,0"/>
+                            </StackPanel>
                         </Grid>
 
                         <Slider Value="{Binding BudgetSliderValue}" Minimum="{Binding MinSliderValue}" Maximum="{Binding MaxSliderValue}" 
@@ -93,25 +104,50 @@
                 </Border>
             </StackPanel>
 
-            <!-- Financial Summary Right Column -->
-            <Border Grid.Column="1" Background="#16213E" CornerRadius="12" Padding="25" VerticalAlignment="Top">
-                <StackPanel>
-                    <TextBlock Text="FINANCIAL SUMMARY" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
-                    
-                    <TextBlock Text="Total Club Balance" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding ClubBalance, StringFormat='€{0:N0}'}" Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15"/>
-                    
-                    <Separator Background="#2A2A4A" Margin="0,5,0,15"/>
-                    
-                    <TextBlock Text="Season Projection" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Text="N/A" Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15"/>
+            <!-- Right Column -->
+            <StackPanel Grid.Column="1">
+                <!-- Financial Summary -->
+                <Border Background="#16213E" CornerRadius="12" Padding="25" Margin="0,0,0,25">
+                    <StackPanel>
+                        <TextBlock Text="FINANCIAL SUMMARY" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+                        
+                        <TextBlock Text="Total Club Balance" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding ClubBalance, StringFormat='€{0:N0}'}" Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                    </StackPanel>
+                </Border>
 
-                    <Separator Background="#2A2A4A" Margin="0,5,0,15"/>
+                <!-- Transactions -->
+                <Border Background="#16213E" CornerRadius="12" Padding="25">
+                    <StackPanel>
+                        <TextBlock Text="RECENT TRANSACTIONS" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+                        <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Transactions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#2A2A4A" BorderThickness="0,0,0,1" Padding="0,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                                                    <TextBlock Text="{Binding Description}" Foreground="White" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Date, StringFormat='dd MMM yyyy'}" Foreground="#666688" FontSize="12" Margin="0,3,0,0"/>
+                                                </StackPanel>
 
-                    <TextBlock Text="Sponsorship Income" Foreground="#A0A8C0" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Text="N/A" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat='€{0:N0}'}" 
+                                                           Foreground="{Binding Amount, Converter={StaticResource AmountToColorConverter}}" 
+                                                           FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

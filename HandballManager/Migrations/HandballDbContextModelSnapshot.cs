@@ -23,17 +23,30 @@ namespace HandballManager.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RunnerUpTeamName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Season")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TeamName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ThirdPlaceTeamName")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ChampionRecords", (string)null);
+                    b.ToTable("ChampionRecords");
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupFixture", b =>
@@ -45,13 +58,23 @@ namespace HandballManager.Migrations
                     b.Property<int>("AwayGoals")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AwayPenaltyGoals")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("AwayTeamId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("CupGroupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("HomeGoals")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HomePenaltyGoals")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("HomeTeamId")
@@ -87,7 +110,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("CupFixtures", (string)null);
+                    b.ToTable("CupFixtures");
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupGroup", b =>
@@ -95,6 +118,10 @@ namespace HandballManager.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("GroupName")
                         .IsRequired()
@@ -106,7 +133,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CupGroups", (string)null);
+                    b.ToTable("CupGroups");
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupGroupEntry", b =>
@@ -145,7 +172,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("CupGroupEntries", (string)null);
+                    b.ToTable("CupGroupEntries");
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupWinnerRecord", b =>
@@ -154,9 +181,16 @@ namespace HandballManager.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Season")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TeamName")
                         .IsRequired()
@@ -164,7 +198,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CupWinnerRecords", (string)null);
+                    b.ToTable("CupWinnerRecords");
                 });
 
             modelBuilder.Entity("HandballManager.Models.LeagueEntry", b =>
@@ -172,6 +206,10 @@ namespace HandballManager.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Drawn")
                         .HasColumnType("INTEGER");
@@ -199,7 +237,133 @@ namespace HandballManager.Migrations
                     b.HasIndex("TeamId")
                         .IsUnique();
 
-                    b.ToTable("LeagueEntries", (string)null);
+                    b.ToTable("LeagueEntries");
+                });
+
+            modelBuilder.Entity("HandballManager.Models.LeagueFixture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AwayTeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("HomeTeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPlayed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MatchRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Phase")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PlayoffLeg")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PlayoffSeriesId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Season")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AwayTeamId");
+
+                    b.HasIndex("HomeTeamId");
+
+                    b.HasIndex("MatchRecordId");
+
+                    b.ToTable("LeagueFixtures");
+                });
+
+            modelBuilder.Entity("HandballManager.Models.Manager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Adaptability")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Birthdate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClubHistoryJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Discipline")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GamesDrawn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GamesLost")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GamesWon")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPlayerManager")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("License")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Motivation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PlaceOfBirth")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Reputation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimeoutTalks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TrophiesWon")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("YouthDevelopment")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId")
+                        .IsUnique();
+
+                    b.ToTable("Managers");
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchEvent", b =>
@@ -207,6 +371,10 @@ namespace HandballManager.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EventType")
                         .IsRequired()
@@ -225,6 +393,9 @@ namespace HandballManager.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Second")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TeamId")
                         .HasColumnType("INTEGER");
 
@@ -232,7 +403,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("MatchEvents", (string)null);
+                    b.ToTable("MatchEvents");
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchPlayerStat", b =>
@@ -272,7 +443,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("MatchPlayerStats", (string)null);
+                    b.ToTable("MatchPlayerStats");
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchRecord", b =>
@@ -281,7 +452,13 @@ namespace HandballManager.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Attendance")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("AwayGoals")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AwayPenaltyGoals")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("AwayTeamId")
@@ -301,6 +478,9 @@ namespace HandballManager.Migrations
                     b.Property<int>("HomeGoals")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("HomePenaltyGoals")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("HomeTeamId")
                         .HasColumnType("INTEGER");
 
@@ -315,15 +495,31 @@ namespace HandballManager.Migrations
                     b.Property<bool>("IsCupMatch")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsUnplayedPlaceholder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LeagueSubtitle")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("MatchweekNumber")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("PlayedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("VenueName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("WasDecidedByOvertime")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("WasDecidedByShootout")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("MatchRecords", (string)null);
+                    b.ToTable("MatchRecords");
                 });
 
             modelBuilder.Entity("HandballManager.Models.NewsItem", b =>
@@ -352,7 +548,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NewsItems", (string)null);
+                    b.ToTable("NewsItems");
                 });
 
             modelBuilder.Entity("HandballManager.Models.PendingTransfer", b =>
@@ -394,7 +590,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("ToTeamId");
 
-                    b.ToTable("PendingTransfers", (string)null);
+                    b.ToTable("PendingTransfers");
                 });
 
             modelBuilder.Entity("HandballManager.Models.Player", b =>
@@ -523,6 +719,9 @@ namespace HandballManager.Migrations
                     b.Property<int>("Marking")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("MatchEnergy")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("MatchesPlayed")
                         .HasColumnType("INTEGER");
 
@@ -623,7 +822,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Players", (string)null);
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("HandballManager.Models.SupercupFixture", b =>
@@ -635,10 +834,20 @@ namespace HandballManager.Migrations
                     b.Property<int>("AwayGoals")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AwayPenaltyGoals")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("AwayTeamId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("HomeGoals")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HomePenaltyGoals")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("HomeTeamId")
@@ -672,7 +881,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("SupercupFixtures", (string)null);
+                    b.ToTable("SupercupFixtures");
                 });
 
             modelBuilder.Entity("HandballManager.Models.SupercupWinnerRecord", b =>
@@ -681,9 +890,16 @@ namespace HandballManager.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Season")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TeamName")
                         .IsRequired()
@@ -691,7 +907,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SupercupWinnerRecords", (string)null);
+                    b.ToTable("SupercupWinnerRecords");
                 });
 
             modelBuilder.Entity("HandballManager.Models.Team", b =>
@@ -705,6 +921,13 @@ namespace HandballManager.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("ClubBalance")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ClubReputation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompetitionName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -729,8 +952,21 @@ namespace HandballManager.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("StadiumCapacity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StadiumImage")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("StadiumName")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TrainingFacilityLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("TrainingFacilityUpgradeCompleteDate")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("TransferBudget")
@@ -739,9 +975,45 @@ namespace HandballManager.Migrations
                     b.Property<decimal>("WageBudget")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("YouthFacilityLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("YouthFacilityUpgradeCompleteDate")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Teams", (string)null);
+                    b.ToTable("Teams");
+                });
+
+            modelBuilder.Entity("HandballManager.Models.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("HandballManager.Models.TransferOffer", b =>
@@ -782,7 +1054,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("FromTeamId");
 
-                    b.ToTable("TransferOffers", (string)null);
+                    b.ToTable("TransferOffers");
                 });
 
             modelBuilder.Entity("HandballManager.Models.YouthIntakePlayer", b =>
@@ -833,7 +1105,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("YouthIntakePlayers", (string)null);
+                    b.ToTable("YouthIntakePlayers");
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupFixture", b =>
@@ -893,6 +1165,41 @@ namespace HandballManager.Migrations
                         .HasForeignKey("HandballManager.Models.LeagueEntry", "TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("HandballManager.Models.LeagueFixture", b =>
+                {
+                    b.HasOne("HandballManager.Models.Team", "AwayTeam")
+                        .WithMany()
+                        .HasForeignKey("AwayTeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HandballManager.Models.Team", "HomeTeam")
+                        .WithMany()
+                        .HasForeignKey("HomeTeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HandballManager.Models.MatchRecord", "MatchRecord")
+                        .WithMany()
+                        .HasForeignKey("MatchRecordId");
+
+                    b.Navigation("AwayTeam");
+
+                    b.Navigation("HomeTeam");
+
+                    b.Navigation("MatchRecord");
+                });
+
+            modelBuilder.Entity("HandballManager.Models.Manager", b =>
+                {
+                    b.HasOne("HandballManager.Models.Team", "Team")
+                        .WithOne("Manager")
+                        .HasForeignKey("HandballManager.Models.Manager", "TeamId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Team");
                 });
@@ -988,6 +1295,17 @@ namespace HandballManager.Migrations
                     b.Navigation("MatchRecord");
                 });
 
+            modelBuilder.Entity("HandballManager.Models.Transaction", b =>
+                {
+                    b.HasOne("HandballManager.Models.Team", "Team")
+                        .WithMany("Transactions")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("HandballManager.Models.TransferOffer", b =>
                 {
                     b.HasOne("HandballManager.Models.Player", "ForPlayer")
@@ -1036,7 +1354,11 @@ namespace HandballManager.Migrations
                 {
                     b.Navigation("LeagueEntry");
 
+                    b.Navigation("Manager");
+
                     b.Navigation("Players");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

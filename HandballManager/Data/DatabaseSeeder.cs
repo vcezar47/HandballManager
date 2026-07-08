@@ -274,6 +274,107 @@ public static class DatabaseSeeder
             // If we have a StadiumImage but no StadiumName from JSON (unlikely but safe), we could do something here.
             // But actually we have both. The above block just ensures we have fallback values.
 
+            // ── Club Facilities ────────────────────────────────────────────────────
+            var fileNameKey = Path.GetFileNameWithoutExtension(
+                Directory.GetFiles(jsonPath, "*.json", SearchOption.AllDirectories)
+                    .FirstOrDefault(f =>
+                    {
+                        var fn = Path.GetFileNameWithoutExtension(f).ToLower().Replace(" ", "_");
+                        return fn == team.Name.ToLower().Replace(" ", "_")
+                            || team.Name.IndexOf(fn, StringComparison.OrdinalIgnoreCase) >= 0;
+                    }) ?? "")?.ToLower() ?? "";
+
+            // Hardcoded facility levels per club (training, youth) as provided
+            var facilityMap = new Dictionary<string, (int Training, int Youth)>
+            {
+                // Romania – Liga Florilor
+                ["baia_mare"]          = (2, 5),  // Average, High standard
+                ["brasov"]             = (3, 2),  // Adequate, Average
+                ["craiova"]            = (2, 1),  // Average, Below average
+                ["csm_bucuresti"]      = (6, 4),  // Fantastic, Modern
+                ["csm_galati"]         = (0, 1),  // Low standard, Below average
+                ["dunarea_braila"]     = (5, 3),  // High standard, Adequate
+                ["gloria_bistrita"]    = (5, 4),  // High standard, Modern
+                ["ramnicu_valcea"]     = (4, 5),  // Modern, High standard
+                ["rapid_bucuresti"]    = (5, 3),  // High standard, Adequate
+                ["slatina"]            = (1, 2),  // Below average, Average
+                ["targu_jiu"]          = (1, 0),  // Below average, Low standard
+                ["zalau"]              = (2, 5),  // Average, High standard
+
+                // Denmark – Kvindeligaen
+                ["aalborg"]            = (1, 2),  // Below average, Average
+                ["bjerringbro"]        = (1, 3),  // Below average, Adequate
+                ["esbjerg"]            = (6, 5),  // Fantastic, High standard
+                ["hh_elite"]           = (2, 2),  // Average, Average
+                ["hoj"]                = (0, 1),  // Low standard, Below average
+                ["ikast"]              = (5, 6),  // High standard, Fantastic
+                ["kobenhavn"]          = (4, 3),  // Modern, Adequate
+                ["nykobing"]           = (4, 3),  // Modern, Adequate
+                ["odense"]             = (6, 4),  // Fantastic, Modern
+                ["ringkobing"]         = (1, 2),  // Below average, Average
+                ["silkeborg"]          = (2, 4),  // Average, Modern
+                ["skanderborg"]        = (2, 5),  // Average, High standard
+                ["sonderjyske"]        = (3, 2),  // Adequate, Average
+                ["viborg"]             = (4, 5),  // Modern, High standard
+
+                // France – Ligue Butagaz Énergie
+                ["achenheim_truchtersheim"] = (0, 1),  // Low standard, Below average
+                ["brest_bretagne"]     = (6, 5),  // Fantastic, High standard
+                ["chambray_touraine"]  = (3, 2),  // Adequate, Average
+                ["esbf_besancon"]      = (4, 5),  // Modern, High standard
+                ["havre"]              = (1, 2),  // Below average, Average
+                ["jda_dijon"]          = (3, 3),  // Adequate, Adequate
+                ["metz"]               = (6, 6),  // Fantastic, Fantastic
+                ["ogc_nice"]           = (2, 2),  // Average, Average
+                ["paris92"]            = (4, 5),  // Modern, High standard
+                ["plan_de_cuques"]     = (2, 1),  // Average, Below average
+                ["sahbph"]             = (1, 2),  // Below average, Average
+                ["sambre_avesnois"]    = (0, 0),  // Low standard, Low standard
+                ["stella_saint_maur"]  = (1, 1),  // Below average, Below average
+                ["toulon_metropole"]   = (2, 3),  // Average, Adequate
+
+                // Hungary – NB I
+                ["alba_fehervar"]      = (2, 3),  // Average, Adequate
+                ["budaors"]            = (1, 2),  // Below average, Average
+                ["dunaujvarosi_ka"]    = (2, 5),  // Average, High standard
+                ["dvsc"]               = (5, 5),  // High standard, High standard
+                ["esztergomi"]         = (3, 1),  // Adequate, Below average
+                ["ferencvaros"]        = (6, 5),  // Fantastic, High standard
+                ["gyor"]               = (6, 6),  // Fantastic, Fantastic
+                ["kisvarda"]           = (1, 2),  // Below average, Average
+                ["kozarmisleny_se"]    = (0, 1),  // Low standard, Below average
+                ["mosonmagyarovar"]    = (4, 3),  // Modern, Adequate
+                ["neka"]               = (4, 6),  // Modern, Fantastic
+                ["szombathely"]        = (1, 2),  // Below average, Average
+                ["vaci_nkse"]          = (3, 5),  // Adequate, High standard
+                ["vasas_sc"]           = (2, 3),  // Average, Adequate
+            };
+
+            // Try to match from the file that seeded this team
+            var matchedFile = files.FirstOrDefault(f =>
+            {
+                var teamJson = System.Text.Json.JsonSerializer.Deserialize<Team>(
+                    File.ReadAllText(f),
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return teamJson?.Name == team.Name;
+            });
+
+            string facilityKey = matchedFile != null
+                ? Path.GetFileNameWithoutExtension(matchedFile).ToLower()
+                : "";
+
+            if (facilityMap.TryGetValue(facilityKey, out var levels))
+            {
+                team.TrainingFacilityLevel = levels.Training;
+                team.YouthFacilityLevel = levels.Youth;
+            }
+            else
+            {
+                // Default: Average for both
+                team.TrainingFacilityLevel = 2;
+                team.YouthFacilityLevel = 2;
+            }
+
             // Create AI Manager if one doesn't already exist
             if (team.Manager != null)
             {

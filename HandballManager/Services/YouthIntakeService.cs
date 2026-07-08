@@ -65,7 +65,7 @@ public class YouthIntakeService
             {
                 int shirt = NextShirt(usedShirts);
                 usedShirts.Add(shirt);
-                var youth = GenerateOneYouth(team.Id, year, shirt, team.Nation ?? "ROU");
+                var youth = GenerateOneYouth(team.Id, year, shirt, team.Nation ?? "ROU", team.YouthFacilityLevel);
                 _db.YouthIntakePlayers.Add(youth);
             }
         }
@@ -94,7 +94,7 @@ public class YouthIntakeService
         _ => "ROU"
     };
 
-    private static YouthIntakePlayer GenerateOneYouth(int clubId, int intakeYear, int suggestedShirt, string nation)
+    private static YouthIntakePlayer GenerateOneYouth(int clubId, int intakeYear, int suggestedShirt, string nation, int youthFacilityLevel = 2)
     {
         string isoCode = NationToCode(nation);
         string[] firstNamesPool = isoCode switch
@@ -132,7 +132,7 @@ public class YouthIntakeService
             MonthlyWage = 0,
             TeamId = 0
         };
-        SetRandomAttributes(p, position);
+        SetRandomAttributes(p, position, youthFacilityLevel);
 
         var json = JsonSerializer.Serialize(PlayerSnapshot.FromPlayer(p));
         return new YouthIntakePlayer
@@ -151,9 +151,14 @@ public class YouthIntakeService
         };
     }
 
-    private static void SetRandomAttributes(Player p, string position)
+    private static void SetRandomAttributes(Player p, string position, int youthFacilityLevel = 2)
     {
-        int baseLevel = Rng.Next(3, 8);
+        // Youth facility quality offset: level 2 (Average) = 0 offset
+        int qualityOffset = Models.FacilityLevel.YouthQualityOffset[
+            Math.Clamp(youthFacilityLevel, Models.FacilityLevel.MinLevel, Models.FacilityLevel.MaxLevel)];
+
+        int baseLevel = Rng.Next(3, 8) + qualityOffset;
+        baseLevel = Math.Clamp(baseLevel, 1, 12); // keep base sane – youth should not be too strong
         int v() => Math.Clamp(baseLevel + Rng.Next(-1, 3), 1, 20);
         p.Dribbling = v(); p.Finishing = v(); p.Marking = v(); p.Passing = v(); p.Technique = v();
         p.Aggression = v(); p.Anticipation = v(); p.Decisions = v(); p.Acceleration = v(); p.Pace = v(); p.Stamina = v(); p.Strength = v();

@@ -26,15 +26,23 @@ public class HandballDbContext : DbContext
     public DbSet<SupercupFixture> SupercupFixtures { get; set; }
     public DbSet<SupercupWinnerRecord> SupercupWinnerRecords { get; set; }
     public DbSet<Manager> Managers { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<GameState> GameStates { get; set; }
 
     private readonly string _dbPath;
 
     public string DbPath => _dbPath;
 
+    /// <summary>Default working database (lives next to the executable).</summary>
     public HandballDbContext()
     {
-        // Move database from C: drive to the project directory on E: drive
         _dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "handball.db");
+    }
+
+    /// <summary>Opens a context against an arbitrary database file (used to validate save files before loading).</summary>
+    public HandballDbContext(string dbPath)
+    {
+        _dbPath = dbPath;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

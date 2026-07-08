@@ -1,4 +1,4 @@
-# Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="45">
+# Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="30">
 
 ## About the Game
 
@@ -57,13 +57,18 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * **Added realistic budgets to all clubs**
 * **----- 10.05.2026 May Competitions Update -----**
 * **Denmark competitions added (League, Cup & SuperCup)**
+* **----- 08.07.2026 July Update -----**
+* **Club facilities added - Training and Youth**
+* **Competitions now award prize money depending on position / trophies won**
+* **Save/Load game**
+* **Bug fixes**
 
-## Upcoming Features
 
-* **Club facilities**
+## Upcoming Features / Updates 
+
 * **Even MORE competitions**
-* **Competitions prize money**
 * **Sponsors**
+* **Likely mobile port**
 
 ## 📜 License & Copyright
 
@@ -83,4 +88,5 @@ Handball Manager is a fan-made simulation project. It is **not affiliated with, 
 * The Romanian Handball Federation (FRH) or Liga Florilor.
 * The Hungarian Handball Federation (MKSZ) or the K&H Női Liga.
 * The French Handball Federation (FFH) or the Ligue Butagaz Energie.
+* The Danish Handball Federation (DanskHåndbold) or the Kvindeligaen.
 * Any other official handball organizations, leagues, teams, or professional players.
