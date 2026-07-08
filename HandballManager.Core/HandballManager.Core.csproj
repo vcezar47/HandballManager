@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>HandballManager</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+  <!-- Seed data ships inside the assembly so every platform (desktop, mobile) reads it the same way. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Data\InitialData\**\*.json" />
+    <EmbeddedResource Include="Data\Past Champions\**\*.json" />
+  </ItemGroup>
+
+  <!-- Resource names default to dot-mangled namespaces that break on folders with spaces or
+       diacritics ("Past Champions", "Ligue Butagaz Énergie"). Pin each seed file's logical name
+       to its project-relative path with forward slashes so SeedDataSource can address them. -->
+  <Target Name="SeedDataLogicalNames" BeforeTargets="CreateManifestResourceNames">
+    <ItemGroup>
+      <EmbeddedResource>
+        <LogicalName Condition="$([System.String]::Copy('%(Identity)').StartsWith('Data\'))">$([System.String]::Copy('%(Identity)').Replace('\', '/'))</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+</Project>

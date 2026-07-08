@@ -33,10 +33,17 @@ public class HandballDbContext : DbContext
 
     public string DbPath => _dbPath;
 
-    /// <summary>Default working database (lives next to the executable).</summary>
+    /// <summary>
+    /// Directory holding the working database. Desktop keeps the historical default
+    /// (next to the executable); a mobile host must point this at its writable
+    /// app-data directory before the first context is created.
+    /// </summary>
+    public static string DatabaseDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+
+    /// <summary>Default working database.</summary>
     public HandballDbContext()
     {
-        _dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "handball.db");
+        _dbPath = Path.Combine(DatabaseDirectory, "handball.db");
     }
 
     /// <summary>Opens a context against an arbitrary database file (used to validate save files before loading).</summary>

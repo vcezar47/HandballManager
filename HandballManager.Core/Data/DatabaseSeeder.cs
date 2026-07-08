@@ -29,40 +29,20 @@ public static class DatabaseSeeder
             return;
         }
 
-        var jsonPath = "";
-        var possiblePaths = new[]
+        var files = SeedDataSource.GetInitialTeamFiles();
+        if (files.Count == 0)
         {
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/InitialData"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../Data/InitialData"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/InitialData"),
-            Path.Combine(Directory.GetCurrentDirectory(), "HandballManager/Data/InitialData")
-        };
-
-        foreach (var p in possiblePaths)
-        {
-            if (Directory.Exists(p))
-            {
-                jsonPath = p;
-                break;
-            }
-        }
-
-        if (string.IsNullOrEmpty(jsonPath))
-        {
-            Log("CRITICAL: Could not find Data/InitialData directory in any expected location.");
+            Log("CRITICAL: No embedded Data/InitialData seed resources found in HandballManager.Core.");
             return;
         }
 
-        Log($"Found data directory at: {jsonPath}");
-        var files = Directory.GetFiles(jsonPath, "*.json", SearchOption.AllDirectories);
-        Log($"Found {files.Length} JSON files to process.");
+        Log($"Found {files.Count} embedded JSON files to process.");
 
-        foreach (var file in files)
+        foreach (var (file, json) in files)
         {
             var fileName = Path.GetFileName(file);
             try
             {
-                var json = File.ReadAllText(file);
                 var teamData = JsonSerializer.Deserialize<Team>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
@@ -275,15 +255,6 @@ public static class DatabaseSeeder
             // But actually we have both. The above block just ensures we have fallback values.
 
             // ── Club Facilities ────────────────────────────────────────────────────
-            var fileNameKey = Path.GetFileNameWithoutExtension(
-                Directory.GetFiles(jsonPath, "*.json", SearchOption.AllDirectories)
-                    .FirstOrDefault(f =>
-                    {
-                        var fn = Path.GetFileNameWithoutExtension(f).ToLower().Replace(" ", "_");
-                        return fn == team.Name.ToLower().Replace(" ", "_")
-                            || team.Name.IndexOf(fn, StringComparison.OrdinalIgnoreCase) >= 0;
-                    }) ?? "")?.ToLower() ?? "";
-
             // Hardcoded facility levels per club (training, youth) as provided
             var facilityMap = new Dictionary<string, (int Training, int Youth)>
             {
@@ -354,13 +325,13 @@ public static class DatabaseSeeder
             var matchedFile = files.FirstOrDefault(f =>
             {
                 var teamJson = System.Text.Json.JsonSerializer.Deserialize<Team>(
-                    File.ReadAllText(f),
+                    f.Json,
                     new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 return teamJson?.Name == team.Name;
             });
 
-            string facilityKey = matchedFile != null
-                ? Path.GetFileNameWithoutExtension(matchedFile).ToLower()
+            string facilityKey = matchedFile.Path != null
+                ? Path.GetFileNameWithoutExtension(matchedFile.Path).ToLower()
                 : "";
 
             if (facilityMap.TryGetValue(facilityKey, out var levels))
@@ -486,24 +457,11 @@ public static class DatabaseSeeder
         }
 
         // Seed Champions
-        string champsFile = "";
-        var possibleChampsPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Liga Florilor/champions.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Liga Florilor/champions.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Liga Florilor/champions.json")
-        };
-
-        foreach (var p in possibleChampsPaths)
-        {
-            if (File.Exists(p)) { champsFile = p; break; }
-        }
-
-        if (!db.ChampionRecords.Any() && !string.IsNullOrEmpty(champsFile))
+        var champsJson = SeedDataSource.ReadText("Data/Past Champions/Liga Florilor/champions.json");
+        if (!db.ChampionRecords.Any() && champsJson != null)
         {
             try
             {
-                var champsJson = File.ReadAllText(champsFile);
                 var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (champsList != null)
                 {
@@ -520,25 +478,12 @@ public static class DatabaseSeeder
         }
 
         // Seed NBI Champions
-        string nbiChampsFile = "";
-        var possibleNbiPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/NBI/champions.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/NBI/champions.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/NBI/champions.json")
-        };
-
-        foreach (var p in possibleNbiPaths)
-        {
-            if (File.Exists(p)) { nbiChampsFile = p; break; }
-        }
-
-        if (!db.ChampionRecords.Any(r => r.CompetitionName == "NB I") && !string.IsNullOrEmpty(nbiChampsFile))
+        var nbiChampsJson = SeedDataSource.ReadText("Data/Past Champions/NBI/champions.json");
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "NB I") && nbiChampsJson != null)
         {
             try
             {
-                var champsJson = File.ReadAllText(nbiChampsFile);
-                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(nbiChampsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (champsList != null)
                 {
                     foreach (var r in champsList) 
@@ -554,25 +499,12 @@ public static class DatabaseSeeder
         }
 
         // Seed French Champions (Ligue Butagaz Énergie)
-        string frChampsFile = "";
-        var possibleFrPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Ligue Butagaz Énergie/champions.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Ligue Butagaz Énergie/champions.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Ligue Butagaz Énergie/champions.json")
-        };
-
-        foreach (var p in possibleFrPaths)
-        {
-            if (File.Exists(p)) { frChampsFile = p; break; }
-        }
-
-        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && !string.IsNullOrEmpty(frChampsFile))
+        var frChampsJson = SeedDataSource.ReadText("Data/Past Champions/Ligue Butagaz Énergie/champions.json");
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && frChampsJson != null)
         {
             try
             {
-                var champsJson = File.ReadAllText(frChampsFile);
-                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(champsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var champsList = JsonSerializer.Deserialize<List<ChampionRecord>>(frChampsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (champsList != null)
                 {
                     foreach (var r in champsList)
@@ -588,23 +520,12 @@ public static class DatabaseSeeder
         }
 
         // Kvindeligaen champions
-        string dkChampsFile = "";
-        var possibleDkChampsPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Kvindeligaen/champions.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Kvindeligaen/champions.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Kvindeligaen/champions.json")
-        };
-        foreach (var p in possibleDkChampsPaths)
-        {
-            if (File.Exists(p)) { dkChampsFile = p; break; }
-        }
-        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkChampsFile))
+        var dkChampsJson = SeedDataSource.ReadText("Data/Past Champions/Kvindeligaen/champions.json");
+        if (!db.ChampionRecords.Any(r => r.CompetitionName == "Kvindeligaen") && dkChampsJson != null)
         {
             try
             {
-                var json = File.ReadAllText(dkChampsFile);
-                var list = JsonSerializer.Deserialize<List<ChampionRecord>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var list = JsonSerializer.Deserialize<List<ChampionRecord>>(dkChampsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (list != null)
                 {
                     foreach (var r in list)
@@ -620,25 +541,12 @@ public static class DatabaseSeeder
         }
 
         // Seed Cup Winners
-        string cupWinnersFile = "";
-        var possibleCupPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Cupa Romaniei/cup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Cupa Romaniei/cup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Cupa Romaniei/cup_winners.json")
-        };
-
-        foreach (var p in possibleCupPaths)
-        {
-            if (File.Exists(p)) { cupWinnersFile = p; break; }
-        }
-
-        if (!db.CupWinnerRecords.Any() && !string.IsNullOrEmpty(cupWinnersFile))
+        var roCupJson = SeedDataSource.ReadText("Data/Past Champions/Cupa Romaniei/cup_winners.json");
+        if (!db.CupWinnerRecords.Any() && roCupJson != null)
         {
             try
             {
-                var cupJson = File.ReadAllText(cupWinnersFile);
-                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(roCupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (cupList != null)
                 {
                     foreach (var r in cupList) r.TeamId = GetTeamId(r.TeamName);
@@ -650,25 +558,12 @@ public static class DatabaseSeeder
         }
 
         // Seed Magyar Kupa Winners
-        string magyarKupFile = "";
-        var possibleMagyarKupaPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Magyar Kupa/cup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Magyar Kupa/cup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Magyar Kupa/cup_winners.json")
-        };
-
-        foreach (var p in possibleMagyarKupaPaths)
-        {
-            if (File.Exists(p)) { magyarKupFile = p; break; }
-        }
-
-        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "NB I") && !string.IsNullOrEmpty(magyarKupFile))
+        var huCupJson = SeedDataSource.ReadText("Data/Past Champions/Magyar Kupa/cup_winners.json");
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "NB I") && huCupJson != null)
         {
             try
             {
-                var cupJson = File.ReadAllText(magyarKupFile);
-                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(huCupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (cupList != null)
                 {
                     foreach (var r in cupList)
@@ -693,25 +588,12 @@ public static class DatabaseSeeder
         }
 
         // Seed Coupe de France winners (stored under Ligue Butagaz Énergie competition key)
-        string cdfFile = "";
-        var possibleCdfPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Coupe de France/cup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Coupe de France/cup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Coupe de France/cup_winners.json")
-        };
-
-        foreach (var p in possibleCdfPaths)
-        {
-            if (File.Exists(p)) { cdfFile = p; break; }
-        }
-
-        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && !string.IsNullOrEmpty(cdfFile))
+        var cdfJson = SeedDataSource.ReadText("Data/Past Champions/Coupe de France/cup_winners.json");
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Ligue Butagaz Énergie") && cdfJson != null)
         {
             try
             {
-                var cupJson = File.ReadAllText(cdfFile);
-                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cdfJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (cupList != null)
                 {
                     foreach (var r in cupList)
@@ -727,23 +609,12 @@ public static class DatabaseSeeder
         }
 
         // Landspokalturnering (Danish cup, keyed by Kvindeligaen)
-        string dkCupFile = "";
-        var possibleDkCupPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Landspokalturnering/cup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Landspokalturnering/cup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Landspokalturnering/cup_winners.json")
-        };
-        foreach (var p in possibleDkCupPaths)
-        {
-            if (File.Exists(p)) { dkCupFile = p; break; }
-        }
-        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkCupFile))
+        var dkCupJson = SeedDataSource.ReadText("Data/Past Champions/Landspokalturnering/cup_winners.json");
+        if (!db.CupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && dkCupJson != null)
         {
             try
             {
-                var cupJson = File.ReadAllText(dkCupFile);
-                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(cupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var cupList = JsonSerializer.Deserialize<List<CupWinnerRecord>>(dkCupJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (cupList != null)
                 {
                     foreach (var r in cupList)
@@ -759,23 +630,11 @@ public static class DatabaseSeeder
         }
 
         // Supercupa României (Liga Florilor — historical finals calendar year stored as Season string)
-        string roScFile = "";
-        var possibleRoScPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Supercupa Romaniei/supercup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Supercupa Romaniei/supercup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Supercupa Romaniei/supercup_winners.json")
-        };
-        foreach (var p in possibleRoScPaths)
-        {
-            if (File.Exists(p)) { roScFile = p; break; }
-        }
-
-        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Liga Florilor") && !string.IsNullOrEmpty(roScFile))
+        var roScJson = SeedDataSource.ReadText("Data/Past Champions/Supercupa Romaniei/supercup_winners.json");
+        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Liga Florilor") && roScJson != null)
         {
             try
             {
-                var roScJson = File.ReadAllText(roScFile);
                 var roScList = JsonSerializer.Deserialize<List<SupercupWinnerRecord>>(roScJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (roScList != null)
                 {
@@ -793,23 +652,12 @@ public static class DatabaseSeeder
         }
 
         // Bambuni Supercup (women's — Kvindeligaen key)
-        string dkScFile = "";
-        var possibleDkScPaths = new[]
-        {
-            Path.Combine(jsonPath, "../Past Champions/Bambuni Supercup/supercup_winners.json"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../Data/Past Champions/Bambuni Supercup/supercup_winners.json"),
-            Path.Combine(Directory.GetCurrentDirectory(), "Data/Past Champions/Bambuni Supercup/supercup_winners.json")
-        };
-        foreach (var p in possibleDkScPaths)
-        {
-            if (File.Exists(p)) { dkScFile = p; break; }
-        }
-        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && !string.IsNullOrEmpty(dkScFile))
+        var dkScJson = SeedDataSource.ReadText("Data/Past Champions/Bambuni Supercup/supercup_winners.json");
+        if (!db.SupercupWinnerRecords.Any(r => r.CompetitionName == "Kvindeligaen") && dkScJson != null)
         {
             try
             {
-                var scJson = File.ReadAllText(dkScFile);
-                var scList = JsonSerializer.Deserialize<List<SupercupWinnerRecord>>(scJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var scList = JsonSerializer.Deserialize<List<SupercupWinnerRecord>>(dkScJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (scList != null)
                 {
                     foreach (var r in scList)

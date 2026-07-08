@@ -13,6 +13,7 @@ public partial class LiveMatchViewModel : BaseViewModel
     private readonly LiveMatchEngine _engine;
     private readonly bool _isUserHome;
     private readonly Action<LiveMatchEngine, SquadSelection, SquadSelection> _onMatchEnd;
+    private readonly IFrameTicker _frameTicker;
     private System.Diagnostics.Stopwatch _stopwatch = new();
     private double _lastTotalSeconds = 0;
     private double _lastCardSyncGameSecond = -1;
@@ -69,12 +70,13 @@ public partial class LiveMatchViewModel : BaseViewModel
     [ObservableProperty] private LivePlayerCard? _playerBeingSubstituted;
     [ObservableProperty] private ObservableCollection<Player> _availableSubstitutes = new();
 
-    public LiveMatchViewModel(LiveMatchEngine engine, bool isUserHome, Action<LiveMatchEngine, SquadSelection, SquadSelection> onMatchEnd)
+    public LiveMatchViewModel(LiveMatchEngine engine, bool isUserHome, Action<LiveMatchEngine, SquadSelection, SquadSelection> onMatchEnd, IFrameTicker frameTicker)
     {
         Title = "LIVE MATCH";
         _engine = engine;
         _isUserHome = isUserHome;
         _onMatchEnd = onMatchEnd;
+        _frameTicker = frameTicker;
 
         HomeTeamName = engine.HomeTeam.Name;
         AwayTeamName = engine.AwayTeam.Name;
@@ -87,11 +89,12 @@ public partial class LiveMatchViewModel : BaseViewModel
         UpdateSubstitutesList();
         SyncVisuals();
 
-        System.Windows.Media.CompositionTarget.Rendering += OnCompositionTargetRendering;
+        _frameTicker.Tick += OnFrameTick;
+        _frameTicker.Start();
         ApplySpeed(1);
     }
 
-    private void OnCompositionTargetRendering(object? sender, EventArgs e)
+    private void OnFrameTick(object? sender, EventArgs e)
     {
         if (IsPaused || IsMatchOver || IsTimeoutActive) return;
         double currentTotalSeconds = _stopwatch.Elapsed.TotalSeconds;
@@ -429,7 +432,8 @@ public partial class LiveMatchViewModel : BaseViewModel
 
     public void Cleanup()
     {
-        System.Windows.Media.CompositionTarget.Rendering -= OnCompositionTargetRendering;
+        _frameTicker.Tick -= OnFrameTick;
+        _frameTicker.Stop();
         _stopwatch.Stop();
     }
 }

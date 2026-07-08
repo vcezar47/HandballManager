@@ -50,7 +50,8 @@ public partial class ClubInfoViewModel : BaseViewModel
     private readonly GameClock _clock;
     private readonly Action<Player> _onPlayerSelected;
     private readonly Action<int, string> _onNegotiateTransfer;
-    private readonly MainViewModel _mainVm;
+    private readonly Action<Manager> _onManagerDetail;
+    private readonly IUserNotifier _notifier;
 
     [ObservableProperty]
     private Team? _team;
@@ -84,7 +85,7 @@ public partial class ClubInfoViewModel : BaseViewModel
     public ObservableCollection<TrophyViewModel> Trophies { get; } = new();
 
     // Modified constructor to include FacilityService
-    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, FacilityService facilityService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer, MainViewModel mainVm)
+    public ClubInfoViewModel(HandballDbContext db, ScoutingService scouting, TransferService transferService, FacilityService facilityService, GameClock clock, Action<Player> onPlayerSelected, Action<int, string> onNegotiateTransfer, Action<Manager> onManagerDetail, IUserNotifier notifier)
     {
         _db = db;
         _scouting = scouting;
@@ -93,7 +94,8 @@ public partial class ClubInfoViewModel : BaseViewModel
         _clock = clock;
         _onPlayerSelected = onPlayerSelected;
         _onNegotiateTransfer = onNegotiateTransfer;
-        _mainVm = mainVm; 
+        _onManagerDetail = onManagerDetail;
+        _notifier = notifier;
     }
 
     [RelayCommand]
@@ -101,7 +103,7 @@ public partial class ClubInfoViewModel : BaseViewModel
     {
         if (Manager != null)
         {
-            _mainVm.NavigateToManagerDetail(Manager);
+            _onManagerDetail(Manager);
         }
     }
 
@@ -118,7 +120,7 @@ public partial class ClubInfoViewModel : BaseViewModel
         }
         else
         {
-            System.Windows.MessageBox.Show(message, "Upgrade Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            _notifier.Warn("Upgrade Failed", message);
         }
     }
 
@@ -134,7 +136,7 @@ public partial class ClubInfoViewModel : BaseViewModel
         }
         else
         {
-            System.Windows.MessageBox.Show(message, "Upgrade Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            _notifier.Warn("Upgrade Failed", message);
         }
     }
 

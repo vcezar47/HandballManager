@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HandballManager.Data;
 using HandballManager.Models;
+using HandballManager.Platform;
 using HandballManager.Services;
 using HandballManager.Views.Dialogs;
 using Microsoft.Data.Sqlite;
@@ -104,9 +105,11 @@ public partial class MainViewModel : BaseViewModel
 
     public MainViewModel()
     {
-        MainMenuVM = new MainMenuViewModel(NewGameAsync, LoadGamePromptAsync);
+        MainMenuVM = new MainMenuViewModel(NewGameAsync, LoadGamePromptAsync, QuitToDesktop);
         _currentViewModel = MainMenuVM;
     }
+
+    private static void QuitToDesktop() => System.Windows.Application.Current?.MainWindow?.Close();
 
     // ── World building ──────────────────────────────────────────────────
 
@@ -460,7 +463,7 @@ public partial class MainViewModel : BaseViewModel
         _liveMatchInProgress = true;
 
         bool isUserHome = engine.HomeTeam.IsPlayerTeam;
-        LiveMatchVM = new LiveMatchViewModel(engine, isUserHome, OnLiveMatchEnded);
+        LiveMatchVM = new LiveMatchViewModel(engine, isUserHome, OnLiveMatchEnded, new RenderingFrameTicker());
         NavigateTo(LiveMatchVM);
     }
 
@@ -517,7 +520,7 @@ public partial class MainViewModel : BaseViewModel
 
     public async void NavigateToTeamRoster(Team team)
     {
-        var vm = new ClubInfoViewModel(_db, _scouting, _transferService, _facilityService, _clock, NavigateToPlayerDetail, OpenTransferNegotiation, this);
+        var vm = new ClubInfoViewModel(_db, _scouting, _transferService, _facilityService, _clock, NavigateToPlayerDetail, OpenTransferNegotiation, NavigateToManagerDetail, new AppDialogNotifier());
         await vm.InitializeAsync(team.Id);
         NavigateTo(vm);
     }

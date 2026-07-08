@@ -1,7 +1,7 @@
 <UserControl x:Class="HandballManager.Views.SquadSelectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:HandballManager.ViewModels"
+             xmlns:vm="clr-namespace:HandballManager.ViewModels;assembly=HandballManager.Core"
              xmlns:conv="clr-namespace:HandballManager.Converters"
              Background="#1A1A2E">
 
