@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.SupercupDetailPage"
+             Title="SUPERCUP"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:AssetImageSourceConverter x:Key="AssetImage" />
+        <local:IsNotNullConverter x:Key="IsNotNull" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <!-- Header (tap → supercup history) -->
+            <Label Text="{Binding SupercupKicker}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="2" />
+            <HorizontalStackLayout Spacing="12" Margin="0,-6,0,0">
+                <HorizontalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ViewSupercupHistoryCommand}" />
+                </HorizontalStackLayout.GestureRecognizers>
+                <Image Source="{Binding HeaderLogoPath, Converter={StaticResource AssetImage}}" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                <Label Text="{Binding SupercupPageTitle}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="24" VerticalOptions="Center" />
+                <Label Text="›" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="20" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="14,14">
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Semi-finals + 3rd place (Romanian format only) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowSemiFinalAndThirdPlace}">
+                        <Label Text="SEMI-FINALS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+                        <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding SemiFinals}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BackgroundColor="#1A2238" Stroke="#252D45" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,9">
+                                        <VerticalStackLayout Spacing="4">
+                                            <Grid ColumnDefinitions="*,76,*" ColumnSpacing="4">
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                                <Border Grid.Column="1" BackgroundColor="#16213E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="6,3" HorizontalOptions="Center" VerticalOptions="Center">
+                                                    <Label Text="{Binding ScoreDisplay}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" />
+                                                </Border>
+                                                <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                            <Label Text="{Binding VenueName}" TextColor="#666688" FontSize="10" FontAttributes="Italic" HorizontalOptions="Center"
+                                                   IsVisible="{Binding VenueName, Converter={StaticResource IsNotNull}}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <Label Text="3RD PLACE MATCH" TextColor="#A0A8C0" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" Margin="0,10,0,0" />
+                        <Border BackgroundColor="#1A2238" Stroke="#252D45" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,9"
+                                BindingContext="{Binding ThirdPlaceMatch}" IsVisible="{Binding ., Converter={StaticResource IsNotNull}}">
+                            <Grid ColumnDefinitions="*,76,*" ColumnSpacing="4">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Border Grid.Column="1" BackgroundColor="#16213E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="6,3" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Label Text="{Binding ScoreDisplay}" TextColor="#A0A8C0" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" />
+                                </Border>
+                                <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Final -->
+                    <HorizontalStackLayout Spacing="8" Margin="0,10,0,0">
+                        <Image Source="trophy.png" WidthRequest="18" HeightRequest="18" Aspect="AspectFit" VerticalOptions="Center" />
+                        <Label Text="FINAL" TextColor="#FFD700" FontFamily="OpenSansSemibold" FontSize="14" CharacterSpacing="2" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Border BackgroundColor="#1A2238" Stroke="#FFD700" StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Padding="12,12"
+                            BindingContext="{Binding FinalMatch}" IsVisible="{Binding ., Converter={StaticResource IsNotNull}}">
+                        <VerticalStackLayout Spacing="4">
+                            <Grid ColumnDefinitions="*,80,*" ColumnSpacing="4">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="8" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Border Grid.Column="1" BackgroundColor="#0F172A" StrokeThickness="0" StrokeShape="RoundRectangle 9" Padding="8,4" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Label Text="{Binding ScoreDisplay}" TextColor="#FFD700" FontFamily="OpenSansSemibold" FontSize="14" HorizontalTextAlignment="Center" />
+                                </Border>
+                                <HorizontalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center">
+                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
+                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="{Binding VenueName}" TextColor="#666688" FontSize="10" FontAttributes="Italic" HorizontalOptions="Center"
+                                   IsVisible="{Binding VenueName, Converter={StaticResource IsNotNull}}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

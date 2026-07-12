@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.SaveSlotsPage"
+             x:Name="Page"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20,16,20,20" RowSpacing="14">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="2">
+            <Label x:Name="HeaderLabel" Text="SAVE SLOTS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Label x:Name="SubLabel" Text="Choose a slot" TextColor="White" FontFamily="OpenSansSemibold" FontSize="26" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="12" x:Name="SlotsHost">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.SlotTappedCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="12">
+                            <!-- Occupied: club logo; empty: a plus glyph -->
+                            <Image Grid.Column="0" Source="{Binding Info.ClubLogo, Converter={StaticResource TeamLogo}}" WidthRequest="48" HeightRequest="48" Aspect="AspectFit" VerticalOptions="Center" IsVisible="{Binding Info.Occupied}" />
+                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" BackgroundColor="#141C33" Stroke="#3A5578" StrokeThickness="1" StrokeShape="RoundRectangle 10" VerticalOptions="Center" IsVisible="{Binding IsEmpty}">
+                                <Label Text="+" TextColor="#8888AA" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- Occupied details -->
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center" IsVisible="{Binding Info.Occupied}">
+                                <Label TextColor="#8888AA" FontSize="10" CharacterSpacing="2" Text="{Binding Info.SlotLabel}" />
+                                <Label Text="{Binding Info.ClubName}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" LineBreakMode="TailTruncation" />
+                                <Label TextColor="#8888AA" FontSize="12">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Info.ManagerName}" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding Info.CompetitionName}" TextColor="#E94560" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label TextColor="#F0A500" FontSize="11">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Info.SeasonLabel}" />
+                                            <Span Text="  ·  " TextColor="#666688" />
+                                            <Span Text="{Binding Info.DateLabel}" TextColor="#8888AA" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+
+                            <!-- Empty details -->
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center" IsVisible="{Binding IsEmpty}">
+                                <Label TextColor="#8888AA" FontSize="10" CharacterSpacing="2" Text="{Binding Info.SlotLabel}" />
+                                <Label Text="Empty slot" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="16" />
+                                <Label Text="{Binding EmptyHint}" TextColor="#666688" FontSize="12" />
+                            </VerticalStackLayout>
+
+                            <!-- Delete (occupied only) -->
+                            <Button Grid.Column="2" Text="✕" FontSize="14"
+                                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" CornerRadius="8"
+                                    WidthRequest="40" HeightRequest="40" Padding="0" VerticalOptions="Center"
+                                    IsVisible="{Binding Info.Occupied}"
+                                    Command="{Binding BindingContext.DeleteSlotCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+
+        <Button Grid.Row="2" Text="BACK" AutomationId="SlotsBackBtn"
+                BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" CornerRadius="12" HeightRequest="50"
+                Clicked="OnBackClicked" />
+
+        <!-- Busy overlay -->
+        <Grid Grid.RowSpan="3" BackgroundColor="#CC1A1A2E" IsVisible="False" x:Name="BusyOverlay">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="10">
+                <ActivityIndicator x:Name="BusySpinner" IsRunning="False" Color="#E94560" />
+                <Label x:Name="BusyLabel" Text="" TextColor="#8888AA" FontSize="13" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

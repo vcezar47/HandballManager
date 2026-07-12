@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.HomePage"
+             Title="HOME"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:BoolToDisabledOpacityConverter x:Key="BoolToDisabledOpacity" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- Date header -->
+        <Label Grid.Row="0" AutomationId="CurrentDateLabel" Text="{Binding CurrentDateText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="22" HorizontalOptions="Center" />
+
+        <!-- Next match card -->
+        <Border Grid.Row="1" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="NEXT MATCH" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+                <Label Text="{Binding NextMatchInfo}" TextColor="#EAEAEA" FontSize="15" LineBreakMode="WordWrap" />
+                <Label Text="{Binding NextMatchDateText}" TextColor="#8888AA" FontSize="12" />
+                <Label Text="{Binding NextCupMatchInfo}" TextColor="#F0A500" FontSize="13"
+                       IsVisible="{Binding NextCupMatchInfo, Converter={StaticResource StringNotEmpty}}" />
+                <Label Text="{Binding LastResultText}" TextColor="#8888AA" FontSize="13" Margin="0,4,0,0"
+                       IsVisible="{Binding LastResultText, Converter={StaticResource StringNotEmpty}}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Season-over banner -->
+        <Border Grid.Row="2" BackgroundColor="#16213E" Stroke="#F0A500" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12"
+                IsVisible="{Binding IsSeasonOver}">
+            <VerticalStackLayout Spacing="8">
+                <HorizontalStackLayout Spacing="8">
+                    <Image Source="trophy.png" WidthRequest="20" HeightRequest="20" Aspect="AspectFit" VerticalOptions="Center" />
+                    <Label Text="SEASON COMPLETED" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Label Text="{Binding SeasonCompletedMessage}" TextColor="#F0A500" FontSize="14" LineBreakMode="WordWrap" />
+                <Button Text="BEGIN NEW SEASON"
+                        BackgroundColor="#F0A500" TextColor="#1A1A2E" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="46"
+                        Command="{Binding BeginNewSeasonCommand}" IsEnabled="{Binding CanBeginNewSeason}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Action buttons -->
+        <Grid Grid.Row="3" RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" RowSpacing="8" ColumnSpacing="10">
+            <Button Grid.Row="0" Grid.ColumnSpan="2" Text="PLAY MATCH" AutomationId="PlayMatchBtn"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="50"
+                    Command="{Binding NavigateToSquadSelectionCommand}" IsEnabled="{Binding CanSimulateMatch}"
+                    Opacity="{Binding CanSimulateMatch, Converter={StaticResource BoolToDisabledOpacity}}" />
+            <Button Grid.Row="1" Grid.Column="0" Text="INSTANT RESULT"
+                    BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="10" HeightRequest="46"
+                    Command="{Binding SimulateMatchCommand}" IsEnabled="{Binding CanSimulateMatch}"
+                    Opacity="{Binding CanSimulateMatch, Converter={StaticResource BoolToDisabledOpacity}}" />
+            <Button Grid.Row="1" Grid.Column="1" Text="ADVANCE DAY"
+                    BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="10" HeightRequest="46"
+                    Command="{Binding AdvanceDayCommand}" IsEnabled="{Binding CanAdvanceDay}"
+                    Opacity="{Binding CanAdvanceDay, Converter={StaticResource BoolToDisabledOpacity}}" />
+        </Grid>
+
+        <!-- Matchweek results browser -->
+        <Grid Grid.Row="4" RowDefinitions="Auto,*" RowSpacing="6">
+            <Grid ColumnDefinitions="44,*,44">
+                <Button Grid.Column="0" Text="‹" FontSize="20" BackgroundColor="#16213E" TextColor="#E94560" CornerRadius="8" HeightRequest="38"
+                        Command="{Binding ChangeMatchweekCommand}" CommandParameter="-1" />
+                <Label Grid.Column="1" Text="{Binding MatchweekDateText}" TextColor="#8888AA" FontSize="13" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                <Button Grid.Column="2" Text="›" FontSize="20" BackgroundColor="#16213E" TextColor="#E94560" CornerRadius="8" HeightRequest="38"
+                        Command="{Binding ChangeMatchweekCommand}" CommandParameter="1" />
+            </Grid>
+
+            <CollectionView Grid.Row="1" x:Name="ResultsView" ItemsSource="{Binding MatchweekResults}" SelectionMode="Single" SelectionChanged="OnResultSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,9">
+                            <Grid ColumnDefinitions="22,*,Auto,*,22" ColumnSpacing="6">
+                                <Image Grid.Column="0" Source="{Binding HomeTeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="20" HeightRequest="20" Aspect="AspectFit" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding HomeTeamName}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding DashboardScoreDisplay}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="14" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="{Binding AwayTeamName}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                <Image Grid.Column="4" Source="{Binding AwayTeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="20" HeightRequest="20" Aspect="AspectFit" VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- Busy overlay -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#AA1A1A2E" IsVisible="{Binding IsBusy}">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="10">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#E94560" />
+                <Label Text="Simulating…" TextColor="#8888AA" FontSize="13" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

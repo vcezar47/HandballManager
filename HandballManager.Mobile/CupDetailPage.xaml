@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.CupDetailPage"
+             x:Name="Page"
+             Title="CUP"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:AssetImageSourceConverter x:Key="AssetImage" />
+        <local:IsNotNullConverter x:Key="IsNotNull" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <!-- Header (tap → cup history) -->
+            <Label Text="{Binding CupDisplayName}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="2" />
+            <HorizontalStackLayout Spacing="12" Margin="0,-6,0,0">
+                <HorizontalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ViewCupHistoryCommand}" />
+                </HorizontalStackLayout.GestureRecognizers>
+                <Image Source="{Binding CupLogoPath, Converter={StaticResource AssetImage}}" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                <Label Text="{Binding CupDisplayName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="24" VerticalOptions="Center" />
+                <Label Text="›" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="20" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- Tab strip (desktop: dark strip with active tab highlighted) -->
+            <Border BackgroundColor="#0F172A" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="6">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="4">
+                    <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="0,9" BackgroundColor="Transparent">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding SelectedTab}" Value="GroupPhase">
+                                <Setter Property="BackgroundColor" Value="#16213E" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="GroupPhase" />
+                        </Border.GestureRecognizers>
+                        <Label Text="GROUP PHASE" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="1" HorizontalTextAlignment="Center" TextColor="#8888AA">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding SelectedTab}" Value="GroupPhase">
+                                    <Setter Property="TextColor" Value="White" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Border>
+                    <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="0,9" BackgroundColor="Transparent">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding SelectedTab}" Value="KnockoutPhase">
+                                <Setter Property="BackgroundColor" Value="#16213E" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="KnockoutPhase" />
+                        </Border.GestureRecognizers>
+                        <Label Text="KNOCKOUT PHASE" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="1" HorizontalTextAlignment="Center" TextColor="#8888AA">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding SelectedTab}" Value="KnockoutPhase">
+                                    <Setter Property="TextColor" Value="White" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- GROUP PHASE -->
+            <VerticalStackLayout Spacing="10" IsVisible="False">
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding SelectedTab}" Value="GroupPhase">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding AllGroups}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="12,10">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label Text="{Binding GroupName, StringFormat='GROUP {0}'}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" CharacterSpacing="1" />
+
+                                    <Grid ColumnDefinitions="22,4,20,*,22,22,22,30,32" ColumnSpacing="3">
+                                        <Label Grid.Column="0" Text="#" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="3" Text="CLUB" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" />
+                                        <Label Grid.Column="4" Text="P" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="5" Text="W" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="6" Text="L" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="7" Text="GD" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="8" Text="PTS" TextColor="#A0A8C0" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" />
+                                    </Grid>
+                                    <BoxView HeightRequest="1" Color="#2A2A4A" Margin="0,-5,0,0" />
+
+                                    <VerticalStackLayout Spacing="0" BindableLayout.ItemsSource="{Binding Entries}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid ColumnDefinitions="22,4,20,*,22,22,22,30,32" ColumnSpacing="3" Padding="0,6">
+                                                    <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding BindingContext.ViewTeamCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                                                    </Grid.GestureRecognizers>
+                                                    <Label Grid.Column="0" Text="{Binding Rank}" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                    <!-- qualification bar: top two advance -->
+                                                    <BoxView Grid.Column="1" WidthRequest="3" HeightRequest="16" CornerRadius="1.5" Color="Transparent" VerticalOptions="Center">
+                                                        <BoxView.Triggers>
+                                                            <DataTrigger TargetType="BoxView" Binding="{Binding Rank}" Value="1"><Setter Property="Color" Value="#4ADE80" /></DataTrigger>
+                                                            <DataTrigger TargetType="BoxView" Binding="{Binding Rank}" Value="2"><Setter Property="Color" Value="#4ADE80" /></DataTrigger>
+                                                        </BoxView.Triggers>
+                                                    </BoxView>
+                                                    <Image Grid.Column="2" Source="{Binding Team.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="15" HeightRequest="15" Aspect="AspectFit" VerticalOptions="Center" />
+                                                    <Label Grid.Column="3" Text="{Binding Team.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                                    <Label Grid.Column="4" Text="{Binding Played}" TextColor="#EAEAEA" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                    <Label Grid.Column="5" Text="{Binding Won}" TextColor="#4ADE80" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                    <Label Grid.Column="6" Text="{Binding Lost}" TextColor="#F87171" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                    <Label Grid.Column="7" Text="{Binding GoalDifference}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                    <Label Grid.Column="8" Text="{Binding Points}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- KNOCKOUT PHASE -->
+            <VerticalStackLayout Spacing="10" IsVisible="False">
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding SelectedTab}" Value="KnockoutPhase">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+
+                <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="14,14">
+                    <VerticalStackLayout Spacing="10">
+
+                        <!-- Quarter-finals (hidden for Hungary) -->
+                        <VerticalStackLayout Spacing="6" x:Name="QuarterFinalsSection">
+                            <Label Text="QUARTER-FINALS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding QuarterFinals}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BackgroundColor="#1A2238" Stroke="#252D45" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,9">
+                                            <Grid ColumnDefinitions="*,76,*" ColumnSpacing="4">
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                                <Border Grid.Column="1" BackgroundColor="#16213E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="6,3" HorizontalOptions="Center" VerticalOptions="Center">
+                                                    <Label Text="{Binding ScoreDisplay}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" />
+                                                </Border>
+                                                <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                            <Label Text="Quarter-finals will be determined after the group stage." TextColor="#555577" FontSize="12" FontAttributes="Italic" x:Name="QfEmptyLabel" IsVisible="False" />
+                        </VerticalStackLayout>
+
+                        <!-- Semi-finals -->
+                        <Label Text="SEMI-FINALS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" Margin="0,10,0,0" />
+                        <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding SemiFinals}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BackgroundColor="#1A2238" Stroke="#252D45" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,9">
+                                        <VerticalStackLayout Spacing="4">
+                                            <Grid ColumnDefinitions="*,76,*" ColumnSpacing="4">
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                                <Border Grid.Column="1" BackgroundColor="#16213E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="6,3" HorizontalOptions="Center" VerticalOptions="Center">
+                                                    <Label Text="{Binding ScoreDisplay}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" />
+                                                </Border>
+                                                <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                            <Label Text="{Binding VenueName}" TextColor="#666688" FontSize="10" FontAttributes="Italic" HorizontalOptions="Center"
+                                                   IsVisible="{Binding VenueName, Converter={StaticResource IsNotNull}}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="Semi-finals will be determined after the quarter-finals." TextColor="#555577" FontSize="12" FontAttributes="Italic" x:Name="SfEmptyLabel" IsVisible="False" />
+
+                        <!-- 3rd place match -->
+                        <VerticalStackLayout Spacing="6" x:Name="ThirdPlaceSection">
+                            <Label Text="3RD PLACE MATCH" TextColor="#A0A8C0" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" Margin="0,10,0,0" />
+                            <Border BackgroundColor="#1A2238" Stroke="#252D45" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,9"
+                                    BindingContext="{Binding ThirdPlaceMatch}" IsVisible="{Binding ., Converter={StaticResource IsNotNull}}">
+                                <Grid ColumnDefinitions="*,76,*" ColumnSpacing="4">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                        <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="#16213E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="6,3" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label Text="{Binding ScoreDisplay}" TextColor="#A0A8C0" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" />
+                                    </Border>
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                        <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="17" HeightRequest="17" Aspect="AspectFit" VerticalOptions="Center" />
+                                        <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Final -->
+                        <HorizontalStackLayout Spacing="8" Margin="0,10,0,0">
+                            <Image Source="trophy.png" WidthRequest="18" HeightRequest="18" Aspect="AspectFit" VerticalOptions="Center" />
+                            <Label Text="FINAL" TextColor="#FFD700" FontFamily="OpenSansSemibold" FontSize="14" CharacterSpacing="2" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Border BackgroundColor="#1A2238" Stroke="#FFD700" StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Padding="12,12"
+                                BindingContext="{Binding FinalMatch}" IsVisible="{Binding ., Converter={StaticResource IsNotNull}}">
+                            <Grid ColumnDefinitions="*,80,*" ColumnSpacing="4">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="8" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding HomeTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    <Image Source="{Binding HomeTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Border Grid.Column="1" BackgroundColor="#0F172A" StrokeThickness="0" StrokeShape="RoundRectangle 9" Padding="8,4" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Label Text="{Binding ScoreDisplay}" TextColor="#FFD700" FontFamily="OpenSansSemibold" FontSize="14" HorizontalTextAlignment="Center" />
+                                </Border>
+                                <HorizontalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center">
+                                    <Image Source="{Binding AwayTeam.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
+                                    <Label Text="{Binding AwayTeam.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                        <Label Text="The final will be determined after the semi-finals." TextColor="#555577" FontSize="12" FontAttributes="Italic" x:Name="FinalEmptyLabel" IsVisible="False" />
+
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

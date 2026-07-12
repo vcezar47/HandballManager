@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.RosterPage"
+             Title="{Binding TeamName}"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,10,16,0" RowSpacing="8">
+
+        <!-- Position filter -->
+        <local:SelectField Grid.Row="0" Title="Position" ItemsSource="{Binding Positions}" SelectedItem="{Binding FilterPosition, Mode=TwoWay}" />
+
+        <!-- Column headers -->
+        <Grid Grid.Row="1" ColumnDefinitions="44,*,40,40,58" Padding="10,0" ColumnSpacing="4">
+            <Label Grid.Column="0" Text="POS" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="1" Text="NAME" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="2" Text="AGE" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
+            <Label Grid.Column="3" Text="OVR" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
+        </Grid>
+
+        <!-- Players (tap a row for the full profile) -->
+        <CollectionView Grid.Row="2" x:Name="PlayersView" ItemsSource="{Binding Players}" SelectionMode="Single" SelectionChanged="OnPlayerSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,8">
+                        <Grid ColumnDefinitions="44,*,40,40,58" ColumnSpacing="4">
+                            <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Name}" TextColor="#EAEAEA" FontSize="14" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Age}" TextColor="#EAEAEA" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <Label Grid.Column="3" Text="{Binding Overall100}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <Button Grid.Column="4" Text="RENEW" FontSize="9"
+                                    BackgroundColor="#1A2238" TextColor="#F0A500" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
+                                    Command="{Binding BindingContext.RenewContractCommand, Source={x:Reference PlayersView}}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

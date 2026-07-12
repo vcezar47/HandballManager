@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.YouthPage"
+             x:Name="Page"
+             Title="YOUTH ACADEMY"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="Auto,*" Padding="16,10,16,0" RowSpacing="8">
+
+        <Label Grid.Row="0" Text="{Binding IntakeYearText}" TextColor="#8888AA" FontSize="13" />
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Intake}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.SelectYouthCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="44,*,64" ColumnSpacing="8">
+                            <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                <Label Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" />
+                                <Label TextColor="#8888AA" FontSize="10">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Nationality}" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding Height}" /><Span Text=" cm" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="SIGN" FontSize="11"
+                                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                                    Command="{Binding BindingContext.SignYouthCommand, Source={x:Reference Page}}" CommandParameter="{Binding Id}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

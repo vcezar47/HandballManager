@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.SetupPage"
+             Title="{Binding Title}"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:AssetImageSourceConverter x:Key="AssetImage" />
+        <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <local:BoolToDisabledOpacityConverter x:Key="BoolToDisabledOpacity" />
+
+        <!-- Entry wrapped in a rounded border to match the app's field styling -->
+        <Style TargetType="Entry">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="TextColor" Value="#EAEAEA" />
+            <Setter Property="PlaceholderColor" Value="#8888AA" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style TargetType="Border" x:Key="FieldBorder">
+            <Setter Property="BackgroundColor" Value="#16213E" />
+            <Setter Property="Stroke" Value="#3A5578" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+        <Style TargetType="Label" x:Key="FieldLabel">
+            <Setter Property="TextColor" Value="#8888AA" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="2,8,0,2" />
+        </Style>
+        <Style TargetType="Button" x:Key="PrimaryButton">
+            <Setter Property="BackgroundColor" Value="#E94560" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="HeightRequest" Value="50" />
+        </Style>
+        <Style TargetType="Button" x:Key="OutlineButton">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="TextColor" Value="#EAEAEA" />
+            <Setter Property="BorderColor" Value="#3A5578" />
+            <Setter Property="BorderWidth" Value="1.5" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="HeightRequest" Value="50" />
+        </Style>
+        <Style TargetType="Button" x:Key="StepperButton">
+            <Setter Property="BackgroundColor" Value="#16213E" />
+            <Setter Property="TextColor" Value="#E94560" />
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="WidthRequest" Value="44" />
+            <Setter Property="HeightRequest" Value="40" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+
+        <!-- ── Step 0: manager creation ─────────────────────────────── -->
+        <ScrollView IsVisible="False">
+            <ScrollView.Triggers>
+                <DataTrigger TargetType="ScrollView" Binding="{Binding CurrentStep}" Value="0">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </ScrollView.Triggers>
+            <VerticalStackLayout Padding="20,10,20,30" Spacing="2" BindingContext="{Binding ManagerCreationVM}">
+
+                <Label Text="MANAGER PROFILE" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="18" CharacterSpacing="2" Margin="0,6,0,8" />
+
+                <Label Text="FIRST NAME" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource FieldBorder}">
+                    <Entry x:Name="FirstNameEntry" AutomationId="FirstNameEntry" Text="{Binding FirstName}" Placeholder="First name" VerticalOptions="Center" />
+                </Border>
+
+                <Label Text="LAST NAME" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource FieldBorder}">
+                    <Entry x:Name="LastNameEntry" AutomationId="LastNameEntry" Text="{Binding LastName}" Placeholder="Last name" VerticalOptions="Center" />
+                </Border>
+
+                <Label Text="PLACE OF BIRTH" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource FieldBorder}">
+                    <Entry x:Name="BirthplaceEntry" AutomationId="BirthplaceEntry" Text="{Binding PlaceOfBirth}" Placeholder="City" VerticalOptions="Center" />
+                </Border>
+
+                <Label Text="DATE OF BIRTH" Style="{StaticResource FieldLabel}" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <local:SelectField Grid.Column="0" Title="Day" ItemsSource="{Binding Days}" SelectedItem="{Binding SelectedDay, Mode=TwoWay}" />
+                    <local:SelectField Grid.Column="1" Title="Month" ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth, Mode=TwoWay}" />
+                    <local:SelectField Grid.Column="2" Title="Year" ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear, Mode=TwoWay}" />
+                </Grid>
+
+                <Label Text="NATIONALITY" Style="{StaticResource FieldLabel}" />
+                <local:SelectField Title="Nationality" ItemsSource="{Binding Nationalities}" SelectedItem="{Binding Nationality, Mode=TwoWay}" />
+
+                <Label Text="COACHING LICENSE" Style="{StaticResource FieldLabel}" />
+                <local:SelectField Title="License" ItemsSource="{Binding LicenseOptions}" DisplayPath="DisplayName" SelectedItem="{Binding SelectedLicense, Mode=TwoWay}" />
+
+                <Grid ColumnDefinitions="*,Auto" Margin="2,14,2,6">
+                    <Label Text="ATTRIBUTES" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="14" CharacterSpacing="2" VerticalOptions="Center" />
+                    <Label Grid.Column="1" TextColor="#EAEAEA" FontSize="13">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Points left: " TextColor="#8888AA" />
+                                <Span Text="{Binding RemainingPoints}" FontFamily="OpenSansSemibold" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,52,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+                    <Label Grid.Row="0" Text="Motivation" TextColor="#EAEAEA" VerticalOptions="Center" />
+                    <Button Grid.Row="0" Grid.Column="1" Text="−" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Motivation:-1" />
+                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Motivation}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    <Button Grid.Row="0" Grid.Column="3" Text="+" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Motivation:1" />
+
+                    <Label Grid.Row="1" Text="Youth Development" TextColor="#EAEAEA" VerticalOptions="Center" />
+                    <Button Grid.Row="1" Grid.Column="1" Text="−" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="YouthDevelopment:-1" />
+                    <Label Grid.Row="1" Grid.Column="2" Text="{Binding YouthDevelopment}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    <Button Grid.Row="1" Grid.Column="3" Text="+" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="YouthDevelopment:1" />
+
+                    <Label Grid.Row="2" Text="Discipline" TextColor="#EAEAEA" VerticalOptions="Center" />
+                    <Button Grid.Row="2" Grid.Column="1" Text="−" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Discipline:-1" />
+                    <Label Grid.Row="2" Grid.Column="2" Text="{Binding Discipline}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    <Button Grid.Row="2" Grid.Column="3" Text="+" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Discipline:1" />
+
+                    <Label Grid.Row="3" Text="Adaptability" TextColor="#EAEAEA" VerticalOptions="Center" />
+                    <Button Grid.Row="3" Grid.Column="1" Text="−" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Adaptability:-1" />
+                    <Label Grid.Row="3" Grid.Column="2" Text="{Binding Adaptability}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    <Button Grid.Row="3" Grid.Column="3" Text="+" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="Adaptability:1" />
+
+                    <Label Grid.Row="4" Text="Timeout Talks" TextColor="#EAEAEA" VerticalOptions="Center" />
+                    <Button Grid.Row="4" Grid.Column="1" Text="−" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="TimeoutTalks:-1" />
+                    <Label Grid.Row="4" Grid.Column="2" Text="{Binding TimeoutTalks}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    <Button Grid.Row="4" Grid.Column="3" Text="+" Style="{StaticResource StepperButton}" Command="{Binding AdjustAttributeCommand}" CommandParameter="TimeoutTalks:1" />
+                </Grid>
+
+                <Button Text="CREATE MANAGER" Style="{StaticResource PrimaryButton}" Command="{Binding CreateManagerCommand}" IsEnabled="{Binding CanCreate}"
+                        Opacity="{Binding CanCreate, Converter={StaticResource BoolToDisabledOpacity}}" Margin="0,18,0,0" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Step 1: league selection ─────────────────────────────── -->
+        <Grid IsVisible="False" RowDefinitions="Auto,*,Auto" Padding="20,10" RowSpacing="12">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid" Binding="{Binding CurrentStep}" Value="1">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </Grid.Triggers>
+
+            <Label Text="CHOOSE YOUR LEAGUE" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="18" CharacterSpacing="2" />
+
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Leagues}" SelectionMode="Single" SelectedItem="{Binding SelectedLeague, Mode=TwoWay}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="#22304F" StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Margin="0,5" Padding="14,12" BackgroundColor="#16213E">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#22304F" />
+                                            <Setter Property="BackgroundColor" Value="#16213E" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#E94560" />
+                                            <Setter Property="BackgroundColor" Value="#1F2B4A" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid ColumnDefinitions="44,*" ColumnSpacing="12">
+                                <Image Grid.Column="0" Source="{Binding Logo, Converter={StaticResource AssetImage}}" WidthRequest="40" HeightRequest="40" Aspect="AspectFit" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" />
+                                    <Label Text="{Binding Country}" TextColor="#8888AA" FontSize="13" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <VerticalStackLayout Grid.Row="2" Spacing="8">
+                <Button Text="CONTINUE" Style="{StaticResource PrimaryButton}" Command="{Binding SelectLeagueCommand}" />
+                <Button Text="BACK" Style="{StaticResource OutlineButton}" Command="{Binding GoBackCommand}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- ── Step 2: team selection ───────────────────────────────── -->
+        <Grid IsVisible="False" RowDefinitions="Auto,*,Auto" Padding="20,10" RowSpacing="12">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid" Binding="{Binding CurrentStep}" Value="2">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </Grid.Triggers>
+
+            <Label Text="{Binding SelectedLeague.Name, StringFormat='PICK YOUR CLUB — {0}'}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="16" CharacterSpacing="1" />
+
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Teams}" SelectionMode="Single" SelectedItem="{Binding SelectedTeam, Mode=TwoWay}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="#22304F" StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Margin="0,4" Padding="14,12" BackgroundColor="#16213E">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#22304F" />
+                                            <Setter Property="BackgroundColor" Value="#16213E" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#E94560" />
+                                            <Setter Property="BackgroundColor" Value="#1F2B4A" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid ColumnDefinitions="46,*" ColumnSpacing="12">
+                                <Image Grid.Column="0" Source="{Binding LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="42" HeightRequest="42" Aspect="AspectFit" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="15" />
+                                    <Label TextColor="#8888AA" FontSize="12">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding City}" />
+                                                <Span Text="  ·  " />
+                                                <Span Text="{Binding StadiumName}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Text="{Binding Description}" TextColor="#666688" FontSize="11" LineBreakMode="WordWrap"
+                                           IsVisible="{Binding Description, Converter={StaticResource StringNotEmpty}}" Margin="0,2,0,0" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <VerticalStackLayout Grid.Row="2" Spacing="8">
+                <Button Text="START CAREER" Style="{StaticResource PrimaryButton}" Command="{Binding StartCareerCommand}" />
+                <Button Text="BACK" Style="{StaticResource OutlineButton}" Command="{Binding GoBackCommand}" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

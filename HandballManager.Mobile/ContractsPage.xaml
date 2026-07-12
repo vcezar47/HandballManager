@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.ContractsPage"
+             Title="CONTRACTS"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="Auto,*" Padding="16,10,16,0" RowSpacing="8">
+
+        <!-- Column headers -->
+        <Grid Grid.Row="0" ColumnDefinitions="34,44,*,110" Padding="10,0">
+            <Label Grid.Column="0" Text="#" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="1" Text="POS" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="2" Text="NAME" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="3" Text="TIME LEFT" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="End" />
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Contracts}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,9">
+                        <Grid ColumnDefinitions="34,44,*,110">
+                            <Label Grid.Column="0" Text="{Binding ShirtNumber}" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding PlayerName}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                            <Label Grid.Column="3" Text="{Binding ContractTimeLeft}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

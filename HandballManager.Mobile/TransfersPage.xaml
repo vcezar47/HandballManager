@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.TransfersPage"
+             x:Name="Page"
+             Title="TRANSFERS"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="8">
+
+        <!-- Incoming offers -->
+        <Label Grid.Row="0" Text="INCOMING OFFERS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
+            <Label Text="No pending offers for your players." TextColor="#8888AA" FontSize="12" IsVisible="{Binding HasNoOffers}" />
+            <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding Offers}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,10">
+                            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                                <Label Grid.Row="0" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding PlayerName}" FontFamily="OpenSansSemibold" />
+                                            <Span Text="  ←  " TextColor="#8888AA" />
+                                            <Span Text="{Binding FromTeamName}" TextColor="#8888AA" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Grid.Row="1" TextColor="#8888AA" FontSize="12">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding OfferAmountText}" TextColor="#F0A500" FontFamily="OpenSansSemibold" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding ProposedWageText}" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding ProposedYears}" /><Span Text=" yrs" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="8">
+                                    <Button Grid.Column="0" Text="ACCEPT" FontSize="12"
+                                            BackgroundColor="#2E7D5B" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="36" Padding="0"
+                                            Command="{Binding BindingContext.AcceptOfferCommand, Source={x:Reference Page}}" CommandParameter="{Binding Id}" />
+                                    <Button Grid.Column="1" Text="REJECT" FontSize="12"
+                                            BackgroundColor="Transparent" TextColor="#E94560" BorderColor="#E94560" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="36" Padding="0"
+                                            Command="{Binding BindingContext.RejectOfferCommand, Source={x:Reference Page}}" CommandParameter="{Binding Id}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Free agents -->
+        <Label Grid.Row="2" Text="FREE AGENTS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+        <Grid Grid.Row="3">
+            <Label Text="No free agents on the market." TextColor="#8888AA" FontSize="12" IsVisible="{Binding HasNoFreeAgents}" VerticalOptions="Start" />
+            <CollectionView ItemsSource="{Binding FreeAgents}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,7">
+                            <Grid ColumnDefinitions="44,*,30,34,64" ColumnSpacing="6">
+                                <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Nationality}" TextColor="#8888AA" FontSize="10" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding Age}" TextColor="#8888AA" FontSize="13" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="{Binding Overall}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                <Button Grid.Column="4" Text="SIGN" FontSize="11"
+                                        BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                                        Command="{Binding BindingContext.SignFreeAgentCommand, Source={x:Reference Page}}" CommandParameter="{Binding Id}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

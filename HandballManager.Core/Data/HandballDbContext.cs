@@ -40,10 +40,17 @@ public class HandballDbContext : DbContext
     /// </summary>
     public static string DatabaseDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
 
-    /// <summary>Default working database.</summary>
+    /// <summary>
+    /// Filename of the working database inside <see cref="DatabaseDirectory"/>. Desktop keeps the
+    /// historical single file; a mobile host swaps this per save slot (e.g. "career_slot2.db") so
+    /// every <c>new HandballDbContext()</c> resolves to the active career.
+    /// </summary>
+    public static string DatabaseFileName { get; set; } = "handball.db";
+
+    /// <summary>Default working database (active slot on mobile).</summary>
     public HandballDbContext()
     {
-        _dbPath = Path.Combine(DatabaseDirectory, "handball.db");
+        _dbPath = Path.Combine(DatabaseDirectory, DatabaseFileName);
     }
 
     /// <summary>Opens a context against an arbitrary database file (used to validate save files before loading).</summary>

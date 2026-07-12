@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.FinancesPage"
+             Title="FINANCES"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:AmountColorConverter x:Key="AmountColor" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- Balance -->
+        <Border Grid.Row="0" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="CLUB BALANCE" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                <Label Text="{Binding ClubBalance, StringFormat='{0:N0} €'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="22" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Budget split -->
+        <Border Grid.Row="1" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="TRANSFER BUDGET" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding TransferBudget, StringFormat='{0:N0} €'}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="16" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="End">
+                        <Label Text="WAGE BUDGET" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" HorizontalTextAlignment="End" />
+                        <Label Text="{Binding WageBudget, StringFormat='{0:N0} € / wk'}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="End" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Slider Minimum="0" Maximum="100" Value="{Binding BudgetSliderValue, Mode=TwoWay}"
+                        MinimumTrackColor="#E94560" MaximumTrackColor="#3A5578" ThumbColor="#E94560" />
+                <Label Text="◀ shift to wages          shift to transfers ▶" TextColor="#8888AA" FontSize="10" HorizontalTextAlignment="Center" />
+                <Button Text="CONFIRM SPLIT"
+                        BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="8" HeightRequest="40"
+                        Command="{Binding ConfirmBudgetsCommand}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Label Grid.Row="2" Text="RECENT TRANSACTIONS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+
+        <CollectionView Grid.Row="3" ItemsSource="{Binding Transactions}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="74,*,96" Padding="4,7" ColumnSpacing="6">
+                        <Label Grid.Column="0" Text="{Binding Date, StringFormat='{0:dd MMM yy}'}" TextColor="#8888AA" FontSize="11" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Description}" TextColor="#EAEAEA" FontSize="12" LineBreakMode="WordWrap" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding Amount, StringFormat='{0:N0} €'}" TextColor="{Binding Amount, Converter={StaticResource AmountColor}}" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

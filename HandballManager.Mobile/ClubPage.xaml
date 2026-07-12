@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.ClubPage"
+             Title="CLUB"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <Style x:Key="BadgePill" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="#E94560" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+            <Setter Property="Padding" Value="7,2" />
+            <Setter Property="MinimumWidthRequest" Value="20" />
+            <Setter Property="HorizontalOptions" Value="End" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="BadgeLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14" Spacing="12">
+
+            <!-- Aggregate "new activity" pill — jumps in when there's fresh news/offers/intake -->
+            <Border x:Name="TotalBadge" BackgroundColor="#2A1620" Stroke="#E94560" StrokeThickness="1" StrokeShape="RoundRectangle 20" Padding="12,7"
+                    IsVisible="{Binding HasAny}" HorizontalOptions="Start">
+                <HorizontalStackLayout Spacing="7">
+                    <Border BackgroundColor="#E94560" StrokeShape="RoundRectangle 8" Padding="6,1" MinimumWidthRequest="18">
+                        <Label Text="{Binding TotalCount}" Style="{StaticResource BadgeLabel}" />
+                    </Border>
+                    <Label Text="NEW SINCE YOUR LAST VISIT" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnInformationTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="information.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="INFORMATION" AutomationId="InformationNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Club overview, trophy cabinet and facilities" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTransfersTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="transfer.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="TRANSFERS" AutomationId="TransfersNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Offers for your players and the free-agent market" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="2" Style="{StaticResource BadgePill}" IsVisible="{Binding HasTransfers}">
+                        <Label Text="{Binding TransfersCount}" Style="{StaticResource BadgeLabel}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnYouthTapped" />
+                </Border.GestureRecognizers>
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding HasYouth}" Value="True">
+                        <Setter Property="Stroke" Value="#F0A500" />
+                        <Setter Property="StrokeThickness" Value="2" />
+                        <Setter Property="Shadow">
+                            <Setter.Value>
+                                <Shadow Brush="#F0A500" Opacity="0.55" Radius="16" Offset="0,0" />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Border.Triggers>
+                <Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="youth_academy.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="YOUTH ACADEMY" AutomationId="YouthNav" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding HasYouth}" Value="True">
+                                    <Setter Property="TextColor" Value="#F0A500" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding HasYouth}" Value="False">
+                                    <Setter Property="TextColor" Value="#E94560" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Text="Annual intake — scout and sign prospects" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="2" BackgroundColor="#F0A500" StrokeShape="RoundRectangle 10" Padding="7,2" MinimumWidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" IsVisible="{Binding HasYouth}">
+                        <Label Text="{Binding YouthCount}" Style="{StaticResource BadgeLabel}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnFinancesTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="money.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="FINANCES" AutomationId="FinancesNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Budget split and recent transactions" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnScoutingTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="search.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="SCOUTING" AutomationId="ScoutingNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Active assignments and your shortlist" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnContractsTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="contract.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="CONTRACTS" AutomationId="ContractsNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Squad contract expiry overview" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnNewsTapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="news.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="NEWS" AutomationId="NewsNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
+                        <Label Text="Transfers, retirements and world headlines" TextColor="#8888AA" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="2" Style="{StaticResource BadgePill}" IsVisible="{Binding HasNews}">
+                        <Label Text="{Binding NewsCount}" Style="{StaticResource BadgeLabel}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

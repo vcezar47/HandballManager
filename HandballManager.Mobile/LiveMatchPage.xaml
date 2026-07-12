@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.LiveMatchPage"
+             x:Name="Page"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:PercentToProgressConverter x:Key="PercentToProgress" />
+        <local:RatingToColorConverter x:Key="RatingToColor" />
+        <local:PlayerIdMatchesConverter x:Key="PlayerIdMatches" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="14,10,14,8" RowSpacing="8">
+
+        <!-- Scoreboard -->
+        <Border Grid.Row="0" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,10">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="{Binding MatchClock}" AutomationId="LiveClockLabel" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="26" HorizontalOptions="Center" />
+                <Label Text="{Binding MatchPhaseLabel}" TextColor="#8888AA" FontSize="11" HorizontalOptions="Center" />
+                <Grid ColumnDefinitions="34,*,Auto,*,34" ColumnSpacing="8">
+                    <Image Grid.Column="0" Source="{Binding HomeTeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding HomeTeamName}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="WordWrap" MaxLines="2" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                    <Label Grid.Column="2" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="30" VerticalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding HomeScore}" />
+                                <Span Text=" : " />
+                                <Span Text="{Binding AwayScore}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label Grid.Column="3" Text="{Binding AwayTeamName}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="WordWrap" MaxLines="2" VerticalOptions="Center" />
+                    <Image Grid.Column="4" Source="{Binding AwayTeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
+                </Grid>
+                <Label TextColor="#8888AA" FontSize="11" HorizontalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding VenueName}" />
+                            <Span Text="  ·  " />
+                            <Span Text="{Binding Attendance, StringFormat='{0:N0} fans'}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Controls -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*,*,*" ColumnSpacing="6" RowSpacing="6">
+            <Button Grid.Row="0" Grid.Column="0" Text="PAUSE" FontSize="11"
+                    BackgroundColor="#16213E" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                    Command="{Binding TogglePauseCommand}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsPaused}" Value="True">
+                        <Setter Property="Text" Value="PLAY" />
+                        <Setter Property="TextColor" Value="#6EE7A0" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Text="1×" FontSize="12" BackgroundColor="#16213E" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                    Command="{Binding SetSpeedCommand}" CommandParameter="1" />
+            <Button Grid.Row="0" Grid.Column="2" Text="8×" FontSize="12" BackgroundColor="#16213E" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                    Command="{Binding SetSpeedCommand}" CommandParameter="8" />
+            <Button Grid.Row="0" Grid.Column="3" Text="16×" FontSize="12" BackgroundColor="#16213E" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                    Command="{Binding SetSpeedCommand}" CommandParameter="16" />
+            <Button Grid.Row="0" Grid.Column="4" Text="32×" FontSize="12" BackgroundColor="#16213E" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                    Command="{Binding SetSpeedCommand}" CommandParameter="32" />
+            <Grid Grid.Row="1" Grid.ColumnSpan="5" ColumnDefinitions="80,*" ColumnSpacing="6">
+                <Button Grid.Column="0" FontSize="11"
+                        BackgroundColor="#16213E" TextColor="#F0A500" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Text="{Binding TimeoutsRemaining, StringFormat='TO ({0})'}"
+                        Command="{Binding CallTimeoutCommand}" />
+                <Button Grid.Column="1" Text="SKIP TO RESULT" FontSize="11"
+                        BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Command="{Binding SkipToResultCommand}" />
+            </Grid>
+        </Grid>
+
+        <!-- Stats -->
+        <Border Grid.Row="2" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,8">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="52,*,52" RowSpacing="4">
+                <Label Grid.Row="0" Grid.Column="0" Text="{Binding HomeShots}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" />
+                <Label Grid.Row="0" Grid.Column="1" Text="SHOTS" TextColor="#8888AA" FontSize="11" HorizontalTextAlignment="Center" />
+                <Label Grid.Row="0" Grid.Column="2" Text="{Binding AwayShots}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" />
+
+                <Label Grid.Row="1" Grid.Column="0" Text="{Binding HomeEfficiencyText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" />
+                <Label Grid.Row="1" Grid.Column="1" Text="EFFICIENCY" TextColor="#8888AA" FontSize="11" HorizontalTextAlignment="Center" />
+                <Label Grid.Row="1" Grid.Column="2" Text="{Binding AwayEfficiencyText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" />
+
+                <Label Grid.Row="2" Grid.Column="0" Text="{Binding HomePossessionPercent, StringFormat='{0:F0}%'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" />
+                <ProgressBar Grid.Row="2" Grid.Column="1" Progress="{Binding HomePossessionPercent, Converter={StaticResource PercentToProgress}}" ProgressColor="#E94560" BackgroundColor="Transparent" VerticalOptions="Center" Margin="8,0" />
+                <Label Grid.Row="2" Grid.Column="2" Text="{Binding AwayPossessionPercent, StringFormat='{0:F0}%'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" />
+            </Grid>
+        </Border>
+
+        <!-- Court / feed toggle -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="6">
+            <Button Grid.Column="0" x:Name="CourtTabBtn" Text="ON COURT" FontSize="11"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                    Clicked="OnCourtTabClicked" />
+            <Button Grid.Column="1" x:Name="FeedTabBtn" Text="EVENT FEED" FontSize="11"
+                    BackgroundColor="#16213E" TextColor="#8888AA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                    Clicked="OnFeedTabClicked" />
+        </Grid>
+
+        <!-- On-court players (tap a card to substitute) -->
+        <CollectionView Grid.Row="4" x:Name="CourtView" ItemsSource="{Binding UserStartingCards}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,2" Padding="10,6">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.OpenSubstitutionCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="30,42,*,72,38" ColumnSpacing="6">
+                            <Label Grid.Column="0" Text="{Binding ShirtNumber}" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                            <Grid Grid.Column="2" ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                                <Label Grid.Column="0" Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                <Image Grid.Column="1" Source="substitution.png" WidthRequest="15" HeightRequest="15" Aspect="AspectFit" VerticalOptions="Center">
+                                    <Image.IsVisible>
+                                        <MultiBinding Converter="{StaticResource PlayerIdMatches}">
+                                            <Binding Path="PlayerId" />
+                                            <Binding Path="BindingContext.RecentlySubstitutedPlayerId" Source="{x:Reference Page}" />
+                                        </MultiBinding>
+                                    </Image.IsVisible>
+                                </Image>
+                            </Grid>
+                            <VerticalStackLayout Grid.Column="3" Spacing="2" VerticalOptions="Center">
+                                <ProgressBar Progress="{Binding EnergyPercent, Converter={StaticResource PercentToProgress}}" ProgressColor="#6EE7A0" BackgroundColor="Transparent" />
+                                <Label Text="{Binding EnergyPercent, StringFormat='{0:F0}% energy'}" TextColor="#8888AA" FontSize="9" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="4" Text="{Binding LiveRating, StringFormat='{0:F1}'}" TextColor="{Binding LiveRating, Converter={StaticResource RatingToColor}}" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Event feed (newest first, auto-scrolled to the top as events arrive) -->
+        <CollectionView Grid.Row="4" x:Name="FeedView" ItemsSource="{Binding EventFeed}" IsVisible="False">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 6" Padding="6,5" Margin="0,1" BackgroundColor="Transparent">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding EventType}" Value="Goal">
+                                <Setter Property="BackgroundColor" Value="#1C3324" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="40,*" ColumnSpacing="6">
+                            <Label Grid.Column="0" Text="{Binding Minute, StringFormat='{0}&#x2032;'}" TextColor="#8888AA" FontSize="12">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="Goal">
+                                        <Setter Property="TextColor" Value="#6EE7A0" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Label Grid.Column="1" Text="{Binding Description}" TextColor="#EAEAEA" FontSize="12" LineBreakMode="WordWrap">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="Goal">
+                                        <Setter Property="TextColor" Value="#6EE7A0" />
+                                        <Setter Property="FontAttributes" Value="Bold" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- ── Overlays ── -->
+
+        <!-- Half-time -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#DD1A1A2E" IsVisible="{Binding IsHalfTime}">
+            <Border BackgroundColor="#16213E" Stroke="#E94560" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="24,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label Text="HALF-TIME" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="18" CharacterSpacing="2" HorizontalOptions="Center" />
+                    <Label TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="26" HorizontalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding HomeScore}" /><Span Text=" : " /><Span Text="{Binding AwayScore}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Button Text="START 2ND HALF" BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="46"
+                            Command="{Binding StartSecondHalfCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Extra-time half-time -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#DD1A1A2E" IsVisible="{Binding IsExtraTimeHalfTime}">
+            <Border BackgroundColor="#16213E" Stroke="#F0A500" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="24,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label Text="EXTRA TIME — BREAK" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="16" CharacterSpacing="2" HorizontalOptions="Center" />
+                    <Button Text="START ET 2ND HALF" BackgroundColor="#F0A500" TextColor="#1A1A2E" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="46"
+                            Command="{Binding StartExtraTimeSecondHalfCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Timeout -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#DD1A1A2E" IsVisible="{Binding IsTimeoutActive}">
+            <Border BackgroundColor="#16213E" Stroke="#3A5578" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="24,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Image Source="{Binding TimeoutCallerLogo, Converter={StaticResource TeamLogo}}" WidthRequest="44" HeightRequest="44" Aspect="AspectFit" HorizontalOptions="Center" />
+                    <Label Text="{Binding TimeoutCallerName, StringFormat='{0} called a timeout'}" TextColor="#EAEAEA" FontSize="14" HorizontalOptions="Center" />
+                    <Button Text="BACK TO PLAY" BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="44"
+                            Command="{Binding DismissTimeoutCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Substitution panel -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#DD1A1A2E" IsVisible="{Binding IsSubstitutionPanelOpen}">
+            <Border BackgroundColor="#16213E" Stroke="#3A5578" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="16,14" Margin="20,40" VerticalOptions="Center">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10" MaximumHeightRequest="440">
+                    <Label Grid.Row="0" Text="{Binding PlayerBeingSubstituted.Name, StringFormat='Substitute {0} for:'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding AvailableSubstitutes}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#141C33" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,2" Padding="10,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BindingContext.ConfirmSubstituteCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="44,*,36" ColumnSpacing="6">
+                                        <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding Overall100}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Button Grid.Row="2" Text="CANCEL" BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40"
+                            Command="{Binding CloseSubstitutionCommand}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Full-time -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#EE1A1A2E" IsVisible="{Binding IsMatchOver}">
+            <Border BackgroundColor="#16213E" Stroke="#E94560" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="26,22" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label Text="FULL TIME" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="18" CharacterSpacing="3" HorizontalOptions="Center" />
+                    <Label TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="32" HorizontalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding HomeScore}" /><Span Text=" : " /><Span Text="{Binding AwayScore}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label TextColor="#F0A500" FontSize="14" HorizontalOptions="Center" IsVisible="{Binding IsShootoutActive}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="(" /><Span Text="{Binding HomeShootoutScore}" /><Span Text=" – " /><Span Text="{Binding AwayShootoutScore}" /><Span Text=" pens)" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Button Text="CONTINUE" AutomationId="MatchContinueBtn" BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="48" WidthRequest="200"
+                            Command="{Binding ViewMatchSummaryCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

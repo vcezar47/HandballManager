@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#1A1A2E">
+
+    <Grid>
+        <VerticalStackLayout VerticalOptions="Center" Spacing="0">
+
+            <!-- Title block -->
+            <VerticalStackLayout Spacing="0">
+                <Image Source="gamelogo.png" Aspect="AspectFit" HeightRequest="180" HorizontalOptions="Center" Margin="0,0,0,6" />
+                <Label Text="HANDBALL"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="32"
+                       TextColor="#EAEAEA"
+                       CharacterSpacing="8"
+                       HorizontalOptions="Center" />
+                <Label Text="MANAGER"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="32"
+                       TextColor="#E94560"
+                       CharacterSpacing="8"
+                       HorizontalOptions="Center" />
+                <Label Text="MOBILE"
+                       FontSize="13"
+                       TextColor="#8888AA"
+                       CharacterSpacing="10"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Menu -->
+            <VerticalStackLayout Spacing="14" Padding="44,0" Margin="0,40,0,0">
+                <Button x:Name="NewGameBtn"
+                        Text="NEW GAME"
+                        ImageSource="play.png"
+                        ContentLayout="Left,10"
+                        Clicked="OnNewGameClicked"
+                        BackgroundColor="#E94560"
+                        TextColor="White"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="16"
+                        CharacterSpacing="2"
+                        CornerRadius="12"
+                        HeightRequest="54" />
+                <Button x:Name="ContinueBtn"
+                        Text="LOAD GAME"
+                        ImageSource="load_game.png"
+                        ContentLayout="Left,10"
+                        Clicked="OnContinueClicked"
+                        IsEnabled="False"
+                        BackgroundColor="Transparent"
+                        TextColor="#EAEAEA"
+                        BorderColor="#3A5578"
+                        BorderWidth="1.5"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="16"
+                        CharacterSpacing="2"
+                        CornerRadius="12"
+                        HeightRequest="54" />
+            </VerticalStackLayout>
+
+            <!-- Busy state -->
+            <VerticalStackLayout Spacing="10" Margin="0,32,0,0">
+                <ActivityIndicator x:Name="BusySpinner"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   Color="#E94560" />
+                <Label x:Name="StatusLabel"
+                       Text=""
+                       FontSize="13"
+                       TextColor="#8888AA"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

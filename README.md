@@ -62,13 +62,14 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * **Competitions now award prize money depending on position / trophies won**
 * **Save/Load game**
 * **Bug fixes**
+* **----- 12.07.2026 JULY MOBILE PORT!!! -----**
+* **FULL and complete mobile port - soon to be posted to Google PlayStore!**
 
 
 ## Upcoming Features / Updates 
 
 * **Even MORE competitions**
 * **Sponsors**
-* **Likely mobile port**
 
 ## 📜 License & Copyright
 

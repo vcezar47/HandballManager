@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- Android first; the Windows head exists so the mobile UI can be exercised on the dev machine. -->
+		<TargetFrameworks>net10.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>HandballManager.Mobile</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<MauiXamlInflator>SourceGen</MauiXamlInflator>
+
+		<!-- Display name -->
+		<ApplicationTitle>Handball Manager</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.handballmanager.mobile</ApplicationId>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<WindowsPackageType>None</WindowsPackageType>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+
+	<!-- Sideloadable Android build: Debug APKs rely on fast deployment (assemblies pushed
+	     over adb, not packaged), so only a Release publish produces an APK that runs when
+	     installed directly. Keep trimming at partial — EF Core and System.Text.Json rely
+	     on reflection that full trimming would strip. -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and '$(Configuration)' == 'Release'">
+		<AndroidPackageFormats>apk</AndroidPackageFormats>
+		<TrimMode>partial</TrimMode>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon: official game logo on the app's dark background -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\gamelogo.png" Color="#1A1A2E" ForegroundScale="0.68" />
+
+		<!-- Splash Screen: the official game logo on the app's dark background (no .NET branding) -->
+		<MauiSplashScreen Include="Resources\Splash\splashlogo.png" Color="#1A1A2E" BaseSize="180,180" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<!-- Club/league/flag/UI art from the desktop project shipped as MauiImage so MAUI
+		     generates DPI-correct raster variants (crisp at small sizes instead of the
+		     blurry runtime-stream decode). Names are flattened + lowercased into resource
+		     ids; the converters map Core paths ("Romania/csm.png") to those ids. Filenames
+		     across these four folders are collision-free and Android-drawable-safe. -->
+		<MauiImage Include="..\HandballManager\Assets\teamlogo\**\*.png" />
+		<MauiImage Include="..\HandballManager\Assets\leaguelogo\**\*.png" />
+		<MauiImage Include="..\HandballManager\Assets\icons\**\*.png" />
+
+		<!-- Trophies and flags kept as raw assets: trophies collide with a league-logo name,
+		     and several "flag" files are actually WebP with a .png extension — aapt2 refuses
+		     to compile those as drawables (MauiImage), but Android decodes them fine as raw
+		     assets at runtime. Flags render small, so the stream path is adequate. -->
+		<MauiAsset Include="..\HandballManager\Assets\trophies\**\*.png"
+		           Link="Resources\Raw\Assets\trophies\%(RecursiveDir)%(Filename)%(Extension)"
+		           LogicalName="Assets\trophies\%(RecursiveDir)%(Filename)%(Extension)" />
+		<MauiAsset Include="..\HandballManager\Assets\flags\**\*.png"
+		           Link="Resources\Raw\Assets\flags\%(RecursiveDir)%(Filename)%(Extension)"
+		           LogicalName="Assets\flags\%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<!-- Stadium photos: large one-off images (no small-size crispness need), so raw
+		     assets avoid MauiImage's multi-DPI-copy bloat for ~25MB of source photos. -->
+		<MauiAsset Include="..\HandballManager\Assets\stadiums\**\*.jpg;..\HandballManager\Assets\stadiums\**\*.jpeg;..\HandballManager\Assets\stadiums\**\*.png"
+		           Link="Resources\Raw\Assets\stadiums\%(RecursiveDir)%(Filename)%(Extension)"
+		           LogicalName="Assets\stadiums\%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\HandballManager.Core\HandballManager.Core.csproj" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+	</ItemGroup>
+
+</Project>

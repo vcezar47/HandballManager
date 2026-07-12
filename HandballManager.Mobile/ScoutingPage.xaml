@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.ScoutingPage"
+             x:Name="Page"
+             Title="SCOUTING"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- Active assignments -->
+        <Border Grid.Row="0" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{Binding ActiveScoutingTitle}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                <Label Text="{Binding ActiveScoutingSubtitle}" TextColor="#8888AA" FontSize="12" LineBreakMode="WordWrap" />
+                <Button Text="CANCEL ALL SCOUTING" FontSize="11"
+                        BackgroundColor="Transparent" TextColor="#E94560" BorderColor="#E94560" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Command="{Binding CancelScoutingCommand}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Label Grid.Row="1" Text="SHORTLIST" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Shortlist}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.ViewPlayerCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="40,*,44,60" ColumnSpacing="6" RowDefinitions="Auto,Auto">
+                            <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                <Label Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" />
+                                <Label TextColor="#8888AA" FontSize="10">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding TeamName}" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding Age}" /><Span Text=" yrs" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="{Binding OverallDisplay}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="NoWrap" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <Button Grid.Column="3" Text="✕" FontSize="13"
+                                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" CornerRadius="8" HeightRequest="32" Padding="0"
+                                    Command="{Binding BindingContext.RemoveFromShortlistCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                            <Grid Grid.Row="1" Grid.ColumnSpan="4" ColumnDefinitions="*,*" ColumnSpacing="6" Margin="0,6,0,0">
+                                <Button Grid.Column="0" Text="SCOUT" FontSize="10"
+                                        BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="30" Padding="0"
+                                        Command="{Binding ScoutCommand}" IsEnabled="{Binding CanScout}" />
+                                <Button Grid.Column="1" Text="MAKE OFFER" FontSize="10"
+                                        BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="30" Padding="0"
+                                        Command="{Binding MakeOfferCommand}" IsEnabled="{Binding CanMakeOffer}" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="No shortlisted players. Open a club from the league table and shortlist players you like."
+                       TextColor="#555577" FontSize="13" LineBreakMode="WordWrap" Margin="4,10" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

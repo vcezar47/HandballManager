@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.PlayerDetailPage"
+             Title="PLAYER"
+             BackgroundColor="#1A1A2E">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <!-- Header -->
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Grid ColumnDefinitions="44,*,64" ColumnSpacing="10">
+                    <Image Grid.Column="0" Source="profile.png" WidthRequest="40" HeightRequest="40" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                        <Label Text="{Binding Player.Name}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="20" LineBreakMode="WordWrap" />
+                        <Label TextColor="#8888AA" FontSize="13">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Player.Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" />
+                                    <Span Text="  ·  #" /><Span Text="{Binding Player.ShirtNumber}" />
+                                    <Span Text="  ·  " /><Span Text="{Binding Player.Age}" /><Span Text=" yrs" />
+                                    <Span Text="  ·  " /><Span Text="{Binding Player.Nationality}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label TextColor="#8888AA" FontSize="13">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Player.Height}" /><Span Text=" cm  ·  " />
+                                    <Span Text="{Binding Player.Weight}" /><Span Text=" kg" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">
+                        <Label Text="{Binding Masked.Overall100}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="26" HorizontalTextAlignment="Center" LineBreakMode="NoWrap" />
+                        <Label Text="OVERALL" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Contract -->
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="2">
+                    <Label Grid.Row="0" Grid.Column="0" Text="WAGE" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Player.MonthlyWage, StringFormat='{0:N0} € / month'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="CONTRACT UNTIL" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Player.ContractEndDate, StringFormat='{0:MMM yyyy}'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                </Grid>
+            </Border>
+
+            <!-- Season stats -->
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto" RowSpacing="2">
+                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Player.MatchesPlayed}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" Text="APPS" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Player.SeasonGoals}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="GOALS" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Player.SeasonAssists}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="2" Text="ASSISTS" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="3" Text="{Binding Player.SeasonSaves}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="3" Text="SAVES" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="4" Text="{Binding Player.AverageRating, StringFormat='{0:F1}'}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="4" Text="RATING" TextColor="#8888AA" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Attribute sections (grids injected from code-behind) -->
+            <Label Text="TECHNICAL" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <ContentView x:Name="TechnicalHost" />
+            </Border>
+
+            <Label Text="MENTAL" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <ContentView x:Name="MentalHost" />
+            </Border>
+
+            <Label Text="PHYSICAL" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <ContentView x:Name="PhysicalHost" />
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

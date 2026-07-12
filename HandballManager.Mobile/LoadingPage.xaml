@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.LoadingPage"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="#1A1A2E">
+
+    <Grid RowDefinitions="*,Auto,*" Padding="40,0">
+
+        <VerticalStackLayout Grid.Row="1" Spacing="18" VerticalOptions="Center">
+            <Image Source="gamelogo.png" Aspect="AspectFit" HeightRequest="200" HorizontalOptions="Center" />
+
+            <Label Text="LOADING…" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="13" CharacterSpacing="4" HorizontalOptions="Center" Margin="0,8,0,0" />
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 6" HeightRequest="8" WidthRequest="240" HorizontalOptions="Center" Padding="0">
+                <ProgressBar x:Name="Bar" Progress="0" ProgressColor="#E94560" BackgroundColor="Transparent" VerticalOptions="Center" />
+            </Border>
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.HonoursPage"
+             Title="HISTORY"
+             BackgroundColor="#1A1A2E">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <Label x:Name="KickerLabel" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="2" />
+            <Label x:Name="TitleLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="24" Margin="0,-8,0,0" />
+
+            <!-- Titles by club (medal table) -->
+            <Label Text="TITLES BY CLUB" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" Margin="0,6,0,0" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="14,10">
+                <VerticalStackLayout Spacing="0" x:Name="MedalHost">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="30,*,44" ColumnSpacing="6" Padding="0,7">
+                                <Label Grid.Column="0" Text="{Binding Rank}" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="12" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding TeamName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding Count}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Roll of honour -->
+            <Label Text="ROLL OF HONOUR" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" Margin="0,6,0,0" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="14,10">
+                <VerticalStackLayout Spacing="0" x:Name="RollHost">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="86,*" ColumnSpacing="8" Padding="0,7">
+                                <Label Grid.Column="0" Text="{Binding Season}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="{Binding TeamName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Detail}" TextColor="#8888AA" FontSize="10" LineBreakMode="TailTruncation" IsVisible="{Binding HasDetail}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

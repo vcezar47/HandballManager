@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.LeagueTablePage"
+             Title="LEAGUE TABLE"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:AssetImageSourceConverter x:Key="AssetImage" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- League header + history shortcut (Table tab always shows the player's own league — other
+             countries' tables live in the Comps tab, so a competition switcher here is redundant). -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+                <Image Source="{Binding LeagueLogoPath, Converter={StaticResource AssetImage}}" WidthRequest="26" HeightRequest="26" Aspect="AspectFit" VerticalOptions="Center" />
+                <Label Text="{Binding CompetitionName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Button Grid.Column="1" Text="HISTORY" FontSize="11"
+                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="10" Padding="12,0"
+                    Clicked="OnHistoryClicked" />
+        </Grid>
+
+        <!-- Column headers -->
+        <Grid Grid.Row="1" ColumnDefinitions="34,*,44,44,52" Padding="10,0">
+            <Label Grid.Column="0" Text="#" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="1" Text="TEAM" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="2" Text="PLD" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
+            <Label Grid.Column="3" Text="GD" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
+            <Label Grid.Column="4" Text="PTS" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="End" />
+        </Grid>
+
+        <!-- Standings (tap a club for its profile) -->
+        <CollectionView Grid.Row="2" x:Name="StandingsView" SelectionMode="Single" SelectionChanged="OnStandingSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="local:StandingRow">
+                    <Border BackgroundColor="#16213E"
+                            Stroke="#22304F"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 8"
+                            Margin="0,3"
+                            Padding="10,10">
+                        <Grid ColumnDefinitions="28,26,*,44,44,52" ColumnSpacing="2">
+                            <Label Grid.Column="0" Text="{Binding Rank}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="14" VerticalOptions="Center" />
+                            <Image Grid.Column="1" Source="{Binding LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="20" HeightRequest="20" Aspect="AspectFit" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Team}" TextColor="#EAEAEA" FontSize="14" LineBreakMode="TailTruncation" VerticalOptions="Center" Margin="6,0,0,0" />
+                            <Label Grid.Column="3" Text="{Binding Played}" TextColor="#EAEAEA" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <Label Grid.Column="4" Text="{Binding GdText}" TextColor="#8888AA" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <Label Grid.Column="5" Text="{Binding Points}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

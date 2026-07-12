@@ -359,8 +359,21 @@ public class LiveMatchEngine
         int remaining = isHome ? HomeTimeoutsRemaining-- : AwayTimeoutsRemaining--;
         if (remaining > 0)
         {
-            EventLog.Insert(0, new LiveMatchEvent { Minute = GameMinute, Second = (int)GameSecond, EventType = "Timeout", TeamId = team.Id, Description = $"{team.Name} called a timeout." });
+            // Minute + 1 matches TriggerEvent's convention (GameMinute counts *completed*
+            // minutes, so the event log should show the minute currently in progress —
+            // otherwise a timeout called before the first minute elapses logs as "0'").
+            EventLog.Insert(0, new LiveMatchEvent { Minute = GameMinute + 1, Second = (int)GameSecond, EventType = "Timeout", TeamId = team.Id, Description = $"{team.Name} called a timeout." });
             _currentAttackTime = 0; // Reset attack progress on timeout
+
+            // A timeout gives the calling team's on-court players a breather (+10% energy each).
+            // Written through p.MatchEnergy too, since UpdateEnergyFromMinutePassed recomputes
+            // PlayerEnergy from it every minute and would otherwise erase this boost.
+            var squad = isHome ? HomeSquad : AwaySquad;
+            foreach (var p in squad.StartingLineup.Values.Where(p => p != null).Select(p => p!).Distinct())
+            {
+                p.MatchEnergy = Math.Min(100.0, p.MatchEnergy + 10.0);
+                PlayerEnergy[p.Id] = p.MatchEnergy;
+            }
         }
     }
 

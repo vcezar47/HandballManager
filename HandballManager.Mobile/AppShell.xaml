@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="HandballManager.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:HandballManager.Mobile"
+    Title="Handball Manager"
+    FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="#16213E"
+    Shell.ForegroundColor="#EAEAEA"
+    Shell.TitleColor="#EAEAEA"
+    Shell.TabBarBackgroundColor="#16213E"
+    Shell.TabBarTitleColor="#E94560"
+    Shell.TabBarUnselectedColor="#8888AA">
+
+    <!-- Branded loading screen shown first, then hands off to the menu -->
+    <ShellContent
+        Route="loading"
+        ContentTemplate="{DataTemplate local:LoadingPage}" />
+
+    <!-- Main menu -->
+    <ShellContent
+        Route="menu"
+        ContentTemplate="{DataTemplate local:MainPage}" />
+
+    <!-- New-career setup flow (manager → league → team) -->
+    <ShellContent
+        Route="setup"
+        ContentTemplate="{DataTemplate local:SetupPage}" />
+
+    <!-- In-game area -->
+    <TabBar Route="game">
+        <ShellContent Route="home" Title="Home" Icon="home.png" ContentTemplate="{DataTemplate local:HomePage}" />
+        <ShellContent Route="squad" Title="Squad" Icon="team.png" ContentTemplate="{DataTemplate local:RosterPage}" />
+        <ShellContent Route="table" Title="Table" Icon="standings.png" ContentTemplate="{DataTemplate local:LeagueTablePage}" />
+        <ShellContent Route="comps" Title="Comps" Icon="trophy.png" ContentTemplate="{DataTemplate local:CompetitionsPage}" />
+        <ShellContent Route="club" Title="{Binding ClubTabTitle}" Icon="club.png" ContentTemplate="{DataTemplate local:ClubPage}" />
+    </TabBar>
+
+</Shell>

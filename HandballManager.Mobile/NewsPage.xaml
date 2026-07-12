@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.NewsPage"
+             Title="NEWS"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:NewsTypeIconConverter x:Key="NewsIcon" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- Filter tabs -->
+        <Border Grid.Row="0" BackgroundColor="#0F172A" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="6">
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
+                <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="0,8" BackgroundColor="Transparent">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding ActiveTab}" Value="All">
+                            <Setter Property="BackgroundColor" Value="#16213E" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetTabCommand}" CommandParameter="All" />
+                    </Border.GestureRecognizers>
+                    <Label Text="ALL" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" HorizontalTextAlignment="Center" TextColor="#8888AA">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding ActiveTab}" Value="All"><Setter Property="TextColor" Value="White" /></DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+                <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="0,8" BackgroundColor="Transparent">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding ActiveTab}" Value="Transfers">
+                            <Setter Property="BackgroundColor" Value="#16213E" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetTabCommand}" CommandParameter="Transfers" />
+                    </Border.GestureRecognizers>
+                    <Label Text="TRANSFERS" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" HorizontalTextAlignment="Center" TextColor="#8888AA">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding ActiveTab}" Value="Transfers"><Setter Property="TextColor" Value="White" /></DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+                <Border Grid.Column="2" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="0,8" BackgroundColor="Transparent">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding ActiveTab}" Value="Retirements">
+                            <Setter Property="BackgroundColor" Value="#16213E" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetTabCommand}" CommandParameter="Retirements" />
+                    </Border.GestureRecognizers>
+                    <Label Text="RETIREMENTS" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" HorizontalTextAlignment="Center" TextColor="#8888AA">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding ActiveTab}" Value="Retirements"><Setter Property="TextColor" Value="White" /></DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Feed -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding FilteredItems}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Margin="0,4" Padding="12,10">
+                        <Grid ColumnDefinitions="26,*" ColumnSpacing="10">
+                            <Image Grid.Column="0" Source="{Binding NewsType, Converter={StaticResource NewsIcon}}" WidthRequest="22" HeightRequest="22" Aspect="AspectFit" VerticalOptions="Start" Margin="0,2,0,0" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label Grid.Column="0" Text="{Binding Title}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" LineBreakMode="WordWrap" />
+                                    <Label Grid.Column="1" Text="{Binding PublishedAt, StringFormat='{0:dd MMM yyyy}'}" TextColor="#666688" FontSize="10" VerticalOptions="Start" />
+                                </Grid>
+                                <Label Text="{Binding Body}" TextColor="#A0A8C0" FontSize="12" LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

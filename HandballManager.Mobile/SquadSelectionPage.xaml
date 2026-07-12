@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.SquadSelectionPage"
+             x:Name="Page"
+             Title="SQUAD SELECTION"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto" Padding="14,8,14,8" RowSpacing="8">
+
+        <!-- Match info -->
+        <Label Grid.Row="0" Text="{Binding MatchInfo}" TextColor="#8888AA" FontSize="13" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+
+        <!-- Quick actions -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button Grid.Column="0" Text="AUTO PICK" AutomationId="AutoPickBtn"
+                    BackgroundColor="#16213E" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="8" HeightRequest="38"
+                    Command="{Binding AutoPickCommand}" />
+            <Button Grid.Column="1" Text="CLEAR ALL"
+                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="8" HeightRequest="38"
+                    Command="{Binding ClearAllCommand}" />
+        </Grid>
+
+        <!-- Starting seven -->
+        <Label Grid.Row="2" Text="STARTING 7" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+        <VerticalStackLayout Grid.Row="3" Spacing="4" BindableLayout.ItemsSource="{Binding StartingLineupSlots}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="10,6">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Stroke" Value="#E94560" />
+                                <Setter Property="BackgroundColor" Value="#1F2B4A" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.SelectSlotCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="48,*,36,30" ColumnSpacing="6">
+                            <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Player.Name, TargetNullValue='tap to pick…'}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Player.Overall100, TargetNullValue=''}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                            <Label Grid.Column="3" Text="✕" TextColor="#8888AA" FontSize="13" HorizontalTextAlignment="Center" VerticalOptions="Center"
+                                   IsVisible="{Binding Player.Name, Converter={StaticResource StringNotEmpty}}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.ClearSlotCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+
+        <!-- Bench -->
+        <Label Grid.Row="4" Text="BENCH — tap empty slot, then a player below (tap filled slot to remove)" TextColor="#8888AA" FontSize="11" />
+        <ScrollView Grid.Row="5" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding SubstituteSlots}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="8,5" WidthRequest="78">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Stroke" Value="#E94560" />
+                                    <Setter Property="BackgroundColor" Value="#1F2B4A" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.SelectSubSlotCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding DisplayLabel}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="10" HorizontalTextAlignment="Center" />
+                                <Label Text="{Binding Player.LastName, TargetNullValue='+'}" TextColor="#EAEAEA" FontSize="11" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Player pool -->
+        <Grid Grid.Row="6" RowDefinitions="Auto,*" RowSpacing="6">
+            <local:SelectField Grid.Row="0" Title="Filter position" ItemsSource="{Binding PositionFilters}" SelectedItem="{Binding SelectedPositionFilter, Mode=TwoWay}" />
+            <CollectionView Grid.Row="1" ItemsSource="{Binding AvailablePlayers}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#141C33" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,2" Padding="10,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.AssignPlayerCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="48,*,36" ColumnSpacing="6">
+                                <Label Grid.Column="0" Text="{Binding Position}" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding Overall100}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- Enter arena -->
+        <Grid Grid.Row="7" ColumnDefinitions="3*,2*" ColumnSpacing="10">
+            <Button Grid.Column="0" Text="ENTER THE ARENA" AutomationId="EnterArenaBtn"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="50"
+                    Command="{Binding EnterTheArenaCommand}" IsEnabled="{Binding IsSquadValid}" />
+            <Button Grid.Column="1" Text="INSTANT SIM"
+                    BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="10" HeightRequest="50"
+                    Command="{Binding SimulateGameCommand}" IsEnabled="{Binding IsSquadValid}" />
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

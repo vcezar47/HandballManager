@@ -69,6 +69,9 @@ public partial class LiveMatchViewModel : BaseViewModel
     [ObservableProperty] private bool _isSubstitutionPanelOpen;
     [ObservableProperty] private LivePlayerCard? _playerBeingSubstituted;
     [ObservableProperty] private ObservableCollection<Player> _availableSubstitutes = new();
+    [ObservableProperty] private int? _recentlySubstitutedPlayerId;
+    private bool _wasPlayingBeforeSub;
+    private int _subBadgeToken;
 
     public LiveMatchViewModel(LiveMatchEngine engine, bool isUserHome, Action<LiveMatchEngine, SquadSelection, SquadSelection> onMatchEnd, IFrameTicker frameTicker)
     {
@@ -363,6 +366,7 @@ public partial class LiveMatchViewModel : BaseViewModel
     private void OpenSubstitution(LivePlayerCard card)
     {
         if (IsMatchOver) return;
+        _wasPlayingBeforeSub = !IsPaused;
         IsPaused = true;
         _stopwatch.Stop();
         PlayerBeingSubstituted = card;
@@ -388,14 +392,35 @@ public partial class LiveMatchViewModel : BaseViewModel
             if (subOut != null)
             {
                 var positionIn = mySquad.StartingLineup.FirstOrDefault(x => x.Value?.Id == subOut.Id).Key;
-                if (!string.IsNullOrEmpty(positionIn)) _engine.PerformSubstitution(_isUserHome, subOut, subIn, positionIn);
+                if (!string.IsNullOrEmpty(positionIn))
+                {
+                    _engine.PerformSubstitution(_isUserHome, subOut, subIn, positionIn);
+                    FlagRecentSubstitution(subIn.Id);
+                }
             }
             UpdateSubstitutesList();
             SyncVisuals();
-            // Close panel but STAY PAUSED
             IsSubstitutionPanelOpen = false;
             PlayerBeingSubstituted = null;
+
+            // Resume automatically only if the clock was actually running before the panel opened;
+            // if the user had already paused deliberately, respect that and stay paused.
+            if (_wasPlayingBeforeSub)
+            {
+                IsPaused = false;
+                _lastTotalSeconds = _stopwatch.Elapsed.TotalSeconds;
+                _stopwatch.Start();
+            }
         }
+    }
+
+    /// <summary>Shows the substitution icon on the incoming player's card for a few seconds.</summary>
+    private async void FlagRecentSubstitution(int playerId)
+    {
+        int token = ++_subBadgeToken;
+        RecentlySubstitutedPlayerId = playerId;
+        await Task.Delay(4000);
+        if (token == _subBadgeToken) RecentlySubstitutedPlayerId = null;
     }
 
     [RelayCommand] private void ViewMatchSummary() => _onMatchEnd?.Invoke(_engine, _engine.HomeSquad, _engine.AwaySquad);

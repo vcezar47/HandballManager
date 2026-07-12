@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.ClubInfoPage"
+             x:Name="Page"
+             Title="CLUB INFO"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:AssetImageSourceConverter x:Key="AssetImage" />
+        <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <local:StadiumImageSourceConverter x:Key="StadiumImage" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <!-- Club header -->
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="14,12">
+                <Grid ColumnDefinitions="52,*" ColumnSpacing="12">
+                    <Image Grid.Column="0" Source="{Binding Team.LogoPath, Converter={StaticResource TeamLogo}}" WidthRequest="48" HeightRequest="48" Aspect="AspectFit" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="{Binding Team.Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="19" LineBreakMode="WordWrap" />
+                        <Label TextColor="#8888AA" FontSize="12">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Team.CompetitionName}" TextColor="#E94560" FontFamily="OpenSansSemibold" />
+                                    <Span Text="  ·  " />
+                                    <Span Text="{Binding Team.StadiumName}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Stadium -->
+            <Label Text="STADIUM" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="14,12">
+                <VerticalStackLayout Spacing="10">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" HeightRequest="160" BackgroundColor="#0F172A">
+                        <Image Source="{Binding Team.StadiumImage, Converter={StaticResource StadiumImage}}" Aspect="AspectFill" />
+                    </Border>
+                    <Label Text="{Binding Team.StadiumName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="17" LineBreakMode="WordWrap" />
+                    <Border BackgroundColor="#1A2238" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,8" HorizontalOptions="Start">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="TOTAL CAPACITY" TextColor="#8888AA" FontSize="10" FontFamily="OpenSansSemibold" CharacterSpacing="1" VerticalOptions="Center" />
+                            <Label Text="{Binding Team.StadiumCapacity, StringFormat='{0:N0}'}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="15" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Manager (tap for profile) -->
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToManagerDetailCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="MANAGER" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding Manager.Name}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="›" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Trophy cabinet -->
+            <VerticalStackLayout Spacing="6" x:Name="TrophySection">
+                <Label Text="TROPHY CABINET" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Trophies}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,8">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Image Source="{Binding ImagePath, Converter={StaticResource AssetImage}}" WidthRequest="22" HeightRequest="22" Aspect="AspectFit" VerticalOptions="Center" />
+                                        <Label Text="{Binding Name}" TextColor="#EAEAEA" FontSize="12" VerticalOptions="Center" />
+                                        <Label Text="{Binding Count, StringFormat='×{0}'}" TextColor="#FFD700" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </VerticalStackLayout>
+
+            <!-- Facilities (upgrades only enabled for the player's club) -->
+            <Label Text="FACILITIES" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="22,*,Auto" ColumnSpacing="8">
+                        <Image Grid.Column="0" Source="training.png" WidthRequest="18" HeightRequest="18" Aspect="AspectFit" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="TRAINING FACILITY" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding TrainingFacilityLabel}" TextColor="{Binding TrainingFacilityColour}" FontFamily="OpenSansSemibold" FontSize="12" />
+                    </Grid>
+                    <Label Text="{Binding TrainingFacilityDescription}" TextColor="#A0A8C0" FontSize="11" LineBreakMode="WordWrap" />
+                    <Label Text="{Binding TrainingCompletionText}" TextColor="#F0A500" FontSize="11"
+                           IsVisible="{Binding TrainingCompletionText, Converter={StaticResource StringNotEmpty}}" />
+                    <Button Text="{Binding TrainingUpgradeCostText, StringFormat='UPGRADE — {0}'}" FontSize="11"
+                            BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                            Command="{Binding UpgradeTrainingFacilityCommand}" IsEnabled="{Binding CanUpgradeTraining}"
+                            IsVisible="{Binding IsPlayerTeam}" />
+                </VerticalStackLayout>
+            </Border>
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="22,*,Auto" ColumnSpacing="8">
+                        <Image Grid.Column="0" Source="youth_academy.png" WidthRequest="18" HeightRequest="18" Aspect="AspectFit" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="YOUTH ACADEMY" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding YouthFacilityLabel}" TextColor="{Binding YouthFacilityColour}" FontFamily="OpenSansSemibold" FontSize="12" />
+                    </Grid>
+                    <Label Text="{Binding YouthFacilityDescription}" TextColor="#A0A8C0" FontSize="11" LineBreakMode="WordWrap" />
+                    <Label Text="{Binding YouthCompletionText}" TextColor="#F0A500" FontSize="11"
+                           IsVisible="{Binding YouthCompletionText, Converter={StaticResource StringNotEmpty}}" />
+                    <Button Text="{Binding YouthUpgradeCostText, StringFormat='UPGRADE — {0}'}" FontSize="11"
+                            BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                            Command="{Binding UpgradeYouthFacilityCommand}" IsEnabled="{Binding CanUpgradeYouth}"
+                            IsVisible="{Binding IsPlayerTeam}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Squad -->
+            <Label Text="SQUAD" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding SquadVM.Players}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="10,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.SquadVM.SelectPlayerCommand, Source={x:Reference Page}}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="40,*,30,52" ColumnSpacing="6">
+                                    <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding Name}" TextColor="#EAEAEA" FontSize="13" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                    <Label Grid.Column="2" Text="{Binding Age}" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                    <Label Grid.Column="3" Text="{Binding OverallDisplay}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="NoWrap" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                </Grid>
+                                <!-- Opponent-club actions: scout / shortlist / transfer -->
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" IsVisible="{Binding CanScout}">
+                                    <Button Grid.Column="0" Text="SCOUT" FontSize="10"
+                                            BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
+                                            Command="{Binding ScoutCommand}" />
+                                    <Button Grid.Column="1" Text="SHORTLIST" FontSize="10"
+                                            BackgroundColor="#1A2238" TextColor="#F0A500" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
+                                            Command="{Binding AddToShortlistCommand}" />
+                                    <Button Grid.Column="2" Text="OFFER" FontSize="10"
+                                            BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
+                                            Command="{Binding MakeOfferCommand}" IsEnabled="{Binding CanMakeOffer}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

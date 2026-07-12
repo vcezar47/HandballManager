@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             x:Class="HandballManager.Mobile.YouthSignPage"
+             Title="SIGN PROSPECT"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14" Spacing="14">
+
+            <Label Text="{Binding PlayerName}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="22" />
+            <Label Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="14" />
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding SuggestedWageText, StringFormat='Suggested wage: {0} € / month'}" TextColor="#F0A500" FontSize="13" />
+
+                    <Label Text="WAGE (€ / MONTH)" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                    <Border BackgroundColor="#141C33" Stroke="#3A5578" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,0">
+                        <Entry Text="{Binding ProposedWageText, Mode=TwoWay}" Keyboard="Numeric"
+                               TextColor="#EAEAEA" PlaceholderColor="#8888AA" BackgroundColor="Transparent" FontSize="15" />
+                    </Border>
+
+                    <Label Text="CONTRACT YEARS" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                    <local:SelectField Title="Years" ItemsSource="{Binding ContractYearsOptions}" SelectedItem="{Binding ContractYears, Mode=TwoWay}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding StatusMessage}" TextColor="#F0A500" FontSize="13" LineBreakMode="WordWrap"
+                   IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmpty}}" />
+
+            <Button Text="SIGN TO FIRST TEAM"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="48"
+                    Command="{Binding ConfirmCommand}" />
+
+            <Button Text="CANCEL"
+                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="44"
+                    Command="{Binding CloseCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

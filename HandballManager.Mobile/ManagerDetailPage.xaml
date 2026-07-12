@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.ManagerDetailPage"
+             Title="MANAGER"
+             BackgroundColor="#1A1A2E">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
+
+            <Label Text="MANAGER PROFILE" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="2" />
+            <Label Text="{Binding FullName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="24" Margin="0,-8,0,0" />
+
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10">
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                        <Label Text="AGE" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding Manager.Age}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="2">
+                        <Label Text="NATIONALITY" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding Manager.Nationality}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="2">
+                        <Label Text="BIRTHPLACE" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding Manager.PlaceOfBirth}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" LineBreakMode="TailTruncation" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2">
+                        <Label Text="BORN" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding Manager.Birthdate, StringFormat='{0:d MMM yyyy}'}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="2">
+                        <Label Text="COACHING LICENSE" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding LicenseDisplay}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="2">
+                        <Label Text="REPUTATION" TextColor="#8888AA" FontSize="10" CharacterSpacing="1" />
+                        <Label Text="{Binding ReputationDisplay}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="14" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Label Text="ATTRIBUTES" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
+            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                <ContentView x:Name="AttributesHost" />
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
