@@ -12,6 +12,7 @@
         <local:AssetImageSourceConverter x:Key="AssetImage" />
         <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
         <local:StadiumImageSourceConverter x:Key="StadiumImage" />
+        <local:BoolToDisabledOpacityConverter x:Key="BoolToDisabledOpacity" />
     </ContentPage.Resources>
 
     <ScrollView>
@@ -138,17 +139,22 @@
                                     <Label Grid.Column="2" Text="{Binding Age}" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" VerticalOptions="Center" />
                                     <Label Grid.Column="3" Text="{Binding OverallDisplay}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" LineBreakMode="NoWrap" HorizontalTextAlignment="End" VerticalOptions="Center" />
                                 </Grid>
-                                <!-- Opponent-club actions: scout / shortlist / transfer -->
-                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" IsVisible="{Binding CanScout}">
-                                    <Button Grid.Column="0" Text="SCOUT" FontSize="10"
+                                <!-- Opponent-club actions: scout / shortlist / transfer.
+                                     Shown for every opposition player; the individual buttons
+                                     disable themselves so OFFER survives after scouting. -->
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" IsVisible="{Binding ShowMarketActions}">
+                                    <Button Grid.Column="0" Text="{Binding ScoutButtonText}" FontSize="10"
                                             BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
-                                            Command="{Binding ScoutCommand}" />
-                                    <Button Grid.Column="1" Text="SHORTLIST" FontSize="10"
+                                            Command="{Binding ScoutCommand}" IsEnabled="{Binding CanScout}"
+                                            Opacity="{Binding CanScout, Converter={StaticResource BoolToDisabledOpacity}}" />
+                                    <Button Grid.Column="1" Text="{Binding ShortlistButtonText}" FontSize="10"
                                             BackgroundColor="#1A2238" TextColor="#F0A500" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
-                                            Command="{Binding AddToShortlistCommand}" />
+                                            Command="{Binding AddToShortlistCommand}" IsEnabled="{Binding CanAddToShortlist}"
+                                            Opacity="{Binding CanAddToShortlist, Converter={StaticResource BoolToDisabledOpacity}}" />
                                     <Button Grid.Column="2" Text="OFFER" FontSize="10"
                                             BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="7" HeightRequest="28" Padding="0"
-                                            Command="{Binding MakeOfferCommand}" IsEnabled="{Binding CanMakeOffer}" />
+                                            Command="{Binding MakeOfferCommand}" IsEnabled="{Binding CanMakeOffer}"
+                                            Opacity="{Binding CanMakeOffer, Converter={StaticResource BoolToDisabledOpacity}}" />
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>

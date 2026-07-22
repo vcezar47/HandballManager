@@ -24,6 +24,8 @@ public class LeagueService
             .Where(e => e.CompetitionName == competitionName)
             .ToListAsync();
 
+        await ReconcileStandingsAsync(competitionName, entries);
+
         var sorted = entries
             .OrderByDescending(e => e.Points)
             .ThenByDescending(e => e.GoalDifference)
@@ -35,6 +37,81 @@ public class LeagueService
             sorted[i].Rank = i + 1;
 
         return sorted;
+    }
+
+    /// <summary>
+    /// Rebuilds a table from the matches that were actually played, and writes back any
+    /// row that disagrees.
+    /// </summary>
+    /// <remarks>
+    /// The table is otherwise a running tally, incremented as each result comes in, and a
+    /// running tally has no way back once it loses a match — testers saw clubs stuck
+    /// several games behind while the fixtures themselves were correct. The played
+    /// fixtures and their match records are the source of truth, so deriving from them
+    /// makes the table self-correcting: a save that has already drifted repairs itself
+    /// the next time its standings are opened.
+    ///
+    /// Skips Kvindeligaen's best-of-three playoff legs, which by design never counted
+    /// towards the table.
+    /// </remarks>
+    private async Task ReconcileStandingsAsync(string competitionName, List<LeagueEntry> entries)
+    {
+        if (entries.Count == 0) return;
+
+        string season = $"{CurrentSeasonYear}/{CurrentSeasonYear + 1}";
+        var results = await _db.LeagueFixtures
+            .Where(f => f.Season == season
+                        && f.CompetitionName == competitionName
+                        && f.IsPlayed
+                        && f.MatchRecord != null
+                        && !(competitionName == KvindeligaenCompetition && f.Phase == "KvBo3"))
+            .Select(f => new
+            {
+                f.HomeTeamId,
+                f.AwayTeamId,
+                HomeGoals = f.MatchRecord!.HomeGoals,
+                AwayGoals = f.MatchRecord.AwayGoals
+            })
+            .ToListAsync();
+
+        var tally = entries.ToDictionary(e => e.TeamId, _ => (P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0));
+
+        void Apply(int teamId, int scored, int conceded)
+        {
+            if (!tally.TryGetValue(teamId, out var t)) return;
+            t.P++;
+            t.GF += scored;
+            t.GA += conceded;
+            if (scored > conceded) t.W++;
+            else if (scored == conceded) t.D++;
+            else t.L++;
+            tally[teamId] = t;
+        }
+
+        foreach (var r in results)
+        {
+            Apply(r.HomeTeamId, r.HomeGoals, r.AwayGoals);
+            Apply(r.AwayTeamId, r.AwayGoals, r.HomeGoals);
+        }
+
+        bool corrected = false;
+        foreach (var entry in entries)
+        {
+            var t = tally[entry.TeamId];
+            if (entry.Played == t.P && entry.Won == t.W && entry.Drawn == t.D
+                && entry.Lost == t.L && entry.GoalsFor == t.GF && entry.GoalsAgainst == t.GA)
+                continue;
+
+            entry.Played = t.P;
+            entry.Won = t.W;
+            entry.Drawn = t.D;
+            entry.Lost = t.L;
+            entry.GoalsFor = t.GF;
+            entry.GoalsAgainst = t.GA;
+            corrected = true;
+        }
+
+        if (corrected) await _db.SaveChangesAsync();
     }
 
     public async Task<List<MatchRecord>> GetRecentResultsAsync(int count = 10)
@@ -205,6 +282,115 @@ public class LeagueService
     /// </summary>
     public static bool IsWithinAnyTransferWindow(DateTime date)
         => IsWithinSummerTransferWindow(date) || IsWithinWinterTransferWindow(date);
+
+    /// <summary>
+    /// Season leaderboards for one competition — top scorers, assists, saves and average
+    /// rating. Built from the individual match stats rather than the season totals on
+    /// <see cref="Player"/>, because those totals pool league, cup and supercup goals
+    /// together and would show a player's supercup tally in the league table.
+    /// </summary>
+    public async Task<LeagueLeaderboards> GetLeaderboardsAsync(string competitionName,
+        CompetitionType competitionType = CompetitionType.League, int top = 10)
+    {
+        var query = _db.MatchPlayerStats
+            .Where(s => s.MatchRecord != null
+                        && s.Player != null
+                        && s.Player.Team != null
+                        && s.Player.Team.CompetitionName == competitionName);
+
+        query = competitionType switch
+        {
+            CompetitionType.League => query.Where(s => !s.MatchRecord!.IsCupMatch),
+            CompetitionType.Supercup => query.Where(s => s.MatchRecord!.IsCupMatch
+                                                         && s.MatchRecord.CupRound != null
+                                                         && s.MatchRecord.CupRound.StartsWith("Supercup")),
+            _ => query.Where(s => s.MatchRecord!.IsCupMatch
+                                  && (s.MatchRecord.CupRound == null
+                                      || !s.MatchRecord.CupRound.StartsWith("Supercup")))
+        };
+
+        var rows = await query
+            .Select(s => new
+            {
+                s.PlayerId,
+                s.PlayerName,
+                TeamName = s.Player!.Team!.Name,
+                TeamLogo = s.Player.Team.LogoPath,
+                s.Player.Position,
+                s.Goals,
+                s.Assists,
+                s.Saves,
+                s.GoalsAgainst,
+                s.Rating
+            })
+            .ToListAsync();
+
+        var players = rows
+            .GroupBy(s => s.PlayerId)
+            .Select(g => new LeaderboardSource(
+                g.First().PlayerName,
+                g.First().TeamName,
+                g.First().TeamLogo,
+                g.First().Position,
+                g.Sum(s => s.Goals),
+                g.Sum(s => s.Assists),
+                g.Sum(s => s.Saves),
+                g.Sum(s => s.Saves + s.GoalsAgainst),
+                g.Count(),
+                g.Sum(s => s.Rating)))
+            .ToList();
+
+        static List<LeaderboardRow> Rank(IEnumerable<LeaderboardSource> source,
+            Func<LeaderboardSource, double> key, Func<LeaderboardSource, string> format, int take,
+            Func<LeaderboardSource, string>? detail = null)
+            => source
+                .OrderByDescending(key)
+                .ThenBy(p => p.MatchesPlayed)
+                .Take(take)
+                .Select((p, i) => new LeaderboardRow(i + 1, p.Name, p.TeamName, p.TeamLogo, p.Position,
+                    p.MatchesPlayed, format(p), detail?.Invoke(p) ?? ""))
+                .ToList();
+
+        // An average rating only means something once a player has a real sample.
+        int minMatches = players.Count == 0 ? 1 : Math.Max(1, players.Max(p => p.MatchesPlayed) / 3);
+
+        // Same idea for save percentage: one stop out of one shot is not a 100% keeper.
+        var keepers = players.Where(p => p.ShotsFaced > 0).ToList();
+        int minShotsFaced = keepers.Count == 0 ? 1 : Math.Max(10, keepers.Max(p => p.ShotsFaced) / 3);
+
+        return new LeagueLeaderboards(
+            Rank(players.Where(p => p.Goals > 0), p => p.Goals, p => p.Goals.ToString(), top),
+            Rank(players.Where(p => p.Assists > 0), p => p.Assists, p => p.Assists.ToString(), top),
+            Rank(keepers.Where(p => p.ShotsFaced >= minShotsFaced), p => p.SavePercentage,
+                p => p.SavePercentage.ToString("P1"), top,
+                p => $"{p.Saves} / {p.ShotsFaced}"),
+            Rank(players.Where(p => p.MatchesPlayed >= minMatches), p => p.AverageRating, p => p.AverageRating.ToString("F2"), top));
+    }
+
+    private sealed record LeaderboardSource(string Name, string TeamName, string TeamLogo, string Position,
+        int Goals, int Assists, int Saves, int ShotsFaced, int MatchesPlayed, double RatingSum)
+    {
+        public double AverageRating => MatchesPlayed > 0 ? RatingSum / MatchesPlayed : 0;
+
+        public double SavePercentage => ShotsFaced > 0 ? (double)Saves / ShotsFaced : 0;
+    }
+
+    /// <summary>
+    /// Which transfer window a date sits in, and how much of it is left. Used for
+    /// the home screen badge and the window open/closing alerts.
+    /// </summary>
+    public static TransferWindowStatus GetTransferWindowStatus(DateTime date)
+    {
+        var d = date.Date;
+
+        if (IsWithinSummerTransferWindow(d))
+            return new TransferWindowStatus(TransferWindowKind.Summer, new DateTime(d.Year, 7, 1), new DateTime(d.Year, 8, 30), d);
+
+        if (IsWithinWinterTransferWindow(d))
+            return new TransferWindowStatus(TransferWindowKind.Winter, new DateTime(d.Year, 1, 1), new DateTime(d.Year, 1, 31), d);
+
+        return TransferWindowStatus.Closed(d);
+    }
     
     public static void AdvanceToNextSeason()
     {

@@ -77,7 +77,7 @@
                     <Label Text="Cup draw not yet available." TextColor="#555577" FontSize="13" FontAttributes="Italic" HorizontalOptions="Center" Margin="0,8"
                            IsVisible="{Binding PlayerCupGroup, Converter={StaticResource IsNull}}" />
 
-                    <VerticalStackLayout Spacing="0" BindableLayout.ItemsSource="{Binding PlayerCupGroup.Entries}">
+                    <VerticalStackLayout Spacing="0" BindableLayout.ItemsSource="{Binding PlayerCupStandings}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="26,22,*,30,34,36" ColumnSpacing="4" Padding="0,7">

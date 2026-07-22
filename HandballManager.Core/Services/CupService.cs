@@ -732,6 +732,9 @@ public class CupService
         string season = $"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}";
         var groups = await _db.CupGroups.Include(g => g.Entries).ThenInclude(e => e.Team).Include(g => g.Fixtures)
             .Where(g => g.Season == season && g.CompetitionName == comp).ToListAsync();
+
+        await ReconcileGroupsAsync(groups);
+
         foreach (var g in groups)
         {
             var sorted = g.Entries.OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).ToList();
@@ -752,6 +755,8 @@ public class CupService
             .FirstOrDefaultAsync();
         if (group != null)
         {
+            await ReconcileGroupsAsync([group]);
+
             var sorted = group.Entries.OrderByDescending(e => e.Points).ThenByDescending(e => e.GoalDifference).ThenByDescending(e => e.GoalsFor).ToList();
             for (int i = 0; i < sorted.Count; i++) sorted[i].Rank = i + 1;
             group.Entries = sorted;
@@ -779,6 +784,58 @@ public class CupService
         _db.CupGroupEntries.RemoveRange(entries);
         _db.CupGroups.RemoveRange(groups);
         await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Rebuilds group tables from the group games that were actually played, and writes
+    /// back any row that disagrees. Same reasoning as the league table: a running tally
+    /// cannot recover from a missed increment, whereas the fixtures always know the
+    /// truth, so a drifted save repairs itself on the next visit.
+    /// </summary>
+    private async Task ReconcileGroupsAsync(List<CupGroup> groups)
+    {
+        bool corrected = false;
+
+        foreach (var group in groups)
+        {
+            var tally = group.Entries.ToDictionary(e => e.TeamId, _ => (P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0));
+
+            void Apply(int teamId, int scored, int conceded)
+            {
+                if (!tally.TryGetValue(teamId, out var t)) return;
+                t.P++;
+                t.GF += scored;
+                t.GA += conceded;
+                if (scored > conceded) t.W++;
+                else if (scored == conceded) t.D++;
+                else t.L++;
+                tally[teamId] = t;
+            }
+
+            foreach (var f in group.Fixtures.Where(f => f.IsPlayed && f.Round == "Group"))
+            {
+                Apply(f.HomeTeamId, f.HomeGoals, f.AwayGoals);
+                Apply(f.AwayTeamId, f.AwayGoals, f.HomeGoals);
+            }
+
+            foreach (var entry in group.Entries)
+            {
+                var t = tally[entry.TeamId];
+                if (entry.Played == t.P && entry.Won == t.W && entry.Drawn == t.D
+                    && entry.Lost == t.L && entry.GoalsFor == t.GF && entry.GoalsAgainst == t.GA)
+                    continue;
+
+                entry.Played = t.P;
+                entry.Won = t.W;
+                entry.Drawn = t.D;
+                entry.Lost = t.L;
+                entry.GoalsFor = t.GF;
+                entry.GoalsAgainst = t.GA;
+                corrected = true;
+            }
+        }
+
+        if (corrected) await _db.SaveChangesAsync();
     }
 
     public async Task UpdateGroupEntryAsync(int cupGroupId, int teamId, int goalsFor, int goalsAgainst)

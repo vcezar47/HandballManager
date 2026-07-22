@@ -185,8 +185,20 @@ public class LiveMatchEngine
         double currentBonus = HomeHasPossession ? HomeAdvantage : 1.0;
         double diff = (attackRating * currentBonus) - defenseRating;
 
+        // Mental attributes: cohesion shapes the ratings, concentration and off-the-ball
+        // shape whether the possession becomes a shot at all.
+        var attackingOutfield = attackers.Where(p => p != null).Select(p => p!).ToList();
+        diff *= TeamIntangibles.Cohesion(attackingOutfield);
+
         // SimulationEngine Logic: Shot Chance (Reduced from 0.72 to 0.69 to avoid excessive goals)
-        double shotChance = Math.Clamp(0.69 + (diff / 35.0), 0.35, 0.95);
+        double shotChance = Math.Clamp(0.69 + (diff / 35.0), 0.35, 0.95)
+                          * TeamIntangibles.PossessionSecurity(attackingOutfield)
+                          * TeamIntangibles.ChanceCreation(attackingOutfield);
+
+        // Unlike the quick sim, the live score is genuinely running, so Determination
+        // can drive a real comeback.
+        int deficit = HomeHasPossession ? AwayScore - HomeScore : HomeScore - AwayScore;
+        shotChance = Math.Clamp(shotChance + TeamIntangibles.ComebackShift(attackingOutfield, deficit), 0.30, 0.96);
 
         if (_rng.NextDouble() > shotChance)
         {
@@ -200,7 +212,8 @@ public class LiveMatchEngine
         // Resolve Shot
         if (HomeHasPossession) HomeShots++; else AwayShots++;
         
-        var shooter = attackers[_rng.Next(attackers.Count)]!;
+        var shooter = PlayerActionWeights.Pick(attackers, PlayerActionWeights.ShotWeight, _rng)
+                      ?? attackers[_rng.Next(attackers.Count)]!;
         if (Stats.ContainsKey(shooter.Id)) Stats[shooter.Id].Shots++;
 
         // Determine if shot is ON TARGET
@@ -224,9 +237,16 @@ public class LiveMatchEngine
         // SimulationEngine Logic: Goal Chance (Reduced base from 0.82 to 0.77 for realism)
         double goalChance = Math.Clamp(0.77 + (shooter.Finishing - gkRating) / 25.0, 0.40, 0.96);
 
-        if (_rng.NextDouble() < goalChance)
+        // Composure bites in a tight finish; Flair can beat any keeper outright.
+        bool clutch = GameMinute >= 50 && Math.Abs(HomeScore - AwayScore) <= 2;
+        goalChance = Math.Clamp(goalChance + TeamIntangibles.ClutchShift(shooter, clutch), 0.35, 0.97);
+        bool brilliance = _rng.NextDouble() < TeamIntangibles.MomentOfBrillianceChance(shooter);
+
+        if (brilliance || _rng.NextDouble() < goalChance)
         {
-            var assister = attackers.FirstOrDefault(p => p != null && p.Id != shooter.Id);
+            var assister = _rng.NextDouble() < PlayerActionWeights.AssistedGoalChance
+                ? PlayerActionWeights.Pick(attackers, PlayerActionWeights.AssistWeight, _rng, shooter.Id)
+                : null;
             ScoreGoal(shooter, assister, gk);
         }
         else

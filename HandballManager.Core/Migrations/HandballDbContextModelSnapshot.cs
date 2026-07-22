@@ -46,7 +46,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChampionRecords");
+                    b.ToTable("ChampionRecords", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupFixture", b =>
@@ -110,7 +110,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("CupFixtures");
+                    b.ToTable("CupFixtures", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupGroup", b =>
@@ -133,7 +133,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CupGroups");
+                    b.ToTable("CupGroups", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupGroupEntry", b =>
@@ -172,7 +172,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("CupGroupEntries");
+                    b.ToTable("CupGroupEntries", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupWinnerRecord", b =>
@@ -198,7 +198,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CupWinnerRecords");
+                    b.ToTable("CupWinnerRecords", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.LeagueEntry", b =>
@@ -237,7 +237,7 @@ namespace HandballManager.Migrations
                     b.HasIndex("TeamId")
                         .IsUnique();
 
-                    b.ToTable("LeagueEntries");
+                    b.ToTable("LeagueEntries", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.LeagueFixture", b =>
@@ -287,7 +287,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("LeagueFixtures");
+                    b.ToTable("LeagueFixtures", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.Manager", b =>
@@ -363,7 +363,7 @@ namespace HandballManager.Migrations
                     b.HasIndex("TeamId")
                         .IsUnique();
 
-                    b.ToTable("Managers");
+                    b.ToTable("Managers", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchEvent", b =>
@@ -403,7 +403,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("MatchEvents");
+                    b.ToTable("MatchEvents", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchPlayerStat", b =>
@@ -443,7 +443,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("MatchPlayerStats");
+                    b.ToTable("MatchPlayerStats", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.MatchRecord", b =>
@@ -519,7 +519,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MatchRecords");
+                    b.ToTable("MatchRecords", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.NewsItem", b =>
@@ -548,7 +548,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NewsItems");
+                    b.ToTable("NewsItems", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.PendingTransfer", b =>
@@ -590,7 +590,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("ToTeamId");
 
-                    b.ToTable("PendingTransfers");
+                    b.ToTable("PendingTransfers", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.Player", b =>
@@ -822,7 +822,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.SupercupFixture", b =>
@@ -881,7 +881,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("MatchRecordId");
 
-                    b.ToTable("SupercupFixtures");
+                    b.ToTable("SupercupFixtures", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.SupercupWinnerRecord", b =>
@@ -907,7 +907,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SupercupWinnerRecords");
+                    b.ToTable("SupercupWinnerRecords", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.Team", b =>
@@ -983,7 +983,7 @@ namespace HandballManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.Transaction", b =>
@@ -1013,7 +1013,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.TransferOffer", b =>
@@ -1054,7 +1054,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("FromTeamId");
 
-                    b.ToTable("TransferOffers");
+                    b.ToTable("TransferOffers", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.YouthIntakePlayer", b =>
@@ -1105,7 +1105,7 @@ namespace HandballManager.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("YouthIntakePlayers");
+                    b.ToTable("YouthIntakePlayers", (string)null);
                 });
 
             modelBuilder.Entity("HandballManager.Models.CupFixture", b =>

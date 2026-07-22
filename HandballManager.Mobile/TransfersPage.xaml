@@ -10,9 +10,12 @@
 
         <!-- Incoming offers -->
         <Label Grid.Row="0" Text="INCOMING OFFERS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
-        <VerticalStackLayout Grid.Row="1" Spacing="4">
-            <Label Text="No pending offers for your players." TextColor="#8888AA" FontSize="12" IsVisible="{Binding HasNoOffers}" />
-            <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding Offers}">
+        <!-- Offers get their own bounded scroll: an unbounded Auto row grew with every
+             pending offer and pushed the free agents section off the bottom of the screen. -->
+        <ScrollView Grid.Row="1" MaximumHeightRequest="260" VerticalScrollBarVisibility="Default">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="No pending offers for your players." TextColor="#8888AA" FontSize="12" IsVisible="{Binding HasNoOffers}" />
+                <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding Offers}">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
                         <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,10">
@@ -48,9 +51,10 @@
                             </Grid>
                         </Border>
                     </DataTemplate>
-                </BindableLayout.ItemTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
             </VerticalStackLayout>
-        </VerticalStackLayout>
+        </ScrollView>
 
         <!-- Free agents -->
         <Label Grid.Row="2" Text="FREE AGENTS" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />

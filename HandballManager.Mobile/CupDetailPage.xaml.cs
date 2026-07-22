@@ -1,3 +1,4 @@
+using HandballManager.Models;
 using HandballManager.ViewModels;
 
 namespace HandballManager.Mobile;
@@ -19,6 +20,12 @@ public partial class CupDetailPage : ContentPage
 		base.OnAppearing();
 		ApplyEmptyStates();
 	}
+
+	private async void OnStatsClicked(object? sender, EventArgs e)
+		=> await Navigation.PushAsync(new StatsPage(_vm.CompetitionName, CompetitionType.Cup));
+
+	private async void OnAwardsClicked(object? sender, EventArgs e)
+		=> await Navigation.PushAsync(new AwardsPage(_vm.CompetitionName, CompetitionType.Cup));
 
 	private void ApplyEmptyStates()
 	{

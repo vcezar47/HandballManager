@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HandballManager.Mobile.Controls.ToastHost"
+             InputTransparent="True"
+             CascadeInputTransparent="False"
+             VerticalOptions="Start">
+
+    <!-- Toasts stack downward from the top of the page. The host itself is input
+         transparent so it never blocks the screen underneath; individual toasts
+         still take taps. -->
+    <VerticalStackLayout x:Name="Stack"
+                         Spacing="8"
+                         Padding="12,8,12,0"
+                         InputTransparent="True"
+                         CascadeInputTransparent="False" />
+</ContentView>

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
              x:Class="HandballManager.Mobile.PlayerDetailPage"
              Title="PLAYER"
              BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:BoolToDisabledOpacityConverter x:Key="BoolToDisabledOpacity" />
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
@@ -39,6 +44,22 @@
                     </VerticalStackLayout>
                 </Grid>
             </Border>
+
+            <!-- Market actions: scout / shortlist / buy without leaving the profile -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" IsVisible="{Binding ShowMarketActions}">
+                <Button Grid.Column="0" Text="{Binding ScoutButtonText}" FontSize="11" AutomationId="PlayerScoutBtn"
+                        BackgroundColor="#1A2238" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                        Command="{Binding ScoutCommand}" IsEnabled="{Binding CanScout}"
+                        Opacity="{Binding CanScout, Converter={StaticResource BoolToDisabledOpacity}}" />
+                <Button Grid.Column="1" Text="{Binding ShortlistButtonText}" FontSize="11" AutomationId="PlayerShortlistBtn"
+                        BackgroundColor="#1A2238" TextColor="#F0A500" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                        Command="{Binding AddToShortlistCommand}" IsEnabled="{Binding CanAddToShortlist}"
+                        Opacity="{Binding CanAddToShortlist, Converter={StaticResource BoolToDisabledOpacity}}" />
+                <Button Grid.Column="2" Text="{Binding OfferButtonText}" FontSize="11" AutomationId="PlayerOfferBtn"
+                        BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="40" Padding="0"
+                        Command="{Binding TransferCommand}" IsEnabled="{Binding CanTransfer}"
+                        Opacity="{Binding CanTransfer, Converter={StaticResource BoolToDisabledOpacity}}" />
+            </Grid>
 
             <!-- Contract -->
             <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">

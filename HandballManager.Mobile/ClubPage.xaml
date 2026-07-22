@@ -37,18 +37,7 @@
                 </HorizontalStackLayout>
             </Border>
 
-            <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnInformationTapped" />
-                </Border.GestureRecognizers>
-                <Grid ColumnDefinitions="34,*" ColumnSpacing="12">
-                    <Image Grid.Column="0" Source="information.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit" VerticalOptions="Center" />
-                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
-                        <Label Text="INFORMATION" AutomationId="InformationNav" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="15" CharacterSpacing="1" />
-                        <Label Text="Club overview, trophy cabinet and facilities" TextColor="#8888AA" FontSize="12" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
+            <!-- Club overview lives on the Info tab now; a second entry point here was redundant. -->
 
             <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="16,14">
                 <Border.GestureRecognizers>

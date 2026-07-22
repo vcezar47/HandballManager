@@ -14,6 +14,7 @@ public class SimulationEngine
     private readonly SupercupService _supercupService;
     private readonly LeagueService _leagueService;
     private readonly FacilityService _facilityService;
+    private readonly AwardsService _awards;
     private readonly Random _rng = new();
     private const int PossessionsPerTeam = 55;
     private DateTime _lastDailyProgressionDate;
@@ -40,6 +41,9 @@ public class SimulationEngine
         _supercupService = supercupService;
         _leagueService = leagueService;
         _facilityService = facilityService;
+        // Derived from the same context rather than injected, so both hosts' existing
+        // construction sites keep working unchanged.
+        _awards = new AwardsService(db);
         _lastDailyProgressionDate = LeagueService.GameSeasonStartDate;
         _lastWeeklyWageDate = LeagueService.GameSeasonStartDate;
     }
@@ -190,19 +194,10 @@ public class SimulationEngine
             var st = kv.Value;
             var tId = engine.HomeTeam.Players.Any(p => p.Id == pId) ? engine.HomeTeam.Id : engine.AwayTeam.Id;
             
-            // Contextual Rating Calculation
-            double finalRating = 5.5; 
-            if (st.Saves > 0 || st.GoalsAgainst > 0) // It's a Goalkeeper
-            {
-                int totalShotsFaced = st.Saves + st.GoalsAgainst;
-                double savePct = totalShotsFaced > 0 ? (double)st.Saves / totalShotsFaced : 0.25;
-                // Base 6.0 for 25% save rate, moves 0.1 per 1% change above/below
-                finalRating = 6.0 + (savePct - 0.25) * 15.0 + (st.Saves * 0.05);
-            }
-            else // Outfield Player
-            {
-                finalRating = 5.5 + (st.Goals * 0.5) + (st.Assists * 0.3) - ((st.Shots - st.Goals) * 0.3);
-            }
+            bool isKeeper = st.Saves > 0 || st.GoalsAgainst > 0;
+            double finalRating = isKeeper
+                ? MatchRating.ForGoalkeeper(st.Saves, st.GoalsAgainst)
+                : MatchRating.ForOutfield(st.Goals, st.Assists, st.Shots);
 
             record.PlayerStats.Add(new MatchPlayerStat
             {
@@ -212,7 +207,9 @@ public class SimulationEngine
                 Goals = st.Goals,
                 Assists = st.Assists,
                 Saves = st.Saves,
-                Rating = Math.Clamp(finalRating, 3.0, 10.0)
+                Shots = st.Shots,
+                GoalsAgainst = st.GoalsAgainst,
+                Rating = finalRating
             });
         }
         
@@ -264,20 +261,9 @@ public class SimulationEngine
                 p.SeasonSaves += liveStat.Saves;
                 p.MatchesPlayed++;
                 
-                // Record rating from the live match engine using contextual logic
-                double finalRating = 5.5;
-                if (p.Position == "GK")
-                {
-                    int totalShotsFaced = liveStat.Saves + liveStat.GoalsAgainst;
-                    double savePct = totalShotsFaced > 0 ? (double)liveStat.Saves / totalShotsFaced : 0.25;
-                    finalRating = 6.0 + (savePct - 0.25) * 15.0 + (liveStat.Saves * 0.05);
-                }
-                else
-                {
-                    finalRating = 5.5 + (liveStat.Goals * 0.5) + (liveStat.Assists * 0.3) - ((liveStat.Shots - liveStat.Goals) * 0.3);
-                }
-                
-                p.SeasonRatingSum += Math.Clamp(finalRating, 3.0, 10.0);
+                p.SeasonRatingSum += p.Position == "GK"
+                    ? MatchRating.ForGoalkeeper(liveStat.Saves, liveStat.GoalsAgainst)
+                    : MatchRating.ForOutfield(liveStat.Goals, liveStat.Assists, liveStat.Shots);
             }
         }
 
@@ -596,24 +582,17 @@ public class SimulationEngine
         {
             // Identify player position for contextual rating
             var player = homeTeam.Players.Concat(awayTeam.Players).FirstOrDefault(p => p.Id == ps.PlayerId);
-            
-            double finalRating = 5.5;
-            if (player?.Position == "GK")
-            {
-                int totalShotsFaced = ps.Saves + ps.GoalsAgainst;
-                double savePct = totalShotsFaced > 0 ? (double)ps.Saves / totalShotsFaced : 0.25;
-                finalRating = 6.0 + (savePct - 0.25) * 15.0 + (ps.Saves * 0.05);
-            }
-            else
-            {
-                finalRating = 5.5 + (ps.Goals * 0.5) + (ps.Assists * 0.3) - ((ps.Shots - ps.Goals) * 0.3);
-            }
-            ps.Rating = Math.Clamp(finalRating, 3.0, 10.0);
+
+            ps.Rating = player?.Position == "GK"
+                ? MatchRating.ForGoalkeeper(ps.Saves, ps.GoalsAgainst)
+                : MatchRating.ForOutfield(ps.Goals, ps.Assists, ps.Shots);
         }
 
         _db.MatchRecords.Add(record);
         // Include players in summary if they recorded any stat OR played significant time (Rating is now always >= 3.0)
-        record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Shots > 0));
+        // GoalsAgainst counts too: a keeper who was beaten every time still faced shots,
+        // and dropping that row would flatter the save percentage.
+        record.PlayerStats.AddRange(playerStats.Values.Where(ps => ps.Goals > 0 || ps.Assists > 0 || ps.Saves > 0 || ps.Shots > 0 || ps.GoalsAgainst > 0));
 
         // Only update league standings for league matches
         if (!isCupMatch && updateLeagueStandings)
@@ -711,6 +690,7 @@ public class SimulationEngine
 
     private void SimulatePossessions(MatchRecord record, Team attackers, Team defenders, Dictionary<int, MatchPlayerStat> stats, bool isAttackerHome, double homeAdvantage, int possessionCount = PossessionsPerTeam)
     {
+        var minutesShare = PlayerActionWeights.MinutesShareByPlayer(attackers);
         var attackRating = CalculateAttackRating(attackers);
         var defenseRating = CalculateDefenseRating(defenders);
         var gk = defenders.Players.FirstOrDefault(p => p.Position == "GK") ?? defenders.Players.First();
@@ -718,22 +698,36 @@ public class SimulationEngine
 
         double currentBonus = (isAttackerHome) ? homeAdvantage : 1.0;
 
+        // Mental attributes. Neutral at league-average mentals, so team scoring is
+        // unchanged for a typical side and only shifts for notably strong/weak squads.
+        var attackOutfield = attackers.Players.Where(p => p.Position != "GK").ToList();
+        double mentalFactor = TeamIntangibles.PossessionSecurity(attackOutfield)
+                            * TeamIntangibles.ChanceCreation(attackOutfield)
+                            * TeamIntangibles.Drive(attackOutfield);
+
         for (int i = 0; i < possessionCount; i++)
         {
             double diff = (attackRating * currentBonus) - defenseRating;
             // Reduced shot chance from 0.73 to 0.69 to avoid excessive goals (35+)
-            double shotChance = Math.Clamp(0.69 + (diff / 35.0), 0.35, 0.95);
+            double shotChance = Math.Clamp(Math.Clamp(0.69 + (diff / 35.0), 0.35, 0.95) * mentalFactor, 0.30, 0.96);
 
             if (_rng.NextDouble() > shotChance) continue;
 
             // Pick a shooter
-            var shooter = PickPlayerForAction(attackers, "Goal");
+            var shooter = PickPlayerForAction(attackers, "Goal", minutesShare);
             if (shooter == null) continue;
 
             // Goal Chance (Reduced base from 0.82 to 0.77 for realistic handball scores)
             double goalChance = Math.Clamp(0.77 + (shooter.Finishing - gkRating) / 30.0, 0.40, 0.96);
 
-            if (_rng.NextDouble() < goalChance)
+            // Composure shows up in the closing stretch. There is no running score
+            // to read here, so "pressure" is simply the end of the match.
+            bool clutch = i >= possessionCount - 6;
+            goalChance = Math.Clamp(goalChance + TeamIntangibles.ClutchShift(shooter, clutch), 0.35, 0.97);
+
+            bool brilliance = _rng.NextDouble() < TeamIntangibles.MomentOfBrillianceChance(shooter);
+
+            if (brilliance || _rng.NextDouble() < goalChance)
             {
                 // GOAL
                 if (!stats.ContainsKey(shooter.Id))
@@ -759,9 +753,9 @@ public class SimulationEngine
                 record.MatchEvents.Add(ev);
 
                 // Potentially an assist
-                if (_rng.NextDouble() < 0.8) // 80% chance of assisted goal in handball
+                if (_rng.NextDouble() < PlayerActionWeights.AssistedGoalChance)
                 {
-                    var assistant = PickPlayerForAction(attackers, "Assist", shooter.Id);
+                    var assistant = PickPlayerForAction(attackers, "Assist", minutesShare, shooter.Id);
                     if (assistant != null)
                     {
                         if (!stats.ContainsKey(assistant.Id))
@@ -786,61 +780,41 @@ public class SimulationEngine
         }
     }
 
+    /// <summary>
+    /// Weighted pick over a full roster. There is no lineup at this level, so a
+    /// per-position depth share stands in for minutes played — otherwise fourth-choice
+    /// reserves accumulate goals at the same rate as the starters.
+    /// </summary>
     private Player? PickPlayerForAction(Team team, string action, int excludePlayerId = -1)
+        => PickPlayerForAction(team, action, PlayerActionWeights.MinutesShareByPlayer(team), excludePlayerId);
+
+    private Player? PickPlayerForAction(Team team, string action, Dictionary<int, double> minutes, int excludePlayerId = -1)
     {
-        var candidates = team.Players.Where(p => p.Id != excludePlayerId).ToList();
-        if (!candidates.Any()) return null;
+        Func<Player, double> baseWeight = action == "Goal"
+            ? PlayerActionWeights.ShotWeight
+            : PlayerActionWeights.AssistWeight;
 
-        // Weights based on position
-        var weights = candidates.Select(p => {
-            double w = 1.0;
-            if (action == "Goal")
-            {
-                w = p.Position switch
-                {
-                    "LB" or "RB" => 3.0,
-                    "LW" or "RW" => 2.5,
-                    "Pivot" => 2.0,
-                    "CB" => 1.5,
-                    _ => 0.1
-                };
-                w *= (p.Finishing / 10.0);
-            }
-            else // Assist
-            {
-                w = p.Position switch
-                {
-                    "CB" => 4.0,
-                    "LB" or "RB" => 2.0,
-                    "Pivot" => 1.5,
-                    _ => 0.5
-                };
-                w *= (p.Passing / 10.0);
-            }
-            return w;
-        }).ToList();
-
-        double totalWeight = weights.Sum();
-        double r = _rng.NextDouble() * totalWeight;
-        double current = 0;
-        for (int i = 0; i < candidates.Count; i++)
-        {
-            current += weights[i];
-            if (r <= current) return candidates[i];
-        }
-        return candidates.Last();
+        return PlayerActionWeights.Pick(
+            team.Players,
+            p => baseWeight(p) * minutes.GetValueOrDefault(p.Id, 0.12),
+            _rng,
+            excludePlayerId);
     }
 
     private double CalculateAttackRating(Team team)
     {
         var players = team.Players.Where(p => p.Position != "GK").ToList();
-        return players.Any() ? players.Average(p => (p.Finishing + p.Passing + p.Technique + p.Decisions + p.Pace + p.Acceleration) / 6.0) : 10;
+        if (players.Count == 0) return 10;
+        double raw = players.Average(p => (p.Finishing + p.Passing + p.Technique + p.Decisions + p.Pace + p.Acceleration) / 6.0);
+        return raw * TeamIntangibles.Cohesion(players);
     }
 
     private double CalculateDefenseRating(Team team)
     {
         var players = team.Players.Where(p => p.Position != "GK").ToList();
-        return players.Any() ? players.Average(p => (p.Marking + p.Tackling + p.Positioning + p.Strength + p.Aggression + p.Anticipation) / 6.0) : 10;
+        if (players.Count == 0) return 10;
+        double raw = players.Average(p => (p.Marking + p.Tackling + p.Positioning + p.Strength + p.Aggression + p.Anticipation) / 6.0);
+        return raw * TeamIntangibles.Cohesion(players);
     }
 
     /// <summary>
@@ -852,6 +826,17 @@ public class SimulationEngine
     {
         return await SimulateMatchInternalAsync(homeTeamId, awayTeamId, round,
             updateLeagueStandings: updateLeagueStandings, forceWinner: true);
+    }
+
+    /// <summary>
+    /// Drops every tracked instance of a type. Used before an ExecuteDelete, which goes
+    /// straight to the database — anything still tracked would be written back on the
+    /// next save as an update to a row that no longer exists.
+    /// </summary>
+    private void DetachTracked<T>() where T : class
+    {
+        foreach (var entry in _db.ChangeTracker.Entries<T>().ToList())
+            entry.State = EntityState.Detached;
     }
 
     private async Task UpdateLeagueEntryAsync(int teamId, int goalsFor, int goalsAgainst)
@@ -874,6 +859,17 @@ public class SimulationEngine
     /// </summary>
     public async Task ProcessEndOfSeasonAsync(DateTime currentDate)
     {
+        // Must run first: this reads the season's match stats, which get wiped below,
+        // and the player rows, which lose their seasonal totals to the progression reset.
+        await _awards.CaptureTeamsOfTheSeasonAsync($"{LeagueService.CurrentSeasonYear}/{LeagueService.CurrentSeasonYear + 1}");
+
+        // A season of play leaves tens of thousands of match rows in the change tracker,
+        // and every SaveChanges below would scan all of them. They are about to be
+        // deleted wholesale, so let them go now.
+        DetachTracked<MatchPlayerStat>();
+        DetachTracked<MatchEvent>();
+        DetachTracked<MatchRecord>();
+
         var toRetire = await _db.Players.IgnoreQueryFilters().Where(p => p.IsRetiringAtEndOfSeason).ToListAsync();
         foreach (var p in toRetire)
             p.IsRetired = true;
@@ -1017,14 +1013,50 @@ public class SimulationEngine
             entry.GoalsAgainst = 0;
         }
 
-        // Wipe match records for the new season
-        var allMatchRecords = await _db.MatchRecords.ToListAsync();
-        var allMatchEvents = await _db.MatchEvents.ToListAsync();
-        var allMatchStats = await _db.MatchPlayerStats.ToListAsync();
+        // Wipe the season's match data.
+        //
+        // Set-based on purpose. Loading it all (a world season runs to ~60k match events)
+        // into the change tracker and removing it row by row took seconds on a desktop and
+        // hung a phone long enough for Android to kill the app. ExecuteDelete issues one
+        // statement per table and never materialises a row.
+        //
+        // League, cup and supercup fixtures all outlive the records they point at, and
+        // SQLite does enforce those foreign keys. The old row-by-row delete got away with
+        // it because EF nulled the links on tracked dependents for us; a set-based delete
+        // has no such fix-up, so the links are dropped explicitly — in memory as well as
+        // on disk, or a later save would write the stale id straight back.
+        foreach (var tracked in _db.ChangeTracker.Entries<LeagueFixture>())
+        {
+            tracked.Entity.MatchRecordId = null;
+            tracked.Entity.MatchRecord = null;
+        }
+        foreach (var tracked in _db.ChangeTracker.Entries<CupFixture>())
+        {
+            tracked.Entity.MatchRecordId = null;
+            tracked.Entity.MatchRecord = null;
+        }
+        foreach (var tracked in _db.ChangeTracker.Entries<SupercupFixture>())
+        {
+            tracked.Entity.MatchRecordId = null;
+            tracked.Entity.MatchRecord = null;
+        }
 
-        _db.MatchPlayerStats.RemoveRange(allMatchStats);
-        _db.MatchEvents.RemoveRange(allMatchEvents);
-        _db.MatchRecords.RemoveRange(allMatchRecords);
+        await _db.SaveChangesAsync();
+
+        await _db.LeagueFixtures.Where(f => f.MatchRecordId != null)
+            .ExecuteUpdateAsync(s => s.SetProperty(f => f.MatchRecordId, (int?)null));
+        await _db.CupFixtures.Where(f => f.MatchRecordId != null)
+            .ExecuteUpdateAsync(s => s.SetProperty(f => f.MatchRecordId, (int?)null));
+        await _db.SupercupFixtures.Where(f => f.MatchRecordId != null)
+            .ExecuteUpdateAsync(s => s.SetProperty(f => f.MatchRecordId, (int?)null));
+
+        DetachTracked<MatchPlayerStat>();
+        DetachTracked<MatchEvent>();
+        DetachTracked<MatchRecord>();
+
+        await _db.MatchPlayerStats.ExecuteDeleteAsync();
+        await _db.MatchEvents.ExecuteDeleteAsync();
+        await _db.MatchRecords.ExecuteDeleteAsync();
 
         // Purge retired players now that the season's match data (which referenced
         // them) has been wiped. Nothing in the UI displays retired players, so this

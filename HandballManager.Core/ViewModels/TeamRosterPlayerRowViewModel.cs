@@ -39,9 +39,23 @@ public partial class TeamRosterPlayerRowViewModel : ObservableObject
     public string OverallDisplay
         => IsFullyKnown ? Player.Overall100.ToString() : Estimation.Range(Player.Id, "Overall100", Player.Overall100, 10, 99, 12);
 
+    /// <summary>
+    /// Whether the scout/shortlist/offer row is shown at all. Gated on the player
+    /// belonging to another club — not on <see cref="CanScout"/>, which goes false
+    /// the moment scouting starts and used to take the offer button down with it.
+    /// </summary>
+    public bool ShowMarketActions => !_isPlayerTeamRoster;
+
     public bool CanScout => !_isPlayerTeamRoster && _scouting.CanStartScouting(Player.Id);
 
+    /// <summary>Scouting already under way or finished — the button reads as done rather than disappearing.</summary>
+    public string ScoutButtonText => _scouting.IsScouted(Player.Id) ? "SCOUTED" : CanScout ? "SCOUT" : "SCOUTING…";
+
     public bool IsShortlisted => _scouting.ShortlistPlayerIds.Contains(Player.Id);
+
+    public string ShortlistButtonText => IsShortlisted ? "SHORTLISTED" : "SHORTLIST";
+
+    public bool CanAddToShortlist => !_isPlayerTeamRoster && !IsShortlisted;
 
     public bool CanApproachToSign => !_isPlayerTeamRoster && _transferService != null && _clock != null &&
         _transferService.CanApproachToSign(Player, _clock.CurrentDate);
@@ -91,7 +105,10 @@ public partial class TeamRosterPlayerRowViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFullyKnown));
         OnPropertyChanged(nameof(OverallDisplay));
         OnPropertyChanged(nameof(CanScout));
+        OnPropertyChanged(nameof(ScoutButtonText));
         OnPropertyChanged(nameof(IsShortlisted));
+        OnPropertyChanged(nameof(ShortlistButtonText));
+        OnPropertyChanged(nameof(CanAddToShortlist));
         OnPropertyChanged(nameof(CanApproachToSign));
         OnPropertyChanged(nameof(CanMakeOffer));
     }

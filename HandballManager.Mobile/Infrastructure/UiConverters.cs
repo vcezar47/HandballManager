@@ -1,4 +1,5 @@
 using System.Globalization;
+using HandballManager.Models;
 
 namespace HandballManager.Mobile;
 
@@ -234,6 +235,22 @@ public class BoolToDisabledOpacityConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true ? 1.0 : 0.4;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+/// <summary>Green while the transfer window has time left, amber inside the last week, red on the closing day.</summary>
+public class WindowUrgencyColorConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value switch
+        {
+            TransferWindowUrgency.LastDay => Color.FromArgb("#E94560"),
+            TransferWindowUrgency.ClosingSoon => Color.FromArgb("#F0A500"),
+            TransferWindowUrgency.Open => Color.FromArgb("#3DDC97"),
+            _ => Color.FromArgb("#8888AA")
+        };
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotSupportedException();

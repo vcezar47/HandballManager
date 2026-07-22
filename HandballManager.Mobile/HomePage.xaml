@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:HandballManager.Mobile"
+             xmlns:controls="clr-namespace:HandballManager.Mobile.Controls"
              x:Class="HandballManager.Mobile.HomePage"
              Title="HOME"
              BackgroundColor="#1A1A2E">
@@ -10,12 +11,36 @@
         <local:StringNotEmptyConverter x:Key="StringNotEmpty" />
         <local:TeamLogoSourceConverter x:Key="TeamLogo" />
         <local:BoolToDisabledOpacityConverter x:Key="BoolToDisabledOpacity" />
+        <local:WindowUrgencyColorConverter x:Key="WindowUrgencyColor" />
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
 
-        <!-- Date header -->
-        <Label Grid.Row="0" AutomationId="CurrentDateLabel" Text="{Binding CurrentDateText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="22" HorizontalOptions="Center" />
+        <!-- Date header + transfer window indicator -->
+        <VerticalStackLayout Grid.Row="0" Spacing="6">
+            <Label AutomationId="CurrentDateLabel" Text="{Binding CurrentDateText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="22" HorizontalOptions="Center" />
+
+            <!-- Dot is a Border, not a BoxView: BoxView's CornerRadius leaves an opaque
+                 square behind the circle on Android. -->
+            <Border AutomationId="TransferWindowBadge" IsVisible="{Binding IsTransferWindowOpen}"
+                    BackgroundColor="#16213E"
+                    Stroke="{Binding TransferWindowUrgency, Converter={StaticResource WindowUrgencyColor}}"
+                    StrokeThickness="1" StrokeShape="RoundRectangle 14"
+                    Padding="12,5" HorizontalOptions="Center">
+                <HorizontalStackLayout Spacing="7">
+                    <Border WidthRequest="8" HeightRequest="8" VerticalOptions="Center" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 4"
+                            BackgroundColor="{Binding TransferWindowUrgency, Converter={StaticResource WindowUrgencyColor}}" />
+                    <Label Text="{Binding TransferWindowBadge}" FontSize="12" FontFamily="OpenSansSemibold" CharacterSpacing="0.5" VerticalOptions="Center"
+                           TextColor="{Binding TransferWindowUrgency, Converter={StaticResource WindowUrgencyColor}}" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Why continuous advance came to a halt -->
+            <Label AutomationId="AdvanceStoppedReason" Text="{Binding AutoAdvanceStoppedReason}" TextColor="#F0A500" FontSize="12" FontFamily="OpenSansSemibold"
+                   HorizontalOptions="Center" HorizontalTextAlignment="Center" LineBreakMode="WordWrap"
+                   IsVisible="{Binding AutoAdvanceStoppedReason, Converter={StaticResource StringNotEmpty}}" />
+        </VerticalStackLayout>
 
         <!-- Next match card -->
         <Border Grid.Row="1" BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,12">
@@ -23,8 +48,6 @@
                 <Label Text="NEXT MATCH" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" />
                 <Label Text="{Binding NextMatchInfo}" TextColor="#EAEAEA" FontSize="15" LineBreakMode="WordWrap" />
                 <Label Text="{Binding NextMatchDateText}" TextColor="#8888AA" FontSize="12" />
-                <Label Text="{Binding NextCupMatchInfo}" TextColor="#F0A500" FontSize="13"
-                       IsVisible="{Binding NextCupMatchInfo, Converter={StaticResource StringNotEmpty}}" />
                 <Label Text="{Binding LastResultText}" TextColor="#8888AA" FontSize="13" Margin="0,4,0,0"
                        IsVisible="{Binding LastResultText, Converter={StaticResource StringNotEmpty}}" />
             </VerticalStackLayout>
@@ -39,9 +62,13 @@
                     <Label Text="SEASON COMPLETED" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="2" VerticalOptions="Center" />
                 </HorizontalStackLayout>
                 <Label Text="{Binding SeasonCompletedMessage}" TextColor="#F0A500" FontSize="14" LineBreakMode="WordWrap" />
-                <Button Text="BEGIN NEW SEASON"
+                <!-- Shown only once it works. It used to sit here looking live through the
+                     whole of pre-season and do nothing when tapped. -->
+                <Button Text="BEGIN NEW SEASON" AutomationId="BeginNewSeasonBtn"
                         BackgroundColor="#F0A500" TextColor="#1A1A2E" FontFamily="OpenSansSemibold" CornerRadius="10" HeightRequest="46"
-                        Command="{Binding BeginNewSeasonCommand}" IsEnabled="{Binding CanBeginNewSeason}" />
+                        Command="{Binding BeginNewSeasonCommand}" IsVisible="{Binding CanBeginNewSeason}" />
+                <Label Text="{Binding NewSeasonUnlockText}" TextColor="#8888AA" FontSize="12" LineBreakMode="WordWrap"
+                       IsVisible="{Binding IsAwaitingNewSeason}" />
             </VerticalStackLayout>
         </Border>
 
@@ -55,9 +82,11 @@
                     BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="10" HeightRequest="46"
                     Command="{Binding SimulateMatchCommand}" IsEnabled="{Binding CanSimulateMatch}"
                     Opacity="{Binding CanSimulateMatch, Converter={StaticResource BoolToDisabledOpacity}}" />
-            <Button Grid.Row="1" Grid.Column="1" Text="ADVANCE DAY"
+            <!-- Advances continuously until something needs attention; the overlay's STOP
+                 button is what interrupts it. -->
+            <Button Grid.Row="1" Grid.Column="1" Text="ADVANCE" AutomationId="AdvanceBtn"
                     BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1.5" FontFamily="OpenSansSemibold" FontSize="13" CornerRadius="10" HeightRequest="46"
-                    Command="{Binding AdvanceDayCommand}" IsEnabled="{Binding CanAdvanceDay}"
+                    Command="{Binding StartAutoAdvanceCommand}" IsEnabled="{Binding CanAdvanceDay}"
                     Opacity="{Binding CanAdvanceDay, Converter={StaticResource BoolToDisabledOpacity}}" />
         </Grid>
 
@@ -95,6 +124,40 @@
                 <Label Text="Simulating…" TextColor="#8888AA" FontSize="13" HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>
+
+        <!-- Continuous-advance overlay. Covers the screen so nothing else can be tapped
+             while days are rolling, and turns STOP into a target you can't miss. The
+             tab bar sits outside this page, so the code-behind hides it to match. -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#E01A1A2E" IsVisible="{Binding IsAutoAdvancing}">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="16" Padding="32,0">
+                <Label Text="ADVANCING" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="3" HorizontalOptions="Center" />
+                <Label Text="{Binding CurrentDateText}" TextColor="#EAEAEA" FontFamily="OpenSansSemibold" FontSize="20" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                <ActivityIndicator IsRunning="{Binding IsAutoAdvancing}" Color="#E94560" />
+                <Button Text="STOP" AutomationId="StopAdvanceBtn"
+                        BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" FontSize="16" CharacterSpacing="2"
+                        CornerRadius="12" HeightRequest="60" WidthRequest="200" HorizontalOptions="Center"
+                        Command="{Binding StopAutoAdvanceCommand}" />
+                <Label Text="Stops as soon as the current day finishes." TextColor="#666688" FontSize="11" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Season rollover. Takes a while — it ages every player in the game and clears
+             a season of match data — so the wait is spelled out rather than looking like
+             a freeze. No stop button: this one cannot be interrupted half-done. -->
+        <Grid Grid.RowSpan="5" BackgroundColor="#F21A1A2E" IsVisible="{Binding IsRollingOverSeason}">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="18" Padding="32,0">
+                <ActivityIndicator IsRunning="{Binding IsRollingOverSeason}" Color="#F0A500"
+                                   WidthRequest="56" HeightRequest="56" HorizontalOptions="Center" />
+                <Label Text="PREPARING THE NEW SEASON" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="13"
+                       CharacterSpacing="2" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                <Label Text="Crowning champions, ageing players and archiving the season's records. This can take a moment."
+                       TextColor="#8888AA" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center" LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Toasts sit above everything, including the overlays, so alerts raised
+             mid-advance are still visible. -->
+        <controls:ToastHost x:Name="Toasts" Grid.RowSpan="5" />
 
     </Grid>
 

@@ -69,11 +69,23 @@
                             <Image Source="{Binding LeagueLogoPath, Converter={StaticResource AssetImage}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
                             <Label Text="{Binding LeagueDisplayName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="16" LineBreakMode="TailTruncation" VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                        <Label Grid.Column="1" Text="HISTORY" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" VerticalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ViewLeagueHistoryCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+                            <Label Text="STATS" AutomationId="WorldStatsLink" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnStatsTapped" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="AWARDS" AutomationId="WorldAwardsLink" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnAwardsTapped" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="HISTORY" TextColor="#8888AA" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ViewLeagueHistoryCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
                     </Grid>
 
                     <Grid ColumnDefinitions="26,22,*,30,34,36" ColumnSpacing="4">

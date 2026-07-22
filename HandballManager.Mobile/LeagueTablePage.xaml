@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:HandballManager.Mobile"
+             xmlns:models="clr-namespace:HandballManager.Models;assembly=HandballManager.Core"
              x:Class="HandballManager.Mobile.LeagueTablePage"
              Title="LEAGUE TABLE"
              BackgroundColor="#1A1A2E">
@@ -11,22 +12,31 @@
         <local:AssetImageSourceConverter x:Key="AssetImage" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
 
-        <!-- League header + history shortcut (Table tab always shows the player's own league — other
-             countries' tables live in the Comps tab, so a competition switcher here is redundant). -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <!-- League header. Reached from Comps, so it shows whichever country was picked. -->
+        <Grid Grid.Row="0" ColumnDefinitions="*" ColumnSpacing="8">
             <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
                 <Image Source="{Binding LeagueLogoPath, Converter={StaticResource AssetImage}}" WidthRequest="26" HeightRequest="26" Aspect="AspectFit" VerticalOptions="Center" />
-                <Label Text="{Binding CompetitionName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
+                <Label x:Name="CompetitionTitle" Text="{Binding CompetitionName}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
             </HorizontalStackLayout>
-            <Button Grid.Column="1" Text="HISTORY" FontSize="11"
-                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="10" Padding="12,0"
+        </Grid>
+
+        <!-- Player stats and awards for this competition -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="6">
+            <Button Grid.Column="0" Text="PLAYER STATS" FontSize="10" AutomationId="StatsBtn"
+                    BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                    Clicked="OnStatsClicked" />
+            <Button Grid.Column="1" Text="AWARDS" FontSize="10" AutomationId="AwardsBtn"
+                    BackgroundColor="Transparent" TextColor="#F0A500" BorderColor="#F0A500" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                    Clicked="OnAwardsClicked" />
+            <Button Grid.Column="2" Text="HISTORY" FontSize="10"
+                    BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
                     Clicked="OnHistoryClicked" />
         </Grid>
 
         <!-- Column headers -->
-        <Grid Grid.Row="1" ColumnDefinitions="34,*,44,44,52" Padding="10,0">
+        <Grid Grid.Row="2" ColumnDefinitions="34,*,44,44,52" Padding="10,0">
             <Label Grid.Column="0" Text="#" TextColor="#8888AA" FontSize="12" />
             <Label Grid.Column="1" Text="TEAM" TextColor="#8888AA" FontSize="12" />
             <Label Grid.Column="2" Text="PLD" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
@@ -35,7 +45,7 @@
         </Grid>
 
         <!-- Standings (tap a club for its profile) -->
-        <CollectionView Grid.Row="2" x:Name="StandingsView" SelectionMode="Single" SelectionChanged="OnStandingSelected">
+        <CollectionView Grid.Row="3" x:Name="StandingsView" SelectionMode="Single" SelectionChanged="OnStandingSelected">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:StandingRow">
                     <Border BackgroundColor="#16213E"

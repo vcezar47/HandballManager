@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             xmlns:services="clr-namespace:HandballManager.Services;assembly=HandballManager.Core"
+             x:Class="HandballManager.Mobile.AwardsPage"
+             Title="TEAM OF THE WEEK"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="10">
+
+        <!-- Competition -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10">
+            <Image x:Name="CompetitionLogo" WidthRequest="26" HeightRequest="26" Aspect="AspectFit" VerticalOptions="Center" />
+            <Label x:Name="CompetitionLabel" Text="" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <!-- Week / Season switch. Only leagues crown a Team of the Season, so cups show
+             the week tab alone. -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="6">
+            <Button x:Name="TabWeek" Grid.Column="0" Text="TEAM OF THE WEEK" FontSize="11" AutomationId="TabTotw"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="36" Padding="0"
+                    Clicked="OnWeekTabClicked" />
+            <Button x:Name="TabSeason" Grid.Column="1" Text="TEAM OF THE SEASON" FontSize="11" AutomationId="TabTots"
+                    BackgroundColor="#16213E" TextColor="#8888AA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="36" Padding="0"
+                    Clicked="OnSeasonTabClicked" />
+        </Grid>
+
+        <!-- Matchweek / season stepper -->
+        <Grid Grid.Row="2" ColumnDefinitions="44,*,44" ColumnSpacing="6">
+            <Button Grid.Column="0" Text="‹" FontSize="20" BackgroundColor="#16213E" TextColor="#E94560" CornerRadius="8" HeightRequest="38"
+                    Clicked="OnPreviousClicked" AutomationId="AwardsPrev" />
+            <Label Grid.Column="1" x:Name="PeriodLabel" Text="" TextColor="#8888AA" FontSize="13"
+                   HorizontalTextAlignment="Center" VerticalOptions="Center" AutomationId="AwardsPeriod" />
+            <Button Grid.Column="2" Text="›" FontSize="20" BackgroundColor="#16213E" TextColor="#E94560" CornerRadius="8" HeightRequest="38"
+                    Clicked="OnNextClicked" AutomationId="AwardsNext" />
+        </Grid>
+
+        <CollectionView Grid.Row="3" x:Name="LineupView" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:AwardPlayer">
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,10">
+                        <Grid ColumnDefinitions="42,26,*,54" ColumnSpacing="8">
+                            <Label Grid.Column="0" Text="{Binding Position}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                            <Image Grid.Column="1" Source="{Binding TeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="24" HeightRequest="24" Aspect="AspectFit" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="2" Spacing="1" VerticalOptions="Center">
+                                <Label Text="{Binding PlayerName}" TextColor="#EAEAEA" FontSize="14" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding TeamName}" TextColor="#8888AA" FontSize="11" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding ContributionText}" TextColor="#666688" FontSize="10" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="3" Spacing="0" VerticalOptions="Center">
+                                <Label Text="{Binding RatingText}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="17" HorizontalTextAlignment="End" />
+                                <Label Text="RATING" TextColor="#8888AA" FontSize="8" CharacterSpacing="1" HorizontalTextAlignment="End" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label x:Name="EmptyLabel" Text="No matches played yet." TextColor="#555577" FontSize="13" Margin="4,10" LineBreakMode="WordWrap" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

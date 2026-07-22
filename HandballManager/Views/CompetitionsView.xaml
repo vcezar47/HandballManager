@@ -208,7 +208,7 @@
                             </Button>
 
                             <!-- Player's cup group table -->
-                            <DataGrid ItemsSource="{Binding PlayerCupGroup.Entries}"
+                            <DataGrid ItemsSource="{Binding PlayerCupStandings}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
                                       CanUserReorderColumns="False"
@@ -402,7 +402,7 @@
                         </Button>
 
                         <!-- Player's cup group table (same columns as Romanian) -->
-                        <DataGrid ItemsSource="{Binding PlayerCupGroup.Entries}"
+                        <DataGrid ItemsSource="{Binding PlayerCupStandings}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserReorderColumns="False"
@@ -528,7 +528,7 @@
                         </Button>
 
                         <!-- Player's cup group table -->
-                        <DataGrid ItemsSource="{Binding PlayerCupGroup.Entries}"
+                        <DataGrid ItemsSource="{Binding PlayerCupStandings}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserReorderColumns="False"
@@ -659,7 +659,7 @@
                                 </Button.Template>
                             </Button>
 
-                            <DataGrid ItemsSource="{Binding PlayerCupGroup.Entries}"
+                            <DataGrid ItemsSource="{Binding PlayerCupStandings}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
                                       CanUserReorderColumns="False"

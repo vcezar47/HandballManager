@@ -30,10 +30,12 @@
 
     <!-- In-game area -->
     <TabBar Route="game">
-        <ShellContent Route="home" Title="Home" Icon="home.png" ContentTemplate="{DataTemplate local:HomePage}" />
+        <!-- Home sits centre. The old Table tab is gone: league tables now hang off
+             Comps, which covers every country rather than only the player's own. -->
         <ShellContent Route="squad" Title="Squad" Icon="team.png" ContentTemplate="{DataTemplate local:RosterPage}" />
-        <ShellContent Route="table" Title="Table" Icon="standings.png" ContentTemplate="{DataTemplate local:LeagueTablePage}" />
         <ShellContent Route="comps" Title="Comps" Icon="trophy.png" ContentTemplate="{DataTemplate local:CompetitionsPage}" />
+        <ShellContent Route="home" Title="Home" Icon="home.png" ContentTemplate="{DataTemplate local:HomePage}" />
+        <ShellContent Route="info" Title="Info" Icon="information.png" ContentTemplate="{DataTemplate local:ClubInfoPage}" />
         <ShellContent Route="club" Title="{Binding ClubTabTitle}" Icon="club.png" ContentTemplate="{DataTemplate local:ClubPage}" />
     </TabBar>
 

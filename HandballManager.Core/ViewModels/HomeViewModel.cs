@@ -18,6 +18,7 @@ public partial class HomeViewModel : BaseViewModel
     private readonly Func<Task>? _onDayAdvanced;
     private readonly Action<int, int, string, string, bool>? _onNavigateToSquadSelection;
     private readonly GameClock _clock;
+    private readonly GameNotificationService? _notifications;
 
     [ObservableProperty]
     private DateTime _currentDate;
@@ -67,6 +68,17 @@ public partial class HomeViewModel : BaseViewModel
     [ObservableProperty]
     private bool _canBeginNewSeason;
 
+    /// <summary>Season finished, but the new one cannot start yet.</summary>
+    [ObservableProperty]
+    private bool _isAwaitingNewSeason;
+
+    /// <summary>The season rollover is running. Drives the blocking progress overlay.</summary>
+    [ObservableProperty]
+    private bool _isRollingOverSeason;
+
+    [ObservableProperty]
+    private string _newSeasonUnlockText = string.Empty;
+
     [ObservableProperty]
     private bool _isCupMatchday;
 
@@ -75,6 +87,32 @@ public partial class HomeViewModel : BaseViewModel
 
     [ObservableProperty]
     private bool _isNextMatchTrophyEvent;
+
+    /// <summary>
+    /// Pause between simulated days. Fast enough to feel like skipping, slow enough
+    /// that STOP is a comfortable target rather than a timing exercise.
+    /// </summary>
+    private const int AutoAdvanceDayDelayMs = 250;
+
+    private bool _stopAutoAdvanceRequested;
+
+    [ObservableProperty]
+    private bool _isAutoAdvancing;
+
+    /// <summary>Why continuous advance came to a halt, shown once it stops.</summary>
+    [ObservableProperty]
+    private string _autoAdvanceStoppedReason = string.Empty;
+
+    [ObservableProperty]
+    private bool _isTransferWindowOpen;
+
+    /// <summary>e.g. "Summer window · 12 days left". Empty when no window is open.</summary>
+    [ObservableProperty]
+    private string _transferWindowBadge = string.Empty;
+
+    /// <summary>Green while there's time, amber inside the last week, red on the closing day.</summary>
+    [ObservableProperty]
+    private TransferWindowUrgency _transferWindowUrgency;
 
     private int _nextHomeTeamId;
     private int _nextAwayTeamId;
@@ -92,7 +130,8 @@ public partial class HomeViewModel : BaseViewModel
     private int _viewedEventIndex;
 
     public HomeViewModel(HandballDbContext db, LeagueService leagueService, SimulationEngine simulationEngine,
-        CupService cupService, SupercupService supercupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Action<int, int, string, string, bool>? onNavigateToSquadSelection = null, Func<Task>? onDayAdvanced = null)
+        CupService cupService, SupercupService supercupService, GameClock clock, Func<int, Task> onNavigateToMatchDetail, Action<int, int, string, string, bool>? onNavigateToSquadSelection = null, Func<Task>? onDayAdvanced = null,
+        GameNotificationService? notifications = null)
     {
         Title = "Home";
         _db = db;
@@ -104,6 +143,7 @@ public partial class HomeViewModel : BaseViewModel
         _onNavigateToMatchDetail = onNavigateToMatchDetail;
         _onNavigateToSquadSelection = onNavigateToSquadSelection;
         _onDayAdvanced = onDayAdvanced;
+        _notifications = notifications;
     }
 
     public async Task InitializeAsync()
@@ -479,6 +519,11 @@ public partial class HomeViewModel : BaseViewModel
     {
         CurrentDateText = CurrentDate.ToString("dddd, MMM d, yyyy");
 
+        var window = LeagueService.GetTransferWindowStatus(CurrentDate);
+        IsTransferWindowOpen = window.IsOpen;
+        TransferWindowBadge = window.BadgeText;
+        TransferWindowUrgency = window.Urgency;
+
         if (IsSeasonOver || (_nextMatchweek <= 0 && !_nextCupDate.HasValue && !_nextSupercupDate.HasValue))
         {
             IsMatchdayToday = false;
@@ -499,27 +544,65 @@ public partial class HomeViewModel : BaseViewModel
             IsCupMatchday = cupPending;
         }
 
-        CanSimulateMatch = !IsBusy && !IsSeasonOver && IsMatchdayToday;
+        CanSimulateMatch = !IsBusy && !IsAutoAdvancing && !IsSeasonOver && IsMatchdayToday;
         CanAdvanceDay = !IsBusy && (!IsMatchdayToday || MatchSimulated || IsSeasonOver);
-        CanSimulateToEndOfSeason = !IsBusy && !IsSeasonOver;
+        CanSimulateToEndOfSeason = !IsBusy && !IsAutoAdvancing && !IsSeasonOver;
 
         if (IsSeasonOver)
         {
             var unlockDate = new DateTime(CurrentDate.Year, 6, 30);
             CanBeginNewSeason = CurrentDate.Date >= unlockDate;
 
-            if (CurrentDate.Date >= unlockDate)
+            if (CanBeginNewSeason)
             {
                 CanAdvanceDay = false;
+                IsAwaitingNewSeason = false;
+                NewSeasonUnlockText = string.Empty;
+            }
+            else
+            {
+                // Pre-season still has days to run. Say so, rather than showing a button
+                // that looks live and does nothing when tapped.
+                IsAwaitingNewSeason = true;
+                NewSeasonUnlockText = $"Pre-season runs until {unlockDate:MMMM d} — keep advancing.";
             }
         }
         else
         {
             CanBeginNewSeason = false;
+            IsAwaitingNewSeason = false;
+            NewSeasonUnlockText = string.Empty;
         }
     }
 
     partial void OnCurrentDateChanged(DateTime value) => UpdateCalendarState();
+
+    /// <summary>
+    /// Toasts the transfer window opening and its final day. Only called from the
+    /// day-by-day advance — bulk simulation would otherwise fire these mid-skip.
+    /// </summary>
+    private void AnnounceTransferWindowChange(DateTime date)
+    {
+        if (_notifications == null) return;
+
+        var window = LeagueService.GetTransferWindowStatus(date);
+        if (!window.IsOpen) return;
+
+        if (window.IsOpeningDay)
+        {
+            _notifications.Post(GameNotificationKind.TransferWindow,
+                $"{window.Name} is open",
+                $"Open until {window.End:MMMM d}. You can buy, sell and negotiate.",
+                route: NotificationRoutes.Transfers);
+        }
+        else if (window.IsFinalDay)
+        {
+            _notifications.Post(GameNotificationKind.TransferWindow,
+                "Final day of the transfer window",
+                $"The {window.Name.ToLowerInvariant()} closes tonight. Last chance to get deals done.",
+                route: NotificationRoutes.Transfers);
+        }
+    }
 
     [RelayCommand]
     private async Task ChangeMatchweekAsync(string? delta)
@@ -686,57 +769,236 @@ public partial class HomeViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            MatchSimulated = false;
-
-            var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
-
-            while (_nextSupercupDate.HasValue && _nextSupercupDate.Value.Date <= CurrentDate.Date)
-            {
-                var playerFixture = await _supercupService.GetFixtureForTeamOnDateAsync(playerTeam!.Id, _nextSupercupDate.Value);
-                
-                if (playerFixture == null)
-                {
-                    await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate.Value.Date);
-                    _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync(playerTeam!.CompetitionName);
-                }
-                else break;
-            }
-
-            while (_nextCupDate.HasValue && _nextCupDate.Value.Date <= CurrentDate.Date)
-            {
-                var playerFixture = await _cupService.GetFixtureForTeamOnDateAsync(playerTeam!.Id, _nextCupDate.Value);
-                
-                if (playerFixture == null)
-                {
-                    await _simulationEngine.SimulateCupFixturesAsync(_nextCupDate.Value.Date);
-                    _nextCupDate = await _cupService.GetNextCupDateAsync();
-                }
-                else break;
-            }
-
-            _clock.AdvanceDay();
-            CurrentDate = _clock.CurrentDate;
-
-            // Always process daily progression for the new date (transfers, contracts, training progression, etc.)
-            await _simulationEngine.ProcessDailyProgressionAsync(CurrentDate);
-
-            // Only simulate other league/cup matches if the player does NOT have a match today.
-            // If the player has a match today, we stop advancing and wait for the player to play/simulate it via MATCHDAY.
-            bool playerHasMatchToday = playerTeam != null && await PlayerHasMatchOnDateAsync(playerTeam.Id, CurrentDate);
-
-            if (!playerHasMatchToday)
-            {
-                await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
-            }
-
-            if (_onDayAdvanced != null) await _onDayAdvanced();
-
-            await BuildAllEventDatesAsync();
-            await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
+            await AdvanceOneDayAsync();
         }
         finally
         {
             IsBusy = false;
+            UpdateCalendarState();
+        }
+    }
+
+    /// <summary>
+    /// Advances the world by one day and reports why the player might want to stop
+    /// here. Returns null when the day passed without anything worth surfacing.
+    /// </summary>
+    private async Task<string?> AdvanceOneDayAsync()
+    {
+        MatchSimulated = false;
+        bool seasonWasOver = IsSeasonOver;
+
+        var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
+
+        // Taken before the day runs so the day's changes can be diffed out of it.
+        var before = await SnapshotAsync(playerTeam);
+
+        while (_nextSupercupDate.HasValue && _nextSupercupDate.Value.Date <= CurrentDate.Date)
+        {
+            var playerFixture = await _supercupService.GetFixtureForTeamOnDateAsync(playerTeam!.Id, _nextSupercupDate.Value);
+
+            if (playerFixture == null)
+            {
+                await _simulationEngine.SimulateSupercupFixturesAsync(_nextSupercupDate.Value.Date);
+                _nextSupercupDate = await _supercupService.GetNextSupercupDateAsync(playerTeam!.CompetitionName);
+            }
+            else break;
+        }
+
+        while (_nextCupDate.HasValue && _nextCupDate.Value.Date <= CurrentDate.Date)
+        {
+            var playerFixture = await _cupService.GetFixtureForTeamOnDateAsync(playerTeam!.Id, _nextCupDate.Value);
+
+            if (playerFixture == null)
+            {
+                await _simulationEngine.SimulateCupFixturesAsync(_nextCupDate.Value.Date);
+                _nextCupDate = await _cupService.GetNextCupDateAsync();
+            }
+            else break;
+        }
+
+        _clock.AdvanceDay();
+        CurrentDate = _clock.CurrentDate;
+        AnnounceTransferWindowChange(CurrentDate);
+
+        // Always process daily progression for the new date (transfers, contracts, training progression, etc.)
+        await _simulationEngine.ProcessDailyProgressionAsync(CurrentDate);
+
+        // Only simulate other league/cup matches if the player does NOT have a match today.
+        // If the player has a match today, we stop advancing and wait for the player to play/simulate it via MATCHDAY.
+        bool playerHasMatchToday = playerTeam != null && await PlayerHasMatchOnDateAsync(playerTeam.Id, CurrentDate);
+
+        if (!playerHasMatchToday)
+        {
+            await _simulationEngine.SimulateAllLeaguesForDateAsync(CurrentDate);
+        }
+
+        if (_onDayAdvanced != null) await _onDayAdvanced();
+
+        await BuildAllEventDatesAsync();
+        await UpdateNextFixtureAsync(setViewedMatchweekDefault: false);
+
+        var after = await SnapshotAsync(playerTeam);
+        AnnounceDayEvents(before, after);
+        return DetectHaltReason(before, after, playerHasMatchToday, seasonWasOver);
+    }
+
+    /// <summary>
+    /// The bits of club state worth watching across a single day. Cheap enough to take
+    /// twice per simulated day during continuous advance.
+    /// </summary>
+    private sealed record DaySnapshot(
+        int PendingOffers,
+        int YouthIntake,
+        int Trophies,
+        IReadOnlyList<(int Id, string Name)> Squad);
+
+    private static readonly DaySnapshot EmptySnapshot = new(0, 0, 0, []);
+
+    private async Task<DaySnapshot> SnapshotAsync(Team? team)
+    {
+        if (team == null) return EmptySnapshot;
+
+        int offers = await _db.TransferOffers
+            .CountAsync(o => o.ForPlayer != null && o.ForPlayer.TeamId == team.Id && o.Status == "Pending");
+
+        int youth = await _db.YouthIntakePlayers
+            .CountAsync(y => y.ClubId == team.Id && y.IntakeYear == CurrentDate.Year);
+
+        int trophies = await _db.ChampionRecords.CountAsync(r => r.TeamId == team.Id)
+                     + await _db.CupWinnerRecords.CountAsync(r => r.TeamId == team.Id)
+                     + await _db.SupercupWinnerRecords.CountAsync(r => r.TeamId == team.Id);
+
+        var squad = await _db.Players
+            .Where(p => p.TeamId == team.Id && !p.IsRetired)
+            .Select(p => new ValueTuple<int, string>(p.Id, p.FirstName + " " + p.LastName))
+            .ToListAsync();
+
+        return new DaySnapshot(offers, youth, trophies, squad);
+    }
+
+    /// <summary>
+    /// Toasts what changed today. Squad arrivals/departures are diffed rather than read
+    /// from the news feed, which carries every transfer in the world and would spam.
+    /// </summary>
+    private void AnnounceDayEvents(DaySnapshot before, DaySnapshot after)
+    {
+        if (_notifications == null) return;
+
+        if (after.Trophies > before.Trophies)
+        {
+            _notifications.Post(GameNotificationKind.Trophy,
+                "Trophy won!",
+                "Your club has lifted silverware. Check the trophy cabinet.",
+                NotificationRoutes.Honours);
+        }
+
+        if (after.YouthIntake > before.YouthIntake)
+        {
+            _notifications.Post(GameNotificationKind.YouthIntake,
+                "Youth intake has arrived",
+                $"{after.YouthIntake - before.YouthIntake} prospects have come through the academy.",
+                NotificationRoutes.Youth);
+        }
+
+        var beforeIds = before.Squad.Select(p => p.Id).ToHashSet();
+        var afterIds = after.Squad.Select(p => p.Id).ToHashSet();
+
+        foreach (var arrival in after.Squad.Where(p => !beforeIds.Contains(p.Id)))
+        {
+            _notifications.Post(GameNotificationKind.Transfer,
+                "Signing confirmed", $"{arrival.Name} has joined the club.", NotificationRoutes.Transfers);
+        }
+
+        foreach (var departure in before.Squad.Where(p => !afterIds.Contains(p.Id)))
+        {
+            _notifications.Post(GameNotificationKind.Transfer,
+                "Departure confirmed", $"{departure.Name} has left the club.", NotificationRoutes.Transfers);
+        }
+
+        if (after.PendingOffers > before.PendingOffers)
+        {
+            _notifications.Post(GameNotificationKind.Transfer,
+                "New transfer offer",
+                "A club has made an offer for one of your players.",
+                NotificationRoutes.Transfers);
+        }
+    }
+
+    /// <summary>
+    /// Anything the player would not want skipped past. Routine days — league results
+    /// elsewhere, news, training ticks — deliberately return null so auto-advance rolls on.
+    /// </summary>
+    private string? DetectHaltReason(DaySnapshot before, DaySnapshot after, bool playerHasMatchToday, bool seasonWasOver)
+    {
+        if (playerHasMatchToday) return "Matchday";
+
+        // Only the day the season ends is worth stopping for. Reporting it every day
+        // afterwards pinned auto-advance in place through the whole of pre-season.
+        if (IsSeasonOver && !seasonWasOver) return "The season is over";
+        if (after.PendingOffers > before.PendingOffers) return "A new transfer offer has arrived";
+        if (after.YouthIntake > before.YouthIntake) return "Your youth intake has arrived";
+        if (after.Trophies > before.Trophies) return "Your club has won a trophy";
+
+        var window = LeagueService.GetTransferWindowStatus(CurrentDate);
+        if (window.IsOpeningDay) return $"{window.Name} is open";
+        if (window.IsFinalDay) return "Final day of the transfer window";
+
+        return null;
+    }
+
+    /// <summary>
+    /// Asks the running advance to finish its current day and stop.
+    /// </summary>
+    /// <remarks>
+    /// Separate from <see cref="StartAutoAdvanceCommand"/> on purpose. An
+    /// <c>AsyncRelayCommand</c> reports <c>CanExecute == false</c> for as long as its
+    /// task is running, so a single toggle command is unclickable during the very loop
+    /// it is meant to interrupt.
+    /// </remarks>
+    [RelayCommand]
+    private void StopAutoAdvance() => _stopAutoAdvanceRequested = true;
+
+    /// <summary>
+    /// Runs days back to back until something needs attention or the player taps stop.
+    /// Deliberately does not set <see cref="BaseViewModel.IsBusy"/> — the busy overlay
+    /// would cover the screen and swallow the stop tap.
+    /// </summary>
+    [RelayCommand]
+    private async Task StartAutoAdvanceAsync()
+    {
+        if (IsAutoAdvancing || !CanAdvanceDay) return;
+
+        IsAutoAdvancing = true;
+        _stopAutoAdvanceRequested = false;
+        AutoAdvanceStoppedReason = string.Empty;
+
+        try
+        {
+            while (!_stopAutoAdvanceRequested)
+            {
+                string? halt = await AdvanceOneDayAsync();
+                UpdateCalendarState();
+
+                if (halt != null)
+                {
+                    AutoAdvanceStoppedReason = halt;
+                    break;
+                }
+
+                if (!CanAdvanceDay)
+                {
+                    if (CanBeginNewSeason) AutoAdvanceStoppedReason = "Pre-season is over — the new season can begin";
+                    break;
+                }
+
+                // Lets the date tick visibly and keeps the stop button responsive.
+                await Task.Delay(AutoAdvanceDayDelayMs);
+            }
+        }
+        finally
+        {
+            IsAutoAdvancing = false;
+            _stopAutoAdvanceRequested = false;
             UpdateCalendarState();
         }
     }
@@ -754,9 +1016,15 @@ public partial class HomeViewModel : BaseViewModel
         if (!IsSeasonOver || !CanBeginNewSeason || IsBusy) return;
 
         IsBusy = true;
+        IsRollingOverSeason = true;
         try
         {
-            await _simulationEngine.ProcessEndOfSeasonAsync(CurrentDate);
+            // Off the UI thread: even trimmed down this clears a season of match data for
+            // every league in the game, and Android kills an app whose main thread stalls
+            // for a few seconds. Nothing else touches the DbContext meanwhile — the
+            // overlay covers the screen and the tab bar is hidden.
+            var seasonEnd = CurrentDate;
+            await Task.Run(() => _simulationEngine.ProcessEndOfSeasonAsync(seasonEnd));
 
             MatchSimulated = false;
             IsSeasonOver = false;
@@ -774,6 +1042,7 @@ public partial class HomeViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+            IsRollingOverSeason = false;
             UpdateCalendarState();
         }
     }

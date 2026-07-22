@@ -21,7 +21,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationVersion>3</ApplicationVersion>
 
 		<WindowsPackageType>None</WindowsPackageType>
 
@@ -63,6 +63,8 @@
 		<MauiImage Include="..\HandballManager\Assets\teamlogo\**\*.png" />
 		<MauiImage Include="..\HandballManager\Assets\leaguelogo\**\*.png" />
 		<MauiImage Include="..\HandballManager\Assets\icons\**\*.png" />
+		<!-- Attribute progression/regression arrows (prog45, prog90, reg45, reg90) -->
+		<MauiImage Include="..\HandballManager\Assets\visuals\**\*.png" />
 
 		<!-- Trophies and flags kept as raw assets: trophies collide with a league-logo name,
 		     and several "flag" files are actually WebP with a .png extension — aapt2 refuses

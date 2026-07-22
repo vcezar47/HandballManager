@@ -23,6 +23,12 @@ public sealed class GameSession
     public HandballDbContext Db { get; }
     public GameClock Clock { get; }
 
+    /// <summary>Toast channel for the session. The shell's toast host subscribes to this.</summary>
+    public GameNotificationService Notifications { get; } = new();
+
+    /// <summary>Exposed for pages that query league data directly (e.g. the Table tab's leaderboards).</summary>
+    public LeagueService Leagues => _leagueService;
+
     private readonly LeagueService _leagueService;
     private readonly SimulationEngine _simulationEngine;
     private readonly TransferService _transferService;
@@ -66,7 +72,8 @@ public sealed class GameSession
 
         StartVM = new StartViewModel(db, OnTeamSelected);
         HomeVM = new HomeViewModel(db, _leagueService, _simulationEngine, _cupService, _supercupService, clock,
-            NavigateToMatchDetailAsync, onNavigateToSquadSelection: NavigateToSquadSelection, onDayAdvanced: PersistStateAsync);
+            NavigateToMatchDetailAsync, onNavigateToSquadSelection: NavigateToSquadSelection, onDayAdvanced: PersistStateAsync,
+            notifications: Notifications);
         RosterVM = new RosterViewModel(db, onPlayerSelected: NavigateToPlayerDetail, onOpenRenewContract: OpenContractRenewal);
         TransfersVM = new TransfersViewModel(db, _transferService, clock,
             onRefresh: RefreshBadgesAsync, onOpenTransferNegotiation: OpenTransferNegotiation);
@@ -74,7 +81,7 @@ public sealed class GameSession
         FinancesVM = new FinancesViewModel(db);
         CompetitionsVM = new CompetitionsViewModel(db, _leagueService, _cupService, _supercupService,
             onTeamSelected: NavigateToTeamRoster,
-            onNavigateToLeagueDetail: () => _ = GoToLeagueTableAsync(),
+            onNavigateToLeagueDetail: () => _ = OpenLeagueTableAsync(null),
             onNavigateToCupDetail: () => _ = OpenCupDetailAsync(null),
             onNavigateToSupercupDetail: () => _ = OpenSupercupDetailAsync(null));
         // World Leagues already renders each country's table inline, so its cards don't
@@ -102,6 +109,7 @@ public sealed class GameSession
         var db = new HandballDbContext();
         await db.Database.EnsureDeletedAsync();
         await db.Database.EnsureCreatedAsync();
+        await SchemaUpgrader.UpgradeAsync(db);
         DatabaseSeeder.Seed(db);
 
         LeagueService.RestoreSeasonYear(2025);
@@ -132,6 +140,10 @@ public sealed class GameSession
                 db.Dispose();
                 return null;
             }
+
+            // A save from an older build predates tables added since — create them
+            // before anything queries them.
+            await SchemaUpgrader.UpgradeAsync(db);
 
             var state = await new GameStateService(db).ReadStateAsync();
             bool hasCareer = await db.Teams.AnyAsync(t => t.IsPlayerTeam);
@@ -226,6 +238,27 @@ public sealed class GameSession
         }
     }
 
+    /// <summary>Maps a tapped toast's logical route onto mobile navigation.</summary>
+    public async void OpenNotificationRoute(string route)
+    {
+        try
+        {
+            Page page = route switch
+            {
+                NotificationRoutes.Transfers => new TransfersPage(),
+                NotificationRoutes.Youth => new YouthPage(),
+                NotificationRoutes.News => new NewsPage(),
+                NotificationRoutes.Honours => new CompetitionsPage(),
+                _ => null!
+            };
+            if (page != null) await Shell.Current.Navigation.PushAsync(page);
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync("Navigation", ex);
+        }
+    }
+
     private async Task NavigateToMatchDetailAsync(int matchId)
     {
         var vm = new MatchDetailViewModel(Db, _ => { });
@@ -300,7 +333,8 @@ public sealed class GameSession
         {
             bool isPlayerTeamPlayer = player.TeamId != null
                 && (await Db.Teams.FindAsync(player.TeamId))?.IsPlayerTeam == true;
-            var vm = new PlayerDetailViewModel(player, isPlayerTeamPlayer, _scoutingService);
+            var vm = new PlayerDetailViewModel(player, isPlayerTeamPlayer, _scoutingService,
+                _transferService, Clock, OpenTransferNegotiation);
             await Shell.Current.Navigation.PushAsync(new PlayerDetailPage(vm));
         }
         catch (Exception ex)
@@ -328,11 +362,16 @@ public sealed class GameSession
 
     private async void NavigateToTeamRoster(Team team) => await OpenClubInfoByIdAsync(team.Id);
 
-    /// <summary>Opens the club info page for the player's own team (Club tab &gt; Information).</summary>
-    public async Task OpenOwnClubInfoAsync()
+    /// <summary>Builds a club-info view model for the player's own team, for the Info tab.</summary>
+    public async Task<ClubInfoViewModel?> CreateOwnClubInfoViewModelAsync()
     {
         var team = await Db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
-        if (team != null) await OpenClubInfoByIdAsync(team.Id);
+        if (team == null) return null;
+
+        var vm = new ClubInfoViewModel(Db, _scoutingService, _transferService, _facilityService, Clock,
+            NavigateToPlayerDetail, OpenTransferNegotiation, NavigateToManagerDetail, new AlertNotifier());
+        await vm.InitializeAsync(team.Id);
+        return vm;
     }
 
     /// <summary>Opens the club info page for a team id (league-table row taps, etc.).</summary>
@@ -363,9 +402,21 @@ public sealed class GameSession
         }
     }
 
-    private static async Task GoToLeagueTableAsync()
+    /// <summary>
+    /// Opens the standings for a competition. Pass null for the player's own league.
+    /// Replaces the old "//game/table" tab, which no longer exists.
+    /// </summary>
+    public async Task OpenLeagueTableAsync(string? competition)
     {
-        await Shell.Current.GoToAsync("//game/table");
+        try
+        {
+            await Shell.Current.Navigation.PushAsync(
+                competition == null ? new LeagueTablePage() : new LeagueTablePage(competition));
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync("League Table", ex);
+        }
     }
 
     private async Task OpenCupDetailAsync(string? competition)

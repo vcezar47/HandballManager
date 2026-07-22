@@ -196,6 +196,7 @@ public partial class MainViewModel : BaseViewModel
             _db = CreateContext();
             await _db.Database.EnsureDeletedAsync();
             await _db.Database.EnsureCreatedAsync();
+            await SchemaUpgrader.UpgradeAsync(_db);
             DatabaseSeeder.Seed(_db);
 
             LeagueService.RestoreSeasonYear(2025);
@@ -270,6 +271,9 @@ public partial class MainViewModel : BaseViewModel
             }
 
             _db = CreateContext();
+            // Saves from older builds predate tables added since — create them before
+            // anything queries them.
+            await SchemaUpgrader.UpgradeAsync(_db);
             var state = await new GameStateService(_db).ReadStateAsync();
             if (state == null)
             {

@@ -29,11 +29,6 @@ public partial class ClubPage : ContentPage
 		}
 	}
 
-	private async void OnInformationTapped(object? sender, TappedEventArgs e)
-	{
-		if (GameSession.Current is { } session) await session.OpenOwnClubInfoAsync();
-	}
-
 	private async void OnTransfersTapped(object? sender, TappedEventArgs e)
 		=> await Navigation.PushAsync(new TransfersPage());
 

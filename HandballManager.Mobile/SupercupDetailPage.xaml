@@ -26,6 +26,19 @@
                 <Label Text="›" TextColor="#666688" FontFamily="OpenSansSemibold" FontSize="20" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
+            <!-- Same trio every competition screen carries -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                <Button Grid.Column="0" Text="PLAYER STATS" FontSize="10" AutomationId="StatsBtn"
+                        BackgroundColor="Transparent" TextColor="#EAEAEA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Clicked="OnStatsClicked" />
+                <Button Grid.Column="1" Text="AWARDS" FontSize="10" AutomationId="AwardsBtn"
+                        BackgroundColor="Transparent" TextColor="#F0A500" BorderColor="#F0A500" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Clicked="OnAwardsClicked" />
+                <Button Grid.Column="2" Text="HISTORY" FontSize="10"
+                        BackgroundColor="Transparent" TextColor="#8888AA" BorderColor="#3A5578" BorderWidth="1" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="34" Padding="0"
+                        Command="{Binding ViewSupercupHistoryCommand}" />
+            </Grid>
+
             <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="14,14">
                 <VerticalStackLayout Spacing="10">
 

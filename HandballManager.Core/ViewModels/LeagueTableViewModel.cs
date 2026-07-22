@@ -39,6 +39,38 @@ public partial class LeagueTableViewModel : BaseViewModel
     [ObservableProperty]
     private string _competitionName = "Liga Florilor";
 
+    [ObservableProperty]
+    private List<LeaderboardRow> _topScorers = [];
+
+    [ObservableProperty]
+    private List<LeaderboardRow> _topAssists = [];
+
+    [ObservableProperty]
+    private List<LeaderboardRow> _topSaves = [];
+
+    [ObservableProperty]
+    private List<LeaderboardRow> _topRated = [];
+
+    /// <summary>0 = goals, 1 = assists, 2 = saves, 3 = rating.</summary>
+    [ObservableProperty]
+    private int _leaderboardTabIndex;
+
+    public List<LeaderboardRow> ActiveLeaderboard => LeaderboardTabIndex switch
+    {
+        1 => TopAssists,
+        2 => TopSaves,
+        3 => TopRated,
+        _ => TopScorers
+    };
+
+    public string ActiveLeaderboardStatHeader => LeaderboardTabIndex switch
+    {
+        1 => "AST",
+        2 => "SAV",
+        3 => "AVG",
+        _ => "GLS"
+    };
+
     public bool IsKvindeligaen =>
         string.Equals(CompetitionName, LeagueService.KvindeligaenCompetition, StringComparison.Ordinal);
 
@@ -103,7 +135,48 @@ public partial class LeagueTableViewModel : BaseViewModel
             Standings = await _leagueService.GetStandingsAsync(CompetitionName);
             NotifyKvTabLayoutProperties();
         }
+
+        await LoadLeaderboardsAsync();
     }
+
+    private async Task LoadLeaderboardsAsync()
+    {
+        var boards = await _leagueService.GetLeaderboardsAsync(CompetitionName);
+        TopScorers = boards.TopScorers;
+        TopAssists = boards.TopAssists;
+        TopSaves = boards.TopSaves;
+        TopRated = boards.TopRated;
+        NotifyLeaderboardChanged();
+    }
+
+    [RelayCommand]
+    private void SelectLeaderboardTab(object? parameter)
+    {
+        LeaderboardTabIndex = parameter switch
+        {
+            int i => Math.Clamp(i, 0, 3),
+            string s when int.TryParse(s, out var n) => Math.Clamp(n, 0, 3),
+            _ => 0
+        };
+    }
+
+    partial void OnLeaderboardTabIndexChanged(int value) => NotifyLeaderboardChanged();
+
+    private void NotifyLeaderboardChanged()
+    {
+        OnPropertyChanged(nameof(ActiveLeaderboard));
+        OnPropertyChanged(nameof(ActiveLeaderboardStatHeader));
+        OnPropertyChanged(nameof(SelectedLeaderboardTabName));
+    }
+
+    /// <summary>String key for the active leaderboard tab (for XAML DataTrigger highlighting).</summary>
+    public string SelectedLeaderboardTabName => LeaderboardTabIndex switch
+    {
+        1 => "Assists",
+        2 => "Saves",
+        3 => "Rating",
+        _ => "Goals"
+    };
 
     [RelayCommand]
     private async Task SelectKvindeligaenTab(object? parameter)

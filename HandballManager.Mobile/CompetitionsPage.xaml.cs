@@ -9,16 +9,32 @@ public partial class CompetitionsPage : ContentPage
 		InitializeComponent();
 	}
 
+	/// <summary>
+	/// Reloads on every arrival. Shell raises this for tab switches and for pops back to
+	/// the tab root, where OnAppearing is unreliable on Android — the tables used to sit
+	/// on whatever the standings were the first time the tab was opened.
+	/// </summary>
+	protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+	{
+		base.OnNavigatedTo(args);
+		await RefreshAsync();
+	}
+
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
+		await RefreshAsync();
+	}
+
+	private async Task RefreshAsync()
+	{
 		if (GameSession.Current is not { } session) return;
 
-		BindingContext = session.CompetitionsVM;
-		await session.CompetitionsVM.InitializeAsync();
+		var vm = session.CompetitionsVM;
+		BindingContext = vm;
+		await vm.InitializeAsync();
 
 		// Only Romania and Denmark run a supercup; the card mirrors the desktop split view.
-		var vm = session.CompetitionsVM;
 		SupercupCard.IsVisible = vm.IsRomanianLeague || vm.IsDanishLeague;
 		if (vm.IsDanishLeague)
 		{

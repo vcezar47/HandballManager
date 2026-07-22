@@ -28,6 +28,7 @@ public class HandballDbContext : DbContext
     public DbSet<Manager> Managers { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<GameState> GameStates { get; set; }
+    public DbSet<TeamOfTheSeasonEntry> TeamOfTheSeasonEntries { get; set; }
 
     private readonly string _dbPath;
 

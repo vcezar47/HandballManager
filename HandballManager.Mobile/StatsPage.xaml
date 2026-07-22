@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             xmlns:models="clr-namespace:HandballManager.Models;assembly=HandballManager.Core"
+             x:Class="HandballManager.Mobile.StatsPage"
+             Title="PLAYER STATS"
+             BackgroundColor="#1A1A2E">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,10,16,0" RowSpacing="8">
+
+        <!-- The competition this page is about: one crest, one name, no switching. -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10">
+            <Image x:Name="CompetitionLogo" WidthRequest="26" HeightRequest="26" Aspect="AspectFit" VerticalOptions="Center" />
+            <Label x:Name="CompetitionLabel" Text="" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <!-- Which stat -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="5">
+            <Button x:Name="CatGoals" Grid.Column="0" Text="GOALS" FontSize="10" AutomationId="CatGoals"
+                    BackgroundColor="#E94560" TextColor="White" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                    Clicked="OnCategoryClicked" CommandParameter="0" />
+            <Button x:Name="CatAssists" Grid.Column="1" Text="ASSISTS" FontSize="10" AutomationId="CatAssists"
+                    BackgroundColor="#16213E" TextColor="#8888AA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                    Clicked="OnCategoryClicked" CommandParameter="1" />
+            <Button x:Name="CatSaves" Grid.Column="2" Text="SAVE %" FontSize="10" AutomationId="CatSaves"
+                    BackgroundColor="#16213E" TextColor="#8888AA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                    Clicked="OnCategoryClicked" CommandParameter="2" />
+            <Button x:Name="CatRating" Grid.Column="3" Text="RATING" FontSize="10" AutomationId="CatRating"
+                    BackgroundColor="#16213E" TextColor="#8888AA" FontFamily="OpenSansSemibold" CornerRadius="8" HeightRequest="32" Padding="0"
+                    Clicked="OnCategoryClicked" CommandParameter="3" />
+        </Grid>
+
+        <Grid Grid.Row="2" ColumnDefinitions="30,26,*,42,64" Padding="10,0" ColumnSpacing="2">
+            <Label Grid.Column="0" Text="#" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="2" Text="PLAYER" TextColor="#8888AA" FontSize="12" />
+            <Label Grid.Column="3" Text="PLD" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="Center" />
+            <Label Grid.Column="4" x:Name="StatColumnHeader" Text="GLS" TextColor="#8888AA" FontSize="12" HorizontalTextAlignment="End" />
+        </Grid>
+
+        <CollectionView Grid.Row="3" x:Name="RowsView" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:LeaderboardRow">
+                    <Border BackgroundColor="#16213E" Stroke="#22304F" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,3" Padding="10,10">
+                        <Grid ColumnDefinitions="30,26,*,42,64" ColumnSpacing="2">
+                            <Label Grid.Column="0" Text="{Binding Rank}" TextColor="#E94560" FontFamily="OpenSansSemibold" FontSize="14" VerticalOptions="Center" />
+                            <Image Grid.Column="1" Source="{Binding TeamLogo, Converter={StaticResource TeamLogo}}" WidthRequest="22" HeightRequest="22" Aspect="AspectFit" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center" Margin="4,0,0,0">
+                                <Label Text="{Binding PlayerName}" TextColor="#EAEAEA" FontSize="14" LineBreakMode="TailTruncation" />
+                                <Label TextColor="#8888AA" FontSize="10" LineBreakMode="TailTruncation">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Position}" TextColor="#E94560" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding TeamName}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="3" Text="{Binding MatchesPlayed}" TextColor="#8888AA" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="4" Spacing="0" VerticalOptions="Center">
+                                <Label Text="{Binding Stat}" TextColor="#F0A500" FontFamily="OpenSansSemibold" FontSize="15" HorizontalTextAlignment="End" />
+                                <!-- e.g. "142 / 386" under a save percentage -->
+                                <Label Text="{Binding StatDetail}" TextColor="#666688" FontSize="9" HorizontalTextAlignment="End"
+                                       IsVisible="{Binding HasStatDetail}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label x:Name="EmptyLabel" Text="No matches played in this competition yet." TextColor="#555577" FontSize="13" Margin="4,10" LineBreakMode="WordWrap" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

@@ -18,8 +18,13 @@ public partial class CompetitionsViewModel : BaseViewModel
     private readonly Action? _onNavigateToCupDetail;
     private readonly Action? _onNavigateToSupercupDetail;
 
+    // Snapshots, not entities — see TableRow for why binding to the entities directly
+    // left this tab showing a mix of current and several-matchdays-old rows.
     [ObservableProperty]
-    private List<LeagueEntry> _leagueStandings = [];
+    private List<TableRow> _leagueStandings = [];
+
+    [ObservableProperty]
+    private List<TableRow> _playerCupStandings = [];
 
     [ObservableProperty]
     private CupGroup? _playerCupGroup;
@@ -72,7 +77,27 @@ public partial class CompetitionsViewModel : BaseViewModel
         _onNavigateToSupercupDetail = onNavigateToSupercupDetail;
     }
 
+    /// <summary>
+    /// Guards the shared <see cref="HandballDbContext"/>. Two screens reload this same
+    /// view model (the Comps tab and the league table page it opens), and a DbContext
+    /// throws if a second query starts while the first is still running.
+    /// </summary>
+    private readonly SemaphoreSlim _reloadGate = new(1, 1);
+
     public async Task InitializeAsync()
+    {
+        await _reloadGate.WaitAsync();
+        try
+        {
+            await LoadAsync();
+        }
+        finally
+        {
+            _reloadGate.Release();
+        }
+    }
+
+    private async Task LoadAsync()
     {
         var playerTeam = await _db.Teams.FirstOrDefaultAsync(t => t.IsPlayerTeam);
         CompetitionName = playerTeam?.CompetitionName ?? "Liga Florilor";
@@ -97,11 +122,13 @@ public partial class CompetitionsViewModel : BaseViewModel
             _ => "/Assets/leaguelogo/cuparomaniei.png"
         };
         
-        if (IsDanishLeague)
-            LeagueStandings = await _leagueService.GetKvindeligaenComputedRegularStandingsAsync();
-        else
-            LeagueStandings = await _leagueService.GetStandingsAsync(CompetitionName);
+        var entries = IsDanishLeague
+            ? await _leagueService.GetKvindeligaenComputedRegularStandingsAsync()
+            : await _leagueService.GetStandingsAsync(CompetitionName);
+        LeagueStandings = TableRow.FromLeague(entries);
+
         PlayerCupGroup = await _cupService.GetPlayerTeamGroupAsync();
+        PlayerCupStandings = PlayerCupGroup == null ? [] : TableRow.FromCupGroup(PlayerCupGroup.Entries);
 
         if (PlayerCupGroup != null)
         {
@@ -144,17 +171,17 @@ public partial class CompetitionsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private void ViewTeam(LeagueEntry? entry)
+    private void ViewTeam(TableRow? row)
     {
-        var team = entry?.Team;
+        var team = row?.Team;
         if (team is null) return;
         _onTeamSelected?.Invoke(team);
     }
 
     [RelayCommand]
-    private void ViewCupTeam(CupGroupEntry? entry)
+    private void ViewCupTeam(TableRow? row)
     {
-        var team = entry?.Team;
+        var team = row?.Team;
         if (team is null) return;
         _onTeamSelected?.Invoke(team);
     }
