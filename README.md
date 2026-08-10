@@ -60,15 +60,6 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 
 ## Recently added Features
 
-* **----- 04.08.2026 -----**
-* **Poland added: ORLEN Superliga Kobiet, Puchar Polski and Superpuchar Polski (10 clubs, 187 players)**
-* **Three points for a win — the first league not on 2-1-0, with a penalty shootout deciding every level match (2 points to the winner, 1 to the loser)**
-* **Unequal split: the championship round runs ten rounds to the relegation round's six**
-* **Cup with a qualifying round — four clubs play off, six are seeded into the last eight**
-* **Türkiye added: Kadınlar Süper Lig, Kadınlar Kupası and Kadınlar Süper Kupa (8 clubs, 141 players)**
-* **League split into a championship and a relegation round, both carrying the regular season's points in full**
-* **Supercup final four (first country with semi-finals and no third-place match)**
-* **Detailed information tab for each club (trophies, description, squad integration etc.)**
 * **----- 29.03.2026 MAJOR UPDATE -----**
 * **Managers & Manager Creation**
 * **Dynamic Stadium Attendance (based on club form, competition, game importance)** 
@@ -128,13 +119,13 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 
 **© 2026 Vieru-Potecu Cezar-Mihai. All rights reserved.**
 
-This project is currently **Source-Available**. While the repository is public for community feedback and portfolio display, the following conditions apply:
+This repository is public for portfolio and community purposes, and to distribute the game itself — the source code is closed and maintained in a private repository. The following conditions apply to the game, its builds, and its assets:
 
-* **No Redistribution:** You may not redistribute, sub-license, copy, or sell this source code or any binaries derived from it.
-* **No Commercial Use:** This code and its assets may not be used in any commercial projects or products. 
+* **No Redistribution:** You may not redistribute, sub-license, or sell the builds made available here.
+* **No Commercial Use:** The game and its assets may not be used in any commercial project or product.
 * **Reservation of Rights:** The author reserves all rights to the underlying logic, match engine, and branding in preparation for a commercial release (e.g., via Steam).
 
-Use of this code for educational study is permitted, but any other use requires explicit written permission from the author.
+Downloading and playing the game for personal use is welcome. Any other use requires explicit written permission from the author.
 
 ## ⚠️ Disclaimer
 
