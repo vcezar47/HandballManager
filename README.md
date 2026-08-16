@@ -52,11 +52,13 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball League (ORLEN Superliga Kobiet)**
 * <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball Cup (Puchar Polski)**
 * <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball SuperCup (Superpuchar Polski)**
+* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's Champions League**
+* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's European League**
+
 
 ## Upcoming Competitions
 
-* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's Champions League**
-* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's European League**
+👀
 
 ## Recently added Features
 
@@ -109,11 +111,19 @@ Handball Manager is an immersive simulation game that puts you in charge of your
 * **New signings and youth graduates get a number that suits their position, instead of the lowest one free**
 * **----- 10.08.2026 Google Play Open Testing Update! -----**
 * **Added Poland and Turkish competitions**
+* **----- 16.08.2026 Google Play LAUNCH Update! -----**
+* **European competitions: EHF Champions League & EHF European League**
+* **EHF country coefficient rankings deciding each nation's places**
+* **The twelve leagues levelled against each other on cross-border results, so a tie between two countries lands where it should**
+* **Club reputation is now derived each summer from honours and recent standing instead of being fixed at seed time**
+
 
 ## Upcoming Features / Updates 
 
-* **European competitions & coefficients logic**
 * **Sponsors**
+* **Game audio and sound effects**
+* **Themed screens based on EHF competition**
+
 
 ## 📜 License & Copyright
 
