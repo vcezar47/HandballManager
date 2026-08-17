@@ -1,155 +1,199 @@
 # Handball Manager <img src="HandballManager/Assets/gamelogo/colorpng.png" height="30">
 
-## About the Game
+A women's handball management simulation for Android and Windows, live on Google Play. Twelve
+national leagues and two European competitions run inside one world model — every club in every
+country plays its own season, whether or not the player ever looks at it.
 
-Handball Manager is an immersive simulation game that puts you in charge of your own handball club. Manage your team's finances, lead them through a competitive league season, and develop your players from promising youths into world-class athletes.
+Built solo, end to end: simulation engine, persistence, two front ends, the test suite, the data
+collection, and the store release.
 
-## Features
+[**Google Play**](https://play.google.com/store/apps/details?id=com.handballmanager.mobile) ·
+[Releases (APK / Windows)](../../releases) ·
+[Engineering notes](#engineering-notes) ·
+[Code samples](samples/)
 
-* **In-Depth Team Management:** Take control of your team's roster, manage player contracts, and balance your club's budget, including wages and transfer funds.
-* **Dynamic Player Progression:** Witness your players evolve over time. Their skills will improve or decline based on their age, performance in matches, and training.
-* **Realistic Transfer Market:** Engage in a dynamic transfer market where you can buy and sell players to strengthen your squad.
-* **Youth Development:** Invest in the future with a comprehensive youth intake system. Unearth hidden gems and nurture them into the next generation of handball stars.
-* **Authentic Match Simulation:** Experience the thrill of match day with a statistically-based simulation engine.
-* **Competitive League System:** Compete in a full league structure, track your progress on the league table, and strive to become the champion.
-* **Strategic Scouting:** Send your scouts to discover new talent and gain a competitive edge in the transfer market.
+> The engine is closed source ahead of a commercial release. This repository holds the builds,
+> the write-ups, and two MIT-licensed extracts in [`samples/`](samples/).
 
-## Get the Game
+---
 
-* **Android:** grab the latest APK from the [Releases](../../releases) page, or join the Google Play open testing programme (by looking up the game on the Play Store).
-* **Windows:** grab the latest build from the [Releases](../../releases) page. (behind compared to the Android version)
+## Stack
 
-> This repository hosts downloadable builds and project information only — the full source is maintained in a private repository. See [License & Copyright](#-license--copyright) below.
+| | |
+|---|---|
+| Language / runtime | C# 13, .NET 10 |
+| Mobile | .NET MAUI (Android, API 24+) |
+| Desktop | WPF (Windows) |
+| Persistence | EF Core 9 over SQLite, `SQLitePCLRaw` bundled for Android |
+| UI pattern | MVVM, `CommunityToolkit.Mvvm` source generators |
+| Tests | xUnit |
 
-## Current In-game Competitions
+## Shape of the codebase
 
-* <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball League (Liga Florilor)**
-* <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball Cup (Cupa Romaniei)**
-* <img src="HandballManager/Assets/flags/romania.png" height="15"> **Romania Women's Handball Supercup (Supercupa Romaniei)**
-* <img src="HandballManager/Assets/flags/hungary.png" height="15"> **Hungary Women's Handball League (NB I)**
-* <img src="HandballManager/Assets/flags/hungary.png" height="15"> **Hungary Women's Handball Cup (Magyar Kupa)**
-* <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball League (Ligue Butagaz Energie)**
-* <img src="HandballManager/Assets/flags/france.png" height="15"> **France Women's Handball Cup (Coupe de France)**
-* <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball League (Kvindeligaen)**
-* <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball Cup (Landspokalturnering)**
-* <img src="HandballManager/Assets/flags/denmark.png" height="15"> **Denmark Women's Handball SuperCup**
-* <img src="HandballManager/Assets/flags/norway.png" height="15"> **Norway Women's Handball League (REMA 1000-ligaen)**
-* <img src="HandballManager/Assets/flags/norway.png" height="15"> **Norway Women's Handball Cup (Norgesmesterskapet)**
-* <img src="HandballManager/Assets/flags/germany.png" height="15"> **Germany Women's Handball League (1. Bundesliga Frauen)**
-* <img src="HandballManager/Assets/flags/germany.png" height="15"> **Germany Women's Handball Cup (DHB-Pokal)**
-* <img src="HandballManager/Assets/flags/germany.png" height="15"> **Germany Women's Handball SuperCup (DHB Supercup)**
-* <img src="HandballManager/Assets/flags/slovenia.png" height="15"> **Slovenia Women's Handball League (1. SRL ženske)**
-* <img src="HandballManager/Assets/flags/slovenia.png" height="15"> **Slovenia Women's Handball Cup (Pokal Slovenije)**
-* <img src="HandballManager/Assets/flags/croatia.png" height="15"> **Croatia Women's Handball League (1. HRL Žene)**
-* <img src="HandballManager/Assets/flags/croatia.png" height="15"> **Croatia Women's Handball Cup (Hrvatski kup)**
-* <img src="HandballManager/Assets/flags/montenegro.png" height="15"> **Montenegro Women's Handball League (Prva liga)**
-* <img src="HandballManager/Assets/flags/montenegro.png" height="15"> **Montenegro Women's Handball Cup (Kup Crne Gore)**
-* <img src="HandballManager/Assets/flags/sweden.png" height="15"> **Sweden Women's Handball League (Handbollsligan)**
-* <img src="HandballManager/Assets/flags/sweden.png" height="15"> **Sweden Women's Handball Cup (Svenska Cupen)**
-* <img src="HandballManager/Assets/flags/turkey.png" height="15"> **Türkiye Women's Handball League (Kadınlar Süper Lig)**
-* <img src="HandballManager/Assets/flags/turkey.png" height="15"> **Türkiye Women's Handball Cup (Kadınlar Kupası)**
-* <img src="HandballManager/Assets/flags/turkey.png" height="15"> **Türkiye Women's Handball SuperCup (Kadınlar Süper Kupa)**
-* <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball League (ORLEN Superliga Kobiet)**
-* <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball Cup (Puchar Polski)**
-* <img src="HandballManager/Assets/flags/poland.png" height="15"> **Poland Women's Handball SuperCup (Superpuchar Polski)**
-* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's Champions League**
-* <img src="HandballManager/Assets/flags/europe.png" height="15"> **EHF Women's European League**
+| Project | Lines | Files | What it is |
+|---|---:|---:|---|
+| `HandballManager.Core` | 36,400 | 130 | Simulation, persistence, and **every view model**. References no UI framework. |
+| `HandballManager` | 14,100 | 91 | WPF desktop head — views only |
+| `HandballManager.Mobile` | 8,800 | 96 | .NET MAUI head — views, session plumbing, Android packaging |
+| `HandballManager.Tests` | 5,400 | 24 | xUnit; 84 tests, most of them full-season integration runs |
 
+26 services and 39 entity types in Core. Putting the view models there rather than in either
+front end is the decision the whole project rests on: both heads bind to the same
+`HomeViewModel`, so a feature is wired once instead of twice, and the desktop app became a mobile
+port without the model layer being touched. The trade-offs are in
+[Architecture](docs/architecture.md).
 
-## Upcoming Competitions
+## The simulation
 
-👀
+The world advances one day at a time. On any date the engine plays every fixture in every
+competition, ages and trains ~2,700 players, runs the AI transfer market, pays wages, sells
+tickets, and writes the news and statistics behind all of it.
 
-## Recently added Features
+Three problems that took the most work:
 
-* **----- 29.03.2026 MAJOR UPDATE -----**
-* **Managers & Manager Creation**
-* **Dynamic Stadium Attendance (based on club form, competition, game importance)** 
-* **Updated Club Info UI**
-* **Personal Manager "Profile" Tab**
-* **Neutral venue logic for Cup and Supercup Final4's**
-* **----- 12.04.2026 APRIL UPDATE -----**
-* **Squad selection before games**
-* **In-depth match simulation (time-outs, substitutions etc.)**
-* **UI Improvements**
-* **----- 29.04.2026 Late April Update -----**
-* **Hungary competitions added (League & Cup)**
-* **----- 03.05.2026 Early May Competitions Update -----**
-* **France competitions added (League & Cup)**
-* **Added realistic budgets to all clubs**
-* **----- 10.05.2026 May Competitions Update -----**
-* **Denmark competitions added (League, Cup & SuperCup)**
-* **----- 08.07.2026 July Update -----**
-* **Club facilities added - Training and Youth**
-* **Competitions now award prize money depending on position / trophies won**
-* **Save/Load game**
-* **Bug fixes**
-* **----- 12.07.2026 JULY MOBILE PORT!!! -----**
-* **FULL and complete mobile port - soon to be posted to Google PlayStore!**
-* **----- 26.07.2026 Norway Update -----**
-* **Norway competitions added (League & Cup)**
-* **Dedicated play-off tab for the Norwegian league**
-* **Nationality flags in squad and player views**
-* **Attributes highlighted by player position**
-* **Bug fixes (missing Positioning attribute, drawn cup knockout ties)**
-* **----- 28.07.2026 Germany Update -----**
-* **Germany competitions added (League, Cup & SuperCup)**
-* **Supercup winners now earn prize money**
-* **German and Norwegian youth intakes now produce German and Norwegian names**
-* **----- 04.08.2026 4 NEW COUNTRIES Update -----**
-* **Slovenia competitions added (League & Cup)**
-* **Croatia competitions added (League & Cup)**
-* **Montenegro competitions added (League & Cup)**
-* **Sweden competitions added (League & Cup) — the tenth country**
-* **Youth name pools doubled to 40 first names and 40 surnames for every country**
-* **Ticket sales now earn money. Attendance was simulated but never paid out**
-* **Finances tab: gate receipts, wages and a season summary by category**
-* **Fixed: cup finals could be scheduled on the same day as a league round**
-* **Fixed: a new Slovenian season started with the previous season's split points still on the table (existing saves repair themselves)**
-* **Every league now archives a full 1st / 2nd / 3rd for seasons you play**
-* **Squad numbers can be handed out by hand from a player's profile**
-* **New signings and youth graduates get a number that suits their position, instead of the lowest one free**
-* **----- 10.08.2026 Google Play Open Testing Update! -----**
-* **Added Poland and Turkish competitions**
-* **----- 16.08.2026 Google Play LAUNCH Update! -----**
-* **European competitions: EHF Champions League & EHF European League**
-* **EHF country coefficient rankings deciding each nation's places**
-* **The twelve leagues levelled against each other on cross-border results, so a tie between two countries lands where it should**
-* **Club reputation is now derived each summer from honours and recent standing instead of being fixed at seed time**
+- **Competition shape is data, not code paths.** Twelve countries do not play the same game
+  administratively. Montenegro's eight clubs meet three times. Slovenia's thirteen meet once —
+  one club idle every round — then split into two groups carrying points down by finishing
+  position. Türkiye splits and carries each club's points in full, so a group table where a club
+  that won nine of twelve finishes second is correct. Poland pays three points a win and settles
+  every drawn match with a shoot-out that leaves the scoreline a draw.
+- **The default failure mode is silence.** An eleven-club league generates no fixtures rather
+  than throwing. A competition with no prize-money tier pays nothing to anyone, forever. A country
+  with no youth name pool quietly produces Romanian teenagers. Most of the work on each new
+  country goes into turning that class of bug into a test that fails loudly instead.
+- **European qualification has to stay exact.** Sixteen and thirty-two clubs, however the
+  three-season coefficient ranking moves and however many countries exist — nine guaranteed
+  Champions League places plus an incentive place and wild cards walked back down the ranking,
+  and banded European League places with the surplus taken off the weakest countries but never
+  below one. Written as rules plus a correction rather than as a lookup table, which is why the
+  totals hold when a country is added — and why adding one costs an existing country a place.
+  That allocator is in [`samples/`](samples/EuropeanPlaceAllocator.cs) with its tests.
 
+## Performance
 
-## Upcoming Features / Updates 
+Simulating a day is the hot path, and it degraded over a career rather than being slow up front —
+the more interesting kind of problem. `SimulationProfiler` (in the test project, inert unless
+`HM_PROFILE=1`) times each phase of a day against a database with real mileage on it.
 
-* **Sponsors**
-* **Game audio and sound effects**
-* **Themed screens based on EHF competition**
+| | before | after |
+|---|---:|---:|
+| 400 simulated days | 449.8 s | 166.1 s |
+| avg day, first 20 | 947 ms | 322 ms |
+| avg day, last 20 | 1,276 ms | 355 ms |
+| EF-tracked entities by June | 161,372 | 11,805 |
 
+The causes were an EF change tracker that never released finished match rows, so every save
+walked a graph that grew all season, and player training running daily across every player in the
+world instead of weekly. Later passes found `DetectChanges` costing 23.7 ms per call — against
+1.37 ms for a squad load — and four callers saving unconditionally on days with nothing to save.
 
-## 📜 License & Copyright
+Two plausible hypotheses measured *negative* and were dropped: indexing the match table (noise),
+and storing less match detail for other countries' games (~7%, inside run-to-run variance — the
+cost is deciding what happened, not writing it down). Full write-up:
+[Making a career fast](docs/performance.md).
 
-**© 2026 Vieru-Potecu Cezar-Mihai. All rights reserved.**
+## Testing
 
-This repository is public for portfolio and community purposes, and to distribute the game itself — the source code is closed and maintained in a private repository. The following conditions apply to the game, its builds, and its assets:
+84 xUnit tests, deliberately weighted towards integration:
 
-* **No Redistribution:** You may not redistribute, sub-license, or sell the builds made available here.
-* **No Commercial Use:** The game and its assets may not be used in any commercial project or product.
-* **Reservation of Rights:** The author reserves all rights to the underlying logic, match engine, and branding in preparation for a commercial release (e.g., via Steam).
+- **Season-completion tests** hand the player a random club, play a whole season through the real
+  view-model commands, then assert that *nothing anywhere in the world* is left unplayed. It
+  exists because the world-simulation loop once looked only for the player's own supercup,
+  leaving two other countries' finals unplayed all season with no error anywhere.
+- **Seed-data tests** enumerate the embedded club data and check squad shape, position-correct
+  attribute blocks, present crests and arena photos, prize tiers for every competition, real head
+  coaches, and that nothing seeded narrates a season the player is about to play.
+- **Fixture-clash tests** prove, without simulating anything, that no competition can schedule a
+  knockout tie onto a date its own league already uses.
+- **Balance-report tests** produce the cross-league comparison described below.
 
-Downloading and playing the game for personal use is welcome. Any other use requires explicit written permission from the author.
+The full suite plays roughly twenty seasons of a twelve-country world and runs over an hour,
+which is its own design constraint — the seed-data subset runs in about 20 seconds for the
+iteration loop.
 
-## ⚠️ Disclaimer
+## Data
 
-Handball Manager is a fan-made simulation project. It is **not affiliated with, endorsed by, or connected to**:
-* The Romanian Handball Federation (FRH) or Liga Florilor.
-* The Hungarian Handball Federation (MKSZ) or the K&H Női Liga.
-* The French Handball Federation (FFH) or the Ligue Butagaz Energie.
-* The Danish Handball Federation (DanskHåndbold) or the Kvindeligaen.
-* The Norwegian Handball Federation (Norges Handballforbund) or the REMA 1000-ligaen.
-* The German Handball Association (DHB) or the 1. Frauen Bundesliga.
-* The Slovenian Handball Federation (RZS) or the 1. SRL ženske.
-* The Croatian Handball Federation (HRS) or the 1. HRL Žene.
-* The Montenegrin Handball Federation (RSCG) or the Prva Liga.
-* The Swedish Handball Federation (SHF) or the Handbollsligan.
-* The Turkish Handball Federation (THF) or the Kadınlar Süper Lig.
-* The Polish Handball Association (ZPRP) or the ORLEN Superliga Kobiet.
-* Any other official handball organizations, leagues, teams, or professional players.
+145 clubs and 2,698 players with real squads, birthdates, positions, shirt numbers, heights and
+head coaches, assembled from twelve national federations plus the EHF. Very little of it was
+offered as a download; most came out of undocumented JSON behind Angular and Vue front ends,
+JavaScript object literals that are not quite JSON, and base64 PDF match reports.
+
+Fetching it is the easy half. Federation sites drift to the current season while the game is
+pinned to 2025/26; one public table was two seasons stale with nothing on the page saying so;
+one federation registers a goalkeeper born in 2015 with eleven appearances; one reigning champion
+enters its league with an under-18 side and fields its internationals only in the final. Where
+positions are unpublished, shot-zone distributions classify them at 100% — but only where zone
+data exists, since on goals and shots alone the best classifier managed 45% against a 35%
+baseline. Full write-up: [Building a world from federation data](docs/data-pipeline.md).
+
+## Balance
+
+Twelve leagues rated country by country over several months have no agreed scale between them,
+and a domestic table cannot measure one league against another. Cross-border European matches are
+the only instrument, so the European competitions doubled as the tooling for the balance problem:
+five seasons with transfers off, cross-border results only, targets set on the raw attribute
+scale.
+
+The most useful result was negative — between two runs *with no rating change at all*, one league
+went from three different champions to the same club winning five from five. Five seasons cannot
+resolve a title race, and a clean sweep is not evidence of a broken league.
+[Levelling twelve leagues](docs/balance-calibration.md).
+
+## Engineering notes
+
+- [**One core, three heads**](docs/architecture.md) — the project split, why the view models live
+  in Core, `EnsureCreated` versus migrations and what that costs forever, and the re-entrancy rule
+  a shared `DbContext` imposes.
+- [**Making a career fast**](docs/performance.md) — profiling a simulated day, the fixes worth
+  2.7x, and two well-reasoned hypotheses that measured as noise.
+- [**Building a world from federation data**](docs/data-pipeline.md) — sourcing 2,698 players,
+  the four ways the data lies, and the validation suite that rejects it.
+- [**Levelling twelve leagues**](docs/balance-calibration.md) — measuring leagues against each
+  other, and how many seasons it takes before a result means anything.
+
+## Code samples
+
+Two pieces of the engine, extracted with their tests and MIT licensed — [`samples/`](samples/):
+
+- [`RoundRobinScheduler`](samples/RoundRobinScheduler.cs) — a season's fixture list for any number
+  of clubs and any number of meetings, with byes where the division is odd
+- [`EuropeanPlaceAllocator`](samples/EuropeanPlaceAllocator.cs) — splitting 16 and 32 European
+  entries between countries by coefficient ranking
+
+## The game itself
+
+<details>
+<summary>Twelve countries, 31 competitions</summary>
+
+| | Country | Competitions |
+|---|---|---|
+| <img src="HandballManager/Assets/flags/romania.png" height="14"> | Romania | Liga Florilor · Cupa României · Supercupa României |
+| <img src="HandballManager/Assets/flags/hungary.png" height="14"> | Hungary | NB I · Magyar Kupa |
+| <img src="HandballManager/Assets/flags/france.png" height="14"> | France | Ligue Butagaz Energie · Coupe de France |
+| <img src="HandballManager/Assets/flags/denmark.png" height="14"> | Denmark | Kvindeligaen · Landspokalturnering · SuperCup |
+| <img src="HandballManager/Assets/flags/norway.png" height="14"> | Norway | REMA 1000-ligaen · Norgesmesterskapet |
+| <img src="HandballManager/Assets/flags/germany.png" height="14"> | Germany | 1. Bundesliga Frauen · DHB-Pokal · DHB Supercup |
+| <img src="HandballManager/Assets/flags/slovenia.png" height="14"> | Slovenia | 1. SRL ženske · Pokal Slovenije |
+| <img src="HandballManager/Assets/flags/croatia.png" height="14"> | Croatia | 1. HRL Žene · Hrvatski kup |
+| <img src="HandballManager/Assets/flags/montenegro.png" height="14"> | Montenegro | Prva liga · Kup Crne Gore |
+| <img src="HandballManager/Assets/flags/sweden.png" height="14"> | Sweden | Handbollsligan · Svenska Cupen |
+| <img src="HandballManager/Assets/flags/turkey.png" height="14"> | Türkiye | Kadınlar Süper Lig · Kadınlar Kupası · Süper Kupa |
+| <img src="HandballManager/Assets/flags/poland.png" height="14"> | Poland | ORLEN Superliga Kobiet · Puchar Polski · Superpuchar |
+| <img src="HandballManager/Assets/flags/europe.png" height="14"> | Europe | EHF Champions League · EHF European League |
+
+</details>
+
+Squad selection and in-match management, contract and transfer negotiation, scouting, youth
+intake and development, club facilities, finances down to gate receipts, dynamic attendance, and
+a full honours history for every club. Version history is in [CHANGELOG.md](CHANGELOG.md).
+
+## License & copyright
+
+**© 2026 Vieru-Potecu Cezar-Mihai. All rights reserved.** No redistribution, no commercial use;
+all rights to the match engine, simulation logic and branding are reserved. The `samples/`
+directory is MIT licensed — see [samples/LICENSE](samples/LICENSE).
+
+## Disclaimer
+
+Handball Manager is a fan-made project and is not affiliated with, endorsed by or connected to
+the EHF, any national handball federation or league, or any club or player represented in it.
