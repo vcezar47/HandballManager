@@ -2,6 +2,39 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 2.2 — 22 August 2026 · Post-launch update
+
+The first round of feedback after release, and what it turned up.
+
+* Fixed: a "Match Result" alert could appear over the match report after a live match. The result
+  had already been recorded — what failed was a *second* attempt to record it, from a CONTINUE
+  button that stayed enabled through several seconds of work and a home screen reload nobody
+  awaited. Both routes are now gated on the shared `DbContext`
+* Fixed: contract renewals and academy signings accepted any wage, including nothing at all.
+  Contract talks had only ever been wired into the transfer negotiation screen, so re-signing
+  your own squad asked the player nothing
+* Fixed: a club with fewer than fourteen fit players could never reach the live match — entering
+  the arena demanded seven substitutes as well as the starting seven. Four seeded clubs were
+  affected, and could only ever use instant result
+* Wage demands move with form: this season's average match rating once there are five games to
+  read it from, last season's completed record before that
+* What a player asks now depends on who is asking. The gap is measured against the higher of the
+  club she already plays for and what her ability entitles her to, so both being asked to drop a
+  level and being too good for the buyer cost the same premium
+* Wages, gate receipts, prize money and every club's budgets drift up 3% a season, so the numbers
+  grow without the economy moving underneath them. Contracts already signed are never re-priced,
+  which is what makes a long deal for a good player worth having
+* AI clubs pay the demands the player is quoted, rather than a random share of the old estimate
+  that took no account of form, inflation or their own standing
+* The wage budget is enforced when signing or renewing — it had been a number on the finances
+  screen that nothing checked
+
+## 2.1 — 18 August 2026 · Advertising
+
+* Interstitial ads, placed between the final whistle and the match report rather than interrupting
+  play
+* Privacy policy published for the Play listing
+
 ## 2.0 — 16 August 2026 · Launch update
 
 Out of Google Play open testing and fully released.
