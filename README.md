@@ -32,12 +32,12 @@ collection, and the store release.
 
 | Project | Lines | Files | What it is |
 |---|---:|---:|---|
-| `HandballManager.Core` | 36,400 | 130 | Simulation, persistence, and **every view model**. References no UI framework. |
+| `HandballManager.Core` | 40,200 | 143 | Simulation, persistence, and **every view model**. References no UI framework. |
 | `HandballManager` | 14,100 | 91 | WPF desktop head — views only |
-| `HandballManager.Mobile` | 8,800 | 96 | .NET MAUI head — views, session plumbing, Android packaging |
-| `HandballManager.Tests` | 5,400 | 24 | xUnit; 84 tests, most of them full-season integration runs |
+| `HandballManager.Mobile` | 12,600 | 123 | .NET MAUI head — views, session plumbing, Android packaging |
+| `HandballManager.Tests` | 8,000 | 31 | xUnit; 147 tests, most of them full-season integration runs |
 
-26 services and 39 entity types in Core. Putting the view models there rather than in either
+33 services and 41 entity types in Core. Putting the view models there rather than in either
 front end is the decision the whole project rests on: both heads bind to the same
 `HomeViewModel`, so a feature is wired once instead of twice, and the desktop app became a mobile
 port without the model layer being touched. The trade-offs are in
@@ -94,7 +94,7 @@ cost is deciding what happened, not writing it down). Full write-up:
 
 ## Testing
 
-84 xUnit tests, deliberately weighted towards integration:
+147 xUnit tests, deliberately weighted towards integration:
 
 - **Season-completion tests** hand the player a random club, play a whole season through the real
   view-model commands, then assert that *nothing anywhere in the world* is left unplayed. It
@@ -185,7 +185,15 @@ Two pieces of the engine, extracted with their tests and MIT licensed — [`samp
 
 Squad selection and in-match management, contract and transfer negotiation, scouting, youth
 intake and development, club facilities, finances down to gate receipts, dynamic attendance, and
-a full honours history for every club. Version history is in [CHANGELOG.md](CHANGELOG.md).
+a full honours history for every club.
+
+Since 3.1 the manager is a career in their own right: coaching licences studied for out of your own
+balance, a contract and a wage, a board that sets objectives and grades you monthly against what a
+club of that size should be doing, and the sack if the grade stays bad. A job market runs across
+all twelve countries whether or not you are in it, so being out of work is a state the game
+supports rather than an ending. European ties bring the competition's own colours and backgrounds
+to the whole app for as long as the next fixture is a European one, with an intro film once a
+season. Version history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License & copyright
 

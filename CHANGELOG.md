@@ -2,6 +2,58 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 3.1 — 31 August 2026 · The manager career, sound, and European nights
+
+The largest release since launch, and the first one where the player is a person rather than a
+club.
+
+* **Coaching licences.** Five courses, Level 1 up to IHF Master, each costing months of the season
+  and a fee out of your own balance. A licence gates which jobs will consider you
+* **A manager contract of your own** — a wage paid monthly by the club, a personal balance, and
+  career earnings that follow you from job to job
+* **A board**, in its own tab on the Club screen. It sets objectives at the start of a season,
+  grades you A+ to F every month against what a club of that size and squad should be doing, and
+  sacks you if the grade stays bad long enough. You can ask for an extension; whether you get one
+  depends on the same grade
+* **A job market.** Vacancies open across all twelve countries as AI boards make their own
+  decisions. Applications are answered in three days, a club waits five before looking elsewhere,
+  and each summer moves coaches between clubs whether or not you are involved
+* **Being out of work is still a career.** The squad and club screens go quiet, a Jobs tab appears,
+  and continuous advance stops on the day a job you could take opens
+* **Sound**, for the first time: a crowd atmosphere loop under a live match, three goal reactions,
+  and a sting when a timeout is called. Off in one tap for anyone who would rather not
+* **European nights.** The whole app — tab bar, cards, buttons, backgrounds — takes on Champions
+  League or European League colours for as long as the club's next fixture is a European one, and
+  drops back to its everyday palette the moment it is not
+* **An intro film per competition**, played once a season before the club's first tie in it
+* Existing saves gain all of it untouched: every column and table goes through the schema upgrader,
+  and a career already in progress simply acquires a contract dated from the day it is loaded
+
+Most of the work after 3.0 was in making the presentation behave on a real device rather than on
+the bench. Three things were wrong at once and each hid the next: the film was recorded as shown
+before it was displayed, so any failure spent it for the season; the navigation lock that stops a
+tab opening mid-simulation was silently refusing the film's own attempt to close itself; and the
+theme was being applied from the thread a save loads on, which on Android half-updates the screen
+and leaves a career sitting on a background with nothing laid out over it.
+
+## 2.7 — 24 August 2026 · Ads and an attendance fix
+
+Monetisation, and a bug it surfaced along the way.
+
+* Ads now play at two more natural breaks: the interval of a live match, and while a new career's
+  world is being built. A single marked story in the news feed carries a third
+* A one-time purchase removes every ad for good, and restores automatically on a reinstall or a
+  new device
+* Fixed: the pause after a live match read as the ad being slow to load. It never was — the ad is
+  a few hundred kilobytes shown from cache in milliseconds. What actually took several seconds was
+  the rest of that day's fixtures simulating behind it, which used to run *after* the ad rather
+  than underneath it
+* Fixed: a live match's attendance and home advantage were guessed separately from a simulated
+  one's — a flat 80% of capacity for the crowd, a bare constant for the advantage — and could show
+  more people in the stands than the stadium holds. Both now come from the same model a simulated
+  match uses, rolled once before kick-off, and a watched match now pays gate receipts at all,
+  which it never had before
+
 ## 2.2 — 22 August 2026 · Post-launch update
 
 The first round of feedback after release, and what it turned up.
