@@ -2,6 +2,83 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 3.5 — 16 September 2026 · The real cups
+
+Six countries' cups played the way they really are, and what a week of testing 3.4 turned up.
+
+* **Romania, Hungary, France, Denmark, Norway and Germany play their real cup formats.** They had
+  group stages since they were added, standing in for a last sixteen their leagues are too small
+  to fill. They are now straight knockouts, with exactly enough first-round ties to leave eight and
+  the byes going to the clubs that enter late in real life — the clubs in Europe first, then by
+  standing. Norway's final is on 28 December at Unity Arena and Denmark's Final4 is between
+  Christmas and New Year, as the real ones are
+* **France keeps a group phase**, because the real Coupe de France has one — for the clubs not in
+  Europe only. The clubs in Europe go straight to the quarter-finals, and how many pools there are
+  follows from how many that is
+* **A career already in a season finishes that season's cup the old way.** The new formats start at
+  the next rollover. League rounds are not stored with a date — the calendar is rebuilt every
+  session around the dates the cup has claimed — so the old cup keeps its old dates to the day,
+  held there by a test against a snapshot of the 3.4 calendars
+* **News about your club is highlighted**, in whichever colours the app is wearing
+* Fixed: a trophy won at the end of the season put up a screen that neither a tap nor back could
+  close. The lock that stops a tab opening mid-simulation refused its attempt to close itself, and
+  could not clear while the trophy covered the home screen
+* Fixed: fitness only came back after restarting the app. Recovery is written straight to the
+  database, and the game kept serving the copies of each player it already held
+* Fixed: the board's objectives read "in progress" all season — they were only judged at the
+  rollover that replaced them. They now say where they stand as the season goes
+* Fixed: "get through the first knockout round" counted as met on being drawn into it rather than
+  on winning the tie
+* Fixed: a player who had agreed a pre-contract elsewhere could still be renewed, and left on 1 July
+  anyway. She could also be released as a free agent the day before her move
+
+## 3.4 — 9 September 2026 · Trophies, and a season of play
+
+3.3.3 and 3.3.4 taken to production.
+
+* **Winning a trophy takes over the screen**, with the crest and confetti in the competition's own
+  colours
+* **A manager's standing moves** with trophies and with seasons spent at a club of standing. It was
+  written at character creation and never again, so a long, successful career could still leave a
+  coach locked out of every job worth having
+* **Pre-contracts work both ways.** The rule was implemented in full and reachable from no screen
+  a player uses; a player in her last six months can now be signed on a free by you, not only by
+  the AI clubs
+* Fixed: fitness recovery kept the best squads at full fitness for ever, so they never needed
+  rotating
+* Fixed: a drawn supercup tie could send the away club through without extra time, and the
+  supercup champion was recorded without checking the shoot-out
+* Fixed: a watched cup group game went to extra time and entered the table as a win, where the same
+  fixture simulated finished level
+
+## 3.3 — 8 September 2026 · Match depth
+
+The update that answers the Reddit thread.
+
+* **Injuries**, from knocks to season-enders, and a treatment room that says who is out and roughly
+  when they are back
+* **Fitness that carries between matches.** A congested week costs a squad and a rest week gives it
+  back, so selection, rotation, injury risk and on-court performance all have a reason to change
+* **Two-minute suspensions and seven-metre throws.** A seven-metre stops a live match to ask who
+  takes it, or who faces it, with the two attributes that decide it beside each name
+* **A training calendar**: rest days, ordinary sessions and hard physical blocks
+* **In-match tactics** — tempo, focus, system and aggression — changed from the bench while the
+  match runs. Pulling the goalkeeper puts a seventh court player on who shoots, tires and appears
+  on the court
+* **The dressing room**: morale, a playing-time promise held against you every week, a captain, and
+  players who ask to leave when they are not getting the minutes they expect
+* Contract renewals are a negotiation, with the same patience and reactions as a transfer
+
+## 3.2 — 1 September 2026 · Bids that hold, contracts that end
+
+* A club keeps the money behind a bid it has made, and is held to the fee it agreed rather than
+  what the player is worth on the day the bid is accepted — which is what kept killing offers with
+  "can no longer fund this move"
+* A manager's contract ends: the board settles it at the rollover, renewed or allowed to lapse,
+  instead of the manager staying for ever
+* Restoring the ad-free purchase is always available, so a device Play has given a wrong answer to
+  can ask again
+
 ## 3.1 — 31 August 2026 · The manager career, sound, and European nights
 
 The largest release since launch, and the first one where the player is a person rather than a

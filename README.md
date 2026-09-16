@@ -32,12 +32,12 @@ collection, and the store release.
 
 | Project | Lines | Files | What it is |
 |---|---:|---:|---|
-| `HandballManager.Core` | 40,200 | 143 | Simulation, persistence, and **every view model**. References no UI framework. |
+| `HandballManager.Core` | 48,000 | 167 | Simulation, persistence, and **every view model**. References no UI framework. |
 | `HandballManager` | 14,100 | 91 | WPF desktop head — views only |
-| `HandballManager.Mobile` | 12,600 | 123 | .NET MAUI head — views, session plumbing, Android packaging |
-| `HandballManager.Tests` | 8,000 | 31 | xUnit; 147 tests, most of them full-season integration runs |
+| `HandballManager.Mobile` | 14,200 | 135 | .NET MAUI head — views, session plumbing, Android packaging |
+| `HandballManager.Tests` | 11,800 | 45 | xUnit; 246 tests, most of them full-season integration runs |
 
-33 services and 41 entity types in Core. Putting the view models there rather than in either
+46 services and 47 entity types in Core. Putting the view models there rather than in either
 front end is the decision the whole project rests on: both heads bind to the same
 `HomeViewModel`, so a feature is wired once instead of twice, and the desktop app became a mobile
 port without the model layer being touched. The trade-offs are in
@@ -68,6 +68,14 @@ Three problems that took the most work:
   below one. Written as rules plus a correction rather than as a lookup table, which is why the
   totals hold when a country is added — and why adding one costs an existing country a place.
   That allocator is in [`samples/`](samples/EuropeanPlaceAllocator.cs) with its tests.
+- **A save is more than what is stored in it.** Careers run for dozens of hours and have no backup,
+  so every release has to open every older save untouched. New columns are the obvious risk; the
+  subtle one is what is *rebuilt* on load. League rounds carry no date — the calendar is recomputed
+  each session and moves rounds off European weekends onto Wednesdays the cup has not claimed — so
+  when 3.5 replaced six countries' group-stage cups with their real knockout formats, changing the
+  cup's dates would have silently moved unplayed league rounds in seasons already underway. Old
+  draws finish on the old path and the old calendar, held there by a test against a snapshot of the
+  previous release's output, taken before the change was written.
 
 ## Performance
 
@@ -94,7 +102,7 @@ cost is deciding what happened, not writing it down). Full write-up:
 
 ## Testing
 
-147 xUnit tests, deliberately weighted towards integration:
+246 xUnit tests, deliberately weighted towards integration:
 
 - **Season-completion tests** hand the player a random club, play a whole season through the real
   view-model commands, then assert that *nothing anywhere in the world* is left unplayed. It
@@ -106,6 +114,12 @@ cost is deciding what happened, not writing it down). Full write-up:
 - **Fixture-clash tests** prove, without simulating anything, that no competition can schedule a
   knockout tie onto a date its own league already uses.
 - **Balance-report tests** produce the cross-league comparison described below.
+- **Compatibility tests** open a deliberately old-schema save through the paths that read it before
+  upgrading it, and hold a season still playing an old cup format to the calendar the previous
+  release produced, day for day, across five seasons and twelve countries.
+
+The regression tests added for the bugs players reported against 3.4 were each run with their fix
+switched off first, to see them fail, before being kept.
 
 The full suite plays roughly twenty seasons of a twelve-country world and runs over an hour,
 which is its own design constraint — the seed-data subset runs in about 20 seconds for the
@@ -193,7 +207,14 @@ club of that size should be doing, and the sack if the grade stays bad. A job ma
 all twelve countries whether or not you are in it, so being out of work is a state the game
 supports rather than an ending. European ties bring the competition's own colours and backgrounds
 to the whole app for as long as the next fixture is a European one, with an intro film once a
-season. Version history is in [CHANGELOG.md](CHANGELOG.md).
+season.
+
+3.3 took the match itself deeper: injuries, fitness that carries from one match to the next and the
+squad rotation that follows from it, two-minute suspensions and seven-metre throws, a training
+calendar, tactics changed from the bench during a match, and a dressing room that remembers the
+playing time it was promised. Since 3.5 the six cups that had stood in with group stages play their
+real formats — straight knockouts with seeded byes, and France's pool phase for the clubs not in
+Europe. Version history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License & copyright
 
