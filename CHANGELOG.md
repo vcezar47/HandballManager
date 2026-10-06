@@ -2,6 +2,68 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 4.0.0 — October 2026 · The 2D engine and the European Cup
+
+The largest release since launch: a new match engine, a third European competition, and seven
+more countries.
+
+* **Your matches are played live on a 2D court.** Every player is an agent that moves, passes,
+  shoots and defends from her own attributes — pace and stamina decide who gets back, finishing and
+  composure decide where a shot goes, a keeper's reflexes and reach decide whether she gets to it —
+  and the referees apply the rules to what happens. The other bench is an AI coach that reads the
+  score and the clock. Calibrated against the engine that simulates every other match in the world,
+  so a watched match and a simulated one play the same handball
+* **The whole bench while it runs**: tempo, attack focus, defensive system and aggression;
+  substitutions, or a switch that lets the bench rotate tired players for you; time-outs, which wait
+  for the ball and gather both sides at their benches; the seventh court player; and who takes, or
+  faces, a seven-metre
+* **1× to 32×**, with the key moments replayed at normal speed at the fast settings; side panels
+  that fold to give the court the screen; the same match as text; skip to the result
+* **The EHF European Cup**, the third European competition — two-legged ties from Round 2 to a
+  two-legged final, with its own colours, court and intro film
+* **The European League plays its real qualifying**: Round 2 and Round 3, with four clubs seeded
+  straight into the groups. Places in all three competitions follow the EHF's rules, by each
+  country's three-season coefficient ranking
+* **A career already in a season finishes it in the old European formats** and changes over at the
+  next rollover — held to the old calendar, day for day, by a test against a snapshot of 3.6's
+* **Seven new countries**, each with its real 2025/26 squads and competitions:
+  * Serbia — ARKUS liga, Kup Srbije, Superkup Srbije
+  * Austria — WHA Meisterliga, ÖHB Cup, WHA Supercup
+  * North Macedonia — Super Ženska Liga, Kup na Makedonija
+  * Portugal — 1ª Divisão Feminina (three points a win, two a draw, one a defeat), Taça de
+    Portugal, Supertaça Feminina
+  * Greece — A1 Women, Greek Cup, Greek Super Cup
+  * the Netherlands — Super Handball League Women, Landelijke Beker, Handbal SuperCup
+  * Iceland — Olís deild kvenna, Powerade bikarinn, Meistarakeppni HSÍ
+* **A transfer list.** Put a player up for sale and clubs come asking; every player's buyout clause
+  is on her profile
+* **A new club picker**: each club opens to show when it was founded, its reputation, its hall and
+  its honours
+* No title bar on the main tabs, crests either side of the match result, and the status bar in the
+  app's colour on Android 15 and later
+* Artwork is packaged at the size it is drawn. Flags were up to 3840 px and decoded at full size,
+  which made the coefficients screen stutter and, on some phones, crash
+* Fixed: an injured player could complain about her playing time
+* Fixed: a match against a club with no squad — HB Ludwigsburg's insolvent first season — could be
+  played out 0–0 from PLAY MATCH. It is the 10–0 walkover the simulated path always awarded, and
+  the report says so
+* Fixed: North Macedonia had no flag in the coefficient rankings
+
+## 3.6 — 25 September 2026 · Four new countries
+
+* **Czechia and Slovakia**: the joint MOL Liga with its twelve clubs, then each country plays for
+  its own title — a Czech play-off with byes, two-legged quarter-finals and best-of-three series and
+  a Czech play-out, and a Slovak play-off — plus the Czech and the Slovak cup
+* **Spain**: the Liga Guerreras Iberdrola with its fourteen clubs. The top eight play two-legged
+  quarter- and semi-finals and a best-of-three final, tenth to thirteenth a play-down that starts
+  from the points they took off each other. The Copa de la Reina ends in a final eight over one
+  weekend; the Supercopa de España starts in 2026/27
+* **Switzerland**: the Swiss Premium League 1 with its eight clubs — a main round, a final round
+  carrying all the points, best-of-three semi-finals and a best-of-five final — and the Mobiliar
+  Handball Cup, with its one-off final in Winterthur. Switzerland has no supercup, as in real life
+* Fixed: a watched league play-off game could end level, and counted towards the league table until
+  the table was next opened
+
 ## 3.5 — 16 September 2026 · The real cups
 
 Six countries' cups played the way they really are, and what a week of testing 3.4 turned up.
