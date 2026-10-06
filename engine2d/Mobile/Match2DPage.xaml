@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HandballManager.Mobile"
+             xmlns:m2d="clr-namespace:HandballManager.Mobile.Match2D"
+             xmlns:e2d="clr-namespace:HandballManager.Engine2D;assembly=HandballManager.Core"
+             x:Class="HandballManager.Mobile.Match2D.Match2DPage"
+             x:DataType="e2d:Match2DViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             SafeAreaEdges="None">
+
+    <ContentPage.Resources>
+        <local:TeamLogoSourceConverter x:Key="TeamLogo" />
+        <local:RatingToColorConverter x:Key="RatingToColor" />
+        <m2d:HexColorConverter x:Key="Hex" />
+
+        <!-- One player in a side panel: shirt, name, live rating, role or status, and an energy bar. -->
+        <DataTemplate x:Key="SideRowTemplate" x:DataType="e2d:SideRow">
+            <Grid ColumnDefinitions="18,*,22,26" RowDefinitions="Auto,3" Padding="2,2" ColumnSpacing="3">
+                <Grid.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{Binding OnCourt}" Value="False">
+                        <Setter Property="Opacity" Value="0.7" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Grid" Binding="{Binding Selected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#55E94560" />
+                    </DataTrigger>
+                </Grid.Triggers>
+                <Border Grid.RowSpan="2" WidthRequest="18" HeightRequest="18" StrokeThickness="0" StrokeShape="RoundRectangle 9"
+                        BackgroundColor="{Binding Shirt, Converter={StaticResource Hex}}" VerticalOptions="Center">
+                    <Label Text="{Binding Number}" TextColor="{Binding NumberColour, Converter={StaticResource Hex}}" FontSize="9"
+                           FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                </Border>
+                <Label Grid.Column="1" Text="{Binding Name}" TextColor="White" FontSize="10" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                <Label Grid.Column="2" Text="{Binding Rating, StringFormat='{0:F1}'}" IsVisible="{Binding Played}" FontSize="10"
+                       FontFamily="OpenSansSemibold" HorizontalTextAlignment="End" VerticalOptions="Center"
+                       TextColor="{Binding Rating, Converter={StaticResource RatingToColor}, ConverterParameter=text}" />
+                <Label Grid.Column="3" Text="{Binding Role}" TextColor="#FFD54F" FontSize="9" HorizontalTextAlignment="End" VerticalOptions="Center">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding OnCourt}" Value="False">
+                            <Setter Property="TextColor" Value="#8892B0" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label Grid.Column="3" Text="{Binding Status}" TextColor="#EF5350" FontSize="9" FontFamily="OpenSansSemibold" HorizontalTextAlignment="End"
+                       VerticalOptions="Center" BackgroundColor="#101628" IsVisible="{Binding HasStatus}" />
+                <ProgressBar Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Progress="{Binding EnergyShare}" HeightRequest="3"
+                             ProgressColor="{Binding EnergyColour, Converter={StaticResource Hex}}" BackgroundColor="#1E2640" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- The same player with the panels folded away: her shirt, her position and her energy.
+             Still tappable, so substitutions work the same folded or open. -->
+        <DataTemplate x:Key="FoldedRowTemplate" x:DataType="e2d:SideRow">
+            <Grid RowDefinitions="Auto,Auto,3" Padding="1,2" RowSpacing="0">
+                <Grid.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{Binding OnCourt}" Value="False">
+                        <Setter Property="Opacity" Value="0.7" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Grid" Binding="{Binding Selected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#55E94560" />
+                    </DataTrigger>
+                </Grid.Triggers>
+                <Border WidthRequest="18" HeightRequest="18" StrokeThickness="0" StrokeShape="RoundRectangle 9" HorizontalOptions="Center"
+                        BackgroundColor="{Binding Shirt, Converter={StaticResource Hex}}">
+                    <Label Text="{Binding Number}" TextColor="{Binding NumberColour, Converter={StaticResource Hex}}" FontSize="9"
+                           FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                </Border>
+                <Label Grid.Row="1" Text="{Binding Role}" TextColor="#FFD54F" FontSize="8" FontFamily="OpenSansSemibold"
+                       HorizontalTextAlignment="Center" LineBreakMode="NoWrap">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding OnCourt}" Value="False">
+                            <Setter Property="TextColor" Value="#8892B0" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label Grid.Row="1" Text="{Binding Status}" TextColor="#EF5350" FontSize="8" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center"
+                       BackgroundColor="#101628" IsVisible="{Binding HasStatus}" />
+                <ProgressBar Grid.Row="2" Progress="{Binding EnergyShare}" HeightRequest="3" WidthRequest="24" HorizontalOptions="Center"
+                             ProgressColor="{Binding EnergyColour, Converter={StaticResource Hex}}" BackgroundColor="#1E2640" />
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <!-- Three rows: the scoreboard, the court, the controls. The drawer and the overlays float
+         over the court rather than squeezing it. The grid runs edge to edge and the side panels
+         touch the screen's edges; only their contents, and the scoreboard, keep clear of the
+         display cut-out — sized in code, since only the device knows where it is. -->
+    <Grid x:Name="Root" RowDefinitions="32,*,30" ColumnDefinitions="144,*,144" Padding="0" SafeAreaEdges="None">
+
+        <!-- ── Scoreboard ── -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="3" x:Name="Scoreboard" ColumnDefinitions="Auto,*,Auto,Auto,Auto,*,Auto" ColumnSpacing="8" Margin="4,0">
+            <Border Grid.Column="0" BackgroundColor="#2A3350" StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                    Padding="10,0" HeightRequest="28" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Label Text="{Binding ClockText}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
+                    <Label Text="{Binding PhaseText}" TextColor="#AAB3CC" FontSize="10" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                <Label Text="{Binding HomeTeamName}" TextColor="White" FontSize="13" LineBreakMode="TailTruncation"
+                       MaximumWidthRequest="170" VerticalOptions="Center" />
+                <Image Source="{Binding HomeTeamLogo, Converter={StaticResource TeamLogo}}" HeightRequest="22" WidthRequest="22" Aspect="AspectFit" />
+            </HorizontalStackLayout>
+            <BoxView Grid.Column="2" x:Name="HomeStripe" WidthRequest="4" HeightRequest="22" CornerRadius="2" VerticalOptions="Center" />
+            <Border Grid.Column="3" BackgroundColor="#101628" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="12,0" HeightRequest="30" VerticalOptions="Center">
+                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding HomeScore}" />
+                            <Span Text="  –  " />
+                            <Span Text="{Binding AwayScore}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </Border>
+            <BoxView Grid.Column="4" x:Name="AwayStripe" WidthRequest="4" HeightRequest="22" CornerRadius="2" VerticalOptions="Center" />
+            <HorizontalStackLayout Grid.Column="5" Spacing="6" HorizontalOptions="Start" VerticalOptions="Center">
+                <Image Source="{Binding AwayTeamLogo, Converter={StaticResource TeamLogo}}" HeightRequest="22" WidthRequest="22" Aspect="AspectFit" />
+                <Label Text="{Binding AwayTeamName}" TextColor="White" FontSize="13" LineBreakMode="TailTruncation"
+                       MaximumWidthRequest="170" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <m2d:Chip Grid.Column="6" x:Name="MenuChip" Text="TACTICS" />
+        </Grid>
+
+        <!-- ── The court: floor, crest, players ── -->
+        <!-- ── The benches, beside the court where the space is ── -->
+        <Border Grid.Row="1" Grid.Column="0" x:Name="HomePanelHost" BackgroundColor="#14FFFFFF" StrokeThickness="0" StrokeShape="RoundRectangle 0,8,0,8" Padding="1,3" Margin="0,1,2,1">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Tapping either header folds both panels to a strip of shirts, and the court
+                     takes the width. -->
+                <Grid x:Name="HomeHeader" Margin="4,0,2,3" BackgroundColor="Transparent">
+                    <Label x:Name="HomeHeaderName" Text="{Binding HomeTeamName}" TextColor="#AAB3CC" FontSize="9" FontFamily="OpenSansSemibold"
+                           LineBreakMode="TailTruncation" Margin="0,0,30,0" VerticalOptions="Center" />
+                    <Border x:Name="HomeFoldButton" WidthRequest="26" HeightRequest="22" BackgroundColor="#2A3350" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 11" HorizontalOptions="End" VerticalOptions="Center">
+                        <Label x:Name="HomeFoldGlyph" Text="‹" TextColor="White" FontSize="17" FontFamily="OpenSansSemibold"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Margin="0,-3,0,0" />
+                    </Border>
+                </Grid>
+                <CollectionView x:Name="HomePanel" Grid.Row="1" ItemsSource="{Binding HomeRoster}" SelectionMode="Single"
+                                ItemTemplate="{StaticResource SideRowTemplate}" SelectionChanged="OnRosterTapped" />
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="2" x:Name="AwayPanelHost" BackgroundColor="#14FFFFFF" StrokeThickness="0" StrokeShape="RoundRectangle 8,0,8,0" Padding="1,3" Margin="2,1,0,1">
+            <Grid RowDefinitions="Auto,*">
+                <Grid x:Name="AwayHeader" Margin="2,0,4,3" BackgroundColor="Transparent">
+                    <Label x:Name="AwayHeaderName" Text="{Binding AwayTeamName}" TextColor="#AAB3CC" FontSize="9" FontFamily="OpenSansSemibold"
+                           LineBreakMode="TailTruncation" Margin="30,0,0,0" VerticalOptions="Center" />
+                    <Border x:Name="AwayFoldButton" WidthRequest="26" HeightRequest="22" BackgroundColor="#2A3350" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 11" HorizontalOptions="Start" VerticalOptions="Center">
+                        <Label x:Name="AwayFoldGlyph" Text="›" TextColor="White" FontSize="17" FontFamily="OpenSansSemibold"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Margin="0,-3,0,0" />
+                    </Border>
+                </Grid>
+                <CollectionView x:Name="AwayPanel" Grid.Row="1" ItemsSource="{Binding AwayRoster}" SelectionMode="Single"
+                                ItemTemplate="{StaticResource SideRowTemplate}" SelectionChanged="OnRosterTapped" />
+            </Grid>
+        </Border>
+
+        <Grid x:Name="CourtHost" Grid.Row="1" Grid.Column="1">
+            <GraphicsView x:Name="CourtLayer" />
+            <Image x:Name="CentreLogo" Opacity="0.9" InputTransparent="True" Aspect="AspectFit"
+                   HorizontalOptions="Start" VerticalOptions="Start" />
+            <GraphicsView x:Name="PlayersLayer" BackgroundColor="Transparent" />
+
+            <!-- Goals, cards and penalties: a small pill at the top of the court. -->
+            <Border IsVisible="{Binding ShowBanner}" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,4,0,0"
+                    BackgroundColor="#D9101628" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12,3" InputTransparent="True">
+                <Label Text="{Binding Banner}" TextColor="{Binding BannerColour, Converter={StaticResource Hex}}" FontFamily="OpenSansSemibold" FontSize="12" MaximumWidthRequest="420"
+                       LineBreakMode="TailTruncation" />
+            </Border>
+
+            <Label Text="{Binding HomeShortHanded}" TextColor="#FF8A80" FontSize="11" FontFamily="OpenSansSemibold"
+                   HorizontalOptions="Start" VerticalOptions="Start" Margin="6,6,0,0" InputTransparent="True" />
+            <Label Text="{Binding AwayShortHanded}" TextColor="#FF8A80" FontSize="11" FontFamily="OpenSansSemibold"
+                   HorizontalOptions="End" VerticalOptions="Start" Margin="0,6,6,0" InputTransparent="True" />
+            <Label IsVisible="{Binding PassiveWarning}" Text="✋ PASSIVE" TextColor="#FFD54F" FontSize="10" FontFamily="OpenSansSemibold"
+                   HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,2" InputTransparent="True" />
+            <Label x:Name="FastForward" Text="▶▶" TextColor="#AAFFFFFF" FontSize="11" FontFamily="OpenSansSemibold" IsVisible="False"
+                   HorizontalOptions="End" VerticalOptions="End" Margin="0,0,8,2" InputTransparent="True" />
+
+            <!-- The classic view: the same match, as text. -->
+            <CollectionView x:Name="TextView" ItemsSource="{Binding Feed}" IsVisible="False" Margin="24,6">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="e2d:FeedItem">
+                        <Grid ColumnDefinitions="36,*" Padding="0,4">
+                            <Label Text="{Binding Minute, StringFormat='{0}′'}" TextColor="#99FFFFFF" FontSize="13" />
+                            <Label Grid.Column="1" Text="{Binding Text}" TextColor="{Binding Colour, Converter={StaticResource Hex}}" FontSize="13" LineBreakMode="WordWrap">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsGoal}" Value="True">
+                                        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- ── Tactics, over the court rather than beside it. The running commentary is the
+                 TEXT VIEW in the control bar, so the drawer holds nothing else. ── -->
+            <Border x:Name="Drawer" WidthRequest="300" HorizontalOptions="End" IsVisible="False" Margin="0,2,2,2"
+                    BackgroundColor="#F7101628" StrokeThickness="1" Stroke="#26FFFFFF" StrokeShape="RoundRectangle 12" Padding="12,8,12,4">
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                            <Label Text="TACTICS" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" CharacterSpacing="2" />
+                            <Label Text="Changes apply from the next attack" TextColor="#8892B0" FontSize="9" />
+                        </VerticalStackLayout>
+                        <m2d:Chip Grid.Column="1" x:Name="CloseDrawerChip" Text="✕" WidthRequest="28" Padding="0" />
+                    </Grid>
+                    <BoxView Grid.Row="1" HeightRequest="1" Color="#1FFFFFFF" />
+                    <ScrollView Grid.Row="2">
+                        <VerticalStackLayout x:Name="TacticsPanel" Spacing="0" Padding="0,0,0,6" />
+                    </ScrollView>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ── Controls: one slim bar ── -->
+        <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="3" x:Name="ControlBar" Spacing="6" HorizontalOptions="Center" VerticalOptions="Center">
+            <m2d:Chip x:Name="PauseChip" Text="❚❚" />
+            <Border BackgroundColor="#1E2640" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="2">
+                <HorizontalStackLayout x:Name="SpeedBar" Spacing="2" />
+            </Border>
+            <m2d:Chip x:Name="TimeoutChip" Text="{Binding TimeoutText}" />
+            <m2d:Chip x:Name="SkipChip" Text="SKIP ▸▸" />
+            <m2d:Chip x:Name="ViewChip" Text="TEXT VIEW" />
+            <m2d:Chip x:Name="SoundChip" Text="SOUND" />
+        </HorizontalStackLayout>
+
+        <!-- ── Who takes the seven-metre, or who faces it ──
+             A card per candidate rather than a line of text: her shirt in the kit colours, her
+             name and a line of context, and the one number that decides it, large, on the right. -->
+        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC060A14" IsVisible="{Binding IsChoosingTaker}">
+            <Border HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="470" BackgroundColor="#F5101628"
+                    StrokeThickness="1" Stroke="#33FFD54F" StrokeShape="RoundRectangle 16" Padding="20,16,20,14">
+                <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding ChoiceKicker}" TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="2" />
+                        <Label Text="{Binding ChoiceTitle}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="19" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Row="1" HeightRequest="1" Color="#22FFFFFF" />
+                    <CollectionView Grid.Row="2" x:Name="TakerList" ItemsSource="{Binding TakerChoices}" SelectionMode="Single"
+                                    SelectionChanged="OnTakerSelected" MaximumHeightRequest="236">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="e2d:SevenMetreCandidate">
+                                <Border BackgroundColor="#1A2340" StrokeThickness="1" Stroke="#14FFFFFF" StrokeShape="RoundRectangle 10" Padding="10,8">
+                                    <Grid ColumnDefinitions="34,*,Auto" RowDefinitions="Auto,Auto,4" ColumnSpacing="12" RowSpacing="2">
+                                        <Border Grid.RowSpan="2" WidthRequest="30" HeightRequest="30" StrokeThickness="0" StrokeShape="RoundRectangle 15"
+                                                BackgroundColor="{Binding Shirt, Converter={StaticResource Hex}}" VerticalOptions="Center">
+                                            <Label Text="{Binding Number}" TextColor="{Binding NumberColour, Converter={StaticResource Hex}}" FontSize="12"
+                                                   FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                        </Border>
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="End">
+                                            <Label Text="{Binding Name}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="14" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                            <Border IsVisible="{Binding HasTag}" BackgroundColor="#33FFD54F" StrokeThickness="0" StrokeShape="RoundRectangle 6" Padding="6,1" VerticalOptions="Center">
+                                                <Label Text="{Binding Tag}" TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="9" CharacterSpacing="1" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Detail}" TextColor="#AAB3CC" FontSize="11" LineBreakMode="TailTruncation" VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.RowSpan="2" Grid.Column="2" Spacing="0" VerticalOptions="Center" HorizontalOptions="End">
+                                            <Label Text="{Binding Score}" TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="22" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding ScoreLabel}" TextColor="#8892B0" FontSize="9" CharacterSpacing="1" HorizontalTextAlignment="Center" />
+                                        </VerticalStackLayout>
+                                        <ProgressBar Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding EnergyShare}" HeightRequest="3"
+                                                     ProgressColor="{Binding EnergyColour, Converter={StaticResource Hex}}" BackgroundColor="#0E1424" VerticalOptions="End" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                        <Label Text="Tap a player — or leave it to the usual choice." TextColor="#8892B0" FontSize="11" VerticalOptions="Center" />
+                        <m2d:Chip Grid.Column="1" x:Name="UsualTakerChip" Text="USUAL TAKER" IsSelected="True" HeightRequest="32" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ── Half-time, full time, and the skip ── -->
+        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsHalfTime}">
+            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                <Label Text="HALF-TIME" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" HorizontalTextAlignment="Center" />
+                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="32" HorizontalTextAlignment="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding HomeScore}" />
+                            <Span Text=" – " />
+                            <Span Text="{Binding AwayScore}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <m2d:Chip x:Name="SecondHalfChip" Text="SECOND HALF" IsSelected="True" HorizontalOptions="Center" HeightRequest="34" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsFinished}">
+            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                <Label Text="{Binding PhaseText}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" HorizontalTextAlignment="Center" />
+                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="32" HorizontalTextAlignment="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding HomeScore}" />
+                            <Span Text=" – " />
+                            <Span Text="{Binding AwayScore}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <m2d:Chip x:Name="ContinueChip" Text="CONTINUE" IsSelected="True" HorizontalOptions="Center" HeightRequest="34" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsSkipping}">
+            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                <ActivityIndicator IsRunning="{Binding IsSkipping}" Color="White" />
+                <Label Text="Playing out the rest of the match…" TextColor="White" FontSize="13" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>
