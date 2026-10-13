@@ -2,6 +2,30 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 4.1.0 — October 2026 · Six languages and a new home screen
+
+* **The game in six languages**: English, French, German, Spanish, Romanian and Danish, chosen
+  from the main menu. A new player starts in the phone's language where the game has it. Club and
+  competition names, and the game's title, stay as they are
+* **Dates follow the game's language**, not the phone's — the home screen used to show a French
+  date in an English game — with capitalised day and month names
+* **A new home screen**: the date as the headline with the season's progress under it; the next
+  match as a card with both crests, the venue and a countdown; the last five results; the last
+  match with its best player; the club's news; and tiles for injuries, the dressing room, contracts
+  and the board, each opening its screen
+* **A season calendar**, a month at a time: league, cup, supercup and the club's European
+  competition, with the club's own match days ringed and every played match a tap from its report
+* **The match report in tabs**: a summary with the player of the match and the two sides compared,
+  one club's ratings at a time, and a graph of the score above every goal. INSTANT RESULT now opens
+  it, as a live match does
+* **The squad as cards** under a summary and sort chips, and **contracts grouped** by the summer
+  they end — long names are shown whole on both
+* **A main-menu button** on the home screen, to leave a career without closing the app
+* **Fixed: players stuck injured forever.** An INSTANT SIM in the 2D build first plays the
+  statistical engine on the real players and then discards that run; injuries from it kept their
+  flag with no injury behind it, so the player never came back. They are given back now, and a
+  daily check repairs saves that already have one
+
 ## 4.0.0 — October 2026 · The 2D engine and the European Cup
 
 The largest release since launch: a new match engine, a third European competition, and seven

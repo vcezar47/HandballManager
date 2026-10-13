@@ -54,16 +54,17 @@ the test suite, the data collection, and the store release.
 | Desktop | WPF (Windows) — no longer updated; the model layer is shared |
 | Persistence | EF Core 9 over SQLite, `SQLitePCLRaw` bundled for Android |
 | UI pattern | MVVM, `CommunityToolkit.Mvvm` source generators |
+| Localisation | Six languages; English text is the key into embedded JSON tables, held complete by a test |
 | Tests | xUnit |
 
 ## Shape of the codebase
 
 | Project | Lines | Files | What it is |
 |---|---:|---:|---|
-| `HandballManager.Core` | 65,500 | 199 | Simulation, the 2D match engine, persistence, and **every view model**. References no UI framework. |
+| `HandballManager.Core` | 67,100 | 206 | Simulation, the 2D match engine, persistence, and **every view model**. References no UI framework. |
 | `HandballManager` | 14,300 | 91 | WPF desktop head — views only, no longer updated |
-| `HandballManager.Mobile` | 16,900 | 149 | .NET MAUI head — views, the 2D court renderer, session plumbing, Android packaging |
-| `HandballManager.Tests` | 17,500 | 70 | xUnit; about 1,500 test cases, many of them full-season integration runs |
+| `HandballManager.Mobile` | 17,900 | 154 | .NET MAUI head — views, the 2D court renderer, session plumbing, Android packaging |
+| `HandballManager.Tests` | 17,800 | 71 | xUnit; about 1,500 test cases, many of them full-season integration runs |
 
 51 services and 30 tables in Core. Putting the view models there rather than in either
 front end is the decision the whole project rests on: both heads bind to the same
@@ -308,7 +309,15 @@ Europe. 3.6 added Czechia and Slovakia's joint MOL Liga, Spain and Switzerland.
 Portugal, Greece, the Netherlands and Iceland — take the world to twenty-three, enough for the
 EHF European Cup to arrive as the third European competition and for the European League to play
 its real qualifying rounds. The player's matches moved to the 2D engine described above, with the
-whole bench to manage while they run. Version history is in [CHANGELOG.md](CHANGELOG.md).
+whole bench to manage while they run.
+
+4.1 put the game into six languages — English, French, German, Spanish, Romanian and Danish — with
+the English text itself as the key, so a string is translated where it is written and a test
+fails the build if any table is missing one or drops a placeholder. Club and competition names are
+never translated. The same release rebuilt the screens a manager sees most: a home screen built
+around the date and the next match, a season calendar, a tabbed match report with a graph of the
+score, and squad and contracts screens that no longer cut names short. Version history is in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## License & copyright
 
