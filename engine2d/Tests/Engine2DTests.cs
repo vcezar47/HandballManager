@@ -129,6 +129,90 @@ public class Engine2DTests(ITestOutputHelper output)
                 + string.Join(" ", g.GroupBy(s => s.Outcome).OrderBy(x => x.Key).Select(x => $"{x.Key}:{x.Count()}")));
     }
 
+    /// <summary>
+    /// How many goals are credited with an assist, against how long the scorer had held the ball.
+    /// Real stat sheets assist roughly two goals in five. Inert unless HM_ENGINE2D_CAL=1.
+    /// </summary>
+    [Fact]
+    public void AssistDiagnostics()
+    {
+        if (Environment.GetEnvironmentVariable("HM_ENGINE2D_CAL") != "1") return;
+        var clubs = AllClubs.Value;
+        var rng = new Random(5);
+        var goals = new List<ShotRecord>();
+        int allGoals = 0, assists = 0;
+        for (int i = 0; i < 60; i++)
+        {
+            var home = clubs[rng.Next(clubs.Count)];
+            var away = clubs.Where(c => c.Nation == home.Nation && c != home).OrderBy(_ => rng.Next()).First();
+            var match = new PhysicsMatch(Setup(home, away), seed: rng.Next());
+            match.RunToEnd();
+            goals.AddRange(match.Shots.Where(s => s.Outcome == ShotOutcome.Goal));
+            allGoals += match.Score[0] + match.Score[1];
+            assists += match.Stats.Values.Sum(s => s.Assists);
+        }
+
+        var open = goals.Where(g => !g.SevenMetre).ToList();
+        output.WriteLine($"{allGoals} goals, {open.Count} in open play; assists credited {assists} = {assists * 100.0 / allGoals:F0}% of all goals");
+        output.WriteLine("open-play goals by how the scorer got the ball: "
+            + string.Join(", ", open.GroupBy(g => g.GotBallBy).Select(g => $"{g.Key} {g.Count() * 100 / open.Count}%")));
+        var passed = open.Where(g => g.GotBallBy == "pass").ToList();
+        foreach (float w in new[] { 0.8f, 1.0f, 1.25f, 1.5f, 2f, 2.5f, 3f, 4f })
+            output.WriteLine($"  held <= {w:F2} s after a pass: {passed.Count(g => g.HeldFor <= w) * 100.0 / allGoals:F0}% of all goals");
+        var held = passed.Select(g => g.HeldFor).OrderBy(x => x).ToList();
+        if (held.Count > 0)
+            output.WriteLine($"  held for: p25 {held[held.Count / 4]:F2} s, median {held[held.Count / 2]:F2} s, p75 {held[held.Count * 3 / 4]:F2} s");
+    }
+
+    /// <summary>
+    /// The match ratings the 2D engine's lines earn, by position, against the 7.0 mean the scale
+    /// was calibrated to on the quick sim. Writes the lines to HM_ENGINE2D_LINES as CSV if set.
+    /// Inert unless HM_ENGINE2D_CAL=1.
+    /// </summary>
+    [Fact]
+    public void RatingDiagnostics()
+    {
+        if (Environment.GetEnvironmentVariable("HM_ENGINE2D_CAL") != "1") return;
+        var clubs = AllClubs.Value;
+        var rng = new Random(9);
+        var lines = new List<(string Pos, int Goals, int Assists, int Shots, int Saves, int Against, int Margin, int Two, int Red, double Rating)>();
+        for (int i = 0; i < 80; i++)
+        {
+            var home = clubs[rng.Next(clubs.Count)];
+            var away = clubs.Where(c => c.Nation == home.Nation && c != home).OrderBy(_ => rng.Next()).First();
+            var match = new PhysicsMatch(Setup(home, away), seed: rng.Next());
+            match.RunToEnd();
+            var byId = home.Players.Concat(away.Players).ToDictionary(p => p.Id);
+            foreach (var st in match.Stats.Values)
+            {
+                if (!byId.TryGetValue(st.PlayerId, out var p)) continue;
+                int side = st.TeamId == home.Id ? 0 : 1;
+                int margin = match.Score[side] - match.Score[1 - side];
+                string pos = st.Saves > 0 || st.GoalsAgainst > 0 ? "GK" : p.Position;
+                lines.Add((pos, st.Goals, st.Assists, st.Shots, st.Saves, st.GoalsAgainst, margin, st.TwoMinutes, st.RedCards,
+                    MatchRating.For(pos, st, margin, MatchRating.Scale.Physics2D)));
+            }
+        }
+
+        foreach (var g in lines.GroupBy(l => l.Pos).OrderBy(g => g.Key))
+        {
+            var r = g.Select(l => l.Rating).ToList();
+            double mean = r.Average(), sd = Math.Sqrt(r.Average(x => (x - mean) * (x - mean)));
+            int shots = g.Sum(l => l.Shots), goals = g.Sum(l => l.Goals);
+            output.WriteLine($"{g.Key,-6} n={g.Count(),5} rating {mean:F2} sd {sd:F2}  shots/line {shots / (double)g.Count():F2} goals/line {goals / (double)g.Count():F2} "
+                + $"miss rate {(shots == 0 ? 0 : 1 - goals / (double)shots):F2}  assists/line {g.Average(l => l.Assists):F2}  under 6: {g.Count(l => l.Rating < 6) * 100.0 / g.Count():F0}%");
+        }
+
+        if (Environment.GetEnvironmentVariable("HM_ENGINE2D_LINES") is { } path)
+        {
+            var csv = new System.Text.StringBuilder("position,goals,assists,shots,saves,against,margin,two_min,red,rating\n");
+            foreach (var l in lines)
+                csv.Append(System.Globalization.CultureInfo.InvariantCulture,
+                    $"{l.Pos},{l.Goals},{l.Assists},{l.Shots},{l.Saves},{l.Against},{l.Margin},{l.Two},{l.Red},{l.Rating:F2}\n");
+            File.WriteAllText(path, csv.ToString());
+        }
+    }
+
     /// <summary>The first minutes of a match, event by event. Inert unless HM_ENGINE2D_CAL=1.</summary>
     [Fact]
     public void PlayByPlay()
@@ -384,13 +468,15 @@ public class Engine2DTests(ITestOutputHelper output)
         {
             now += 1.0 / 30;
             if (vm.IsChoosingTaker) vm.ChooseTaker(0);
+            // Half-time waits for SECOND HALF, as a player would press it.
+            if (vm.IsHalfTime) vm.ContinueSecondHalfCommand.Execute(null);
             ticker.Fire();
         }
 
         // Into the match, then to a moment the ball is the other side's.
         for (int f = 0; f < 3000; f++) Frame();
         for (int f = 0; f < 20_000 && !(match.Possession == 1 && match.Phase == MatchPhase.Play); f++) Frame();
-        Assert.Equal(1, match.Possession);
+        Assert.True(match.Possession == 1, $"the other side's ball by now: clock {match.Clock:F0} s, phase {match.Phase}, restart {match.Restart}, possession {match.Possession}");
 
         vm.CallTimeoutCommand.Execute(null);
         Assert.Equal(1, vm.Speed);
@@ -471,6 +557,90 @@ public class Engine2DTests(ITestOutputHelper output)
         output.WriteLine($"throw-offs after goals: {fast} fast, {slow} slow; longest keeper hold {longest:F1} s");
         Assert.True(longest < 6f, $"a keeper held the ball {longest:F1} s");
         Assert.InRange(fast / (double)(fast + slow), 0.2, 0.8);
+    }
+
+    /// <summary>
+    /// A keeper goes for the shot: a tester saw them stand still while it went past, at seven
+    /// metres above all. On a save she ends up where the ball arrives; on a goal she has moved
+    /// towards it; and at seven metres she sometimes goes early, the wrong way included.
+    /// </summary>
+    [Fact]
+    public void TheKeeperDivesAtTheShot()
+    {
+        var clubs = AllClubs.Value;
+        var match = new PhysicsMatch(Setup(clubs.First(c => c.Name == "Győr"), clubs.First(c => c.Name == "Metz Handball")), seed: 5);
+        var moved = new List<float>();
+        var saveGaps = new List<float>();
+        var sevenDives = new List<float>();
+        Agent? keeper = null;
+        System.Numerics.Vector2 from = default, to = default;
+        ShotOutcome pending = default;
+        bool seven = false;
+
+        while (!match.IsFinished)
+        {
+            if (match.IsHalfTime) match.StartSecondHalf();
+            bool wasShot = match.Ball.State == BallState.Shot;
+            match.Tick();
+            if (wasShot && match.Ball.State != BallState.Shot && keeper != null)
+            {
+                // It has landed: where her dive took her.
+                float d = System.Numerics.Vector2.Distance(from, keeper.Pos);
+                if (pending is ShotOutcome.Goal or ShotOutcome.Saved or ShotOutcome.SavedHeld) moved.Add(d);
+                if (pending is ShotOutcome.Saved or ShotOutcome.SavedHeld) saveGaps.Add(System.Numerics.Vector2.Distance(keeper.Pos, to));
+                if (seven) sevenDives.Add(d);
+                keeper = null;
+            }
+            if (!wasShot && match.Ball.State == BallState.Shot && match.Ball.ShotKeeper is { } k && match.Ball.PendingShot != ShotOutcome.Blocked)
+            {
+                keeper = k; from = k.Pos; to = match.Ball.To; pending = match.Ball.PendingShot; seven = match.Ball.IsSevenMetre;
+            }
+        }
+
+        output.WriteLine($"{moved.Count} shots on target: moved {moved.Average():F2} m on average; saves {saveGaps.Count}, gap {saveGaps.DefaultIfEmpty().Average():F2} m; "
+            + $"seven-metres {sevenDives.Count}, {sevenDives.Count(d => d > 0.6f)} with a dive");
+        Assert.True(moved.Average() > 0.4f, $"keepers go for the ball: {moved.Average():F2} m on average");
+        // Not every one: a wing landing beside her can push her off the spot as the ball arrives.
+        Assert.True(saveGaps.Count > 0 && saveGaps.Count(g => g < 0.5f) >= 0.9 * saveGaps.Count,
+            $"a save is made where the ball arrives: {saveGaps.Count(g => g >= 0.5f)} of {saveGaps.Count} more than half a metre off");
+        Assert.Contains(sevenDives, d => d > 0.6f);
+    }
+
+    /// <summary>
+    /// The second half starts as the first did, from the centre: the ends change, the side that
+    /// did not throw off at the start throws off now, and each team is lined up in its own half.
+    /// </summary>
+    [Fact]
+    public void SecondHalfStartsWithAThrowOffFromTheCentre()
+    {
+        var clubs = AllClubs.Value;
+        var rng = new Random(31);
+        for (int i = 0; i < 4; i++)
+        {
+            var home = clubs[rng.Next(clubs.Count)];
+            var away = clubs.Where(c => c.Nation == home.Nation && c != home).OrderBy(_ => rng.Next()).First();
+            var match = new PhysicsMatch(Setup(home, away), seed: rng.Next());
+            int first = match.Possession;
+            float homeAttackedFirst = match.Sides[0].AttackGoalX;
+            while (!match.IsHalfTime && !match.IsFinished) match.Tick();
+            Assert.True(match.IsHalfTime);
+
+            match.StartSecondHalf();
+
+            Assert.Equal(MatchPhase.Restart, match.Phase);
+            Assert.Equal(RestartKind.ThrowOff, match.Restart);
+            Assert.Equal(1 - first, match.Possession);
+            Assert.Equal(Court.Length - homeAttackedFirst, match.Sides[0].AttackGoalX);
+            Assert.InRange(match.Ball.Pos.X, Court.CentreX - 0.3f, Court.CentreX + 0.3f);
+            Assert.InRange(match.Ball.Pos.Y, Court.CentreY - 0.3f, Court.CentreY + 0.3f);
+            foreach (var s in match.Sides)
+                foreach (var a in s.Court)
+                {
+                    // Own half: the half away from the goal the side now attacks.
+                    float towardsAttack = (a.Pos.X - Court.CentreX) * s.Dir;
+                    Assert.True(towardsAttack <= 0.3f, $"{a.Role} of side {s.Index} starts {towardsAttack:F1} m into the other half");
+                }
+        }
     }
 
     /// <summary>
@@ -857,6 +1027,89 @@ public class Engine2DTests(ITestOutputHelper output)
         }
     }
 
+    /// <summary>
+    /// A badly mismatched fixture with one outstanding player — the shape of a 29–49 reported from
+    /// a 2028 save, CSM Târgu Jiu v CSM Corona Brașov, with one back scoring 30. Clubs are cloned
+    /// and inflated the way several seasons of progression might leave them. Inert unless
+    /// HM_ENGINE2D_CAL=1.
+    /// </summary>
+    [Fact]
+    public void MismatchDiagnostics()
+    {
+        if (Environment.GetEnvironmentVariable("HM_ENGINE2D_CAL") != "1") return;
+        int n = int.TryParse(Environment.GetEnvironmentVariable("HM_ENGINE2D_MATCHES"), out int m) ? m : 40;
+
+        Team Fresh(string part) => Clone(AllClubs.Value.First(c => c.Name.Contains(part)));
+
+        var scenarios = new (string Label, Func<(Team Home, Team Away)> Build)[]
+        {
+            ("seed squads", () => (Fresh("Jiu"), Fresh("Corona"))),
+            ("star back at 95", () => { var a = Fresh("Corona"); Lift(StarOf(a), 95); return (Fresh("Jiu"), a); }),
+            ("star 97, Corona +12", () => { var a = Fresh("Corona"); LiftAll(a, 12); Lift(StarOf(a), 97); return (Fresh("Jiu"), a); }),
+            ("star 97, Corona +12, Jiu -8", () => { var a = Fresh("Corona"); LiftAll(a, 12); Lift(StarOf(a), 97); var h = Fresh("Jiu"); LiftAll(h, -8); return (h, a); }),
+        };
+
+        foreach (var (label, build) in scenarios)
+        {
+            var (home, away) = build();
+            output.WriteLine($"=== {label}: {home.Name} top-10 {Strength(home):F1} v {away.Name} top-10 {Strength(away):F1}, star {StarOf(away).Overall100}");
+            var rng = new Random(11);
+            var totals = new List<int>(); var awaySide = new List<int>();
+            var topShots = new List<int>(); var topGoals = new List<int>(); var topShare = new List<double>();
+            for (int i = 0; i < n; i++)
+            {
+                var match = new PhysicsMatch(Setup(home, away), seed: rng.Next());
+                match.RunToEnd();
+                totals.Add(match.Score[0] + match.Score[1]);
+                awaySide.Add(match.Score[1]);
+                var mine = match.Stats.Values.Where(s => s.TeamId == away.Id).ToList();
+                var top = mine.OrderByDescending(s => s.Shots).First();
+                topShots.Add(top.Shots); topGoals.Add(top.Goals);
+                topShare.Add(top.Shots / (double)Math.Max(1, mine.Sum(s => s.Shots)));
+            }
+            double mean = totals.Average(), sd = Math.Sqrt(totals.Average(x => (x - mean) * (x - mean)));
+            output.WriteLine($"  goals {mean:F1} (sd {sd:F1}, max {totals.Max()}), away side {awaySide.Average():F1} (max {awaySide.Max()}), "
+                + $"top shooter {topShots.Average():F1} shots / {topGoals.Average():F1} goals (max {topShots.Max()} / {topGoals.Max()}), share {topShare.Average():P0} (max {topShare.Max():P0})");
+        }
+    }
+
+    private static Team Clone(Team t)
+    {
+        var json = JsonSerializer.Serialize(t, new JsonSerializerOptions { ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles });
+        var copy = JsonSerializer.Deserialize<Team>(json)!;
+        foreach (var p in copy.Players) p.Team = null;
+        return copy;
+    }
+
+    /// <summary>The club's best back: in the seeded Corona Brașov, the one who scored 30 in 2028.</summary>
+    private static Player StarOf(Team t)
+        => t.Players.FirstOrDefault(p => p.LastName.Contains("Boiciuc"))
+           ?? t.Players.Where(p => p.Position is "LB" or "RB" or "CB").OrderByDescending(p => p.Overall100).First();
+
+    private static readonly string[] TrainedAttributes =
+    [
+        "Dribbling", "Finishing", "LongThrows", "Marking", "SevenMeterTaking", "Tackling", "Technique", "Receiving", "Passing",
+        "AerialReach", "Communication", "Eccentricity", "Handling", "Throwing", "OneOnOnes", "Reflexes",
+        "Aggression", "Anticipation", "Composure", "Concentration", "Decisions", "Determination", "Flair", "Leadership",
+        "OffTheBall", "Positioning", "Teamwork", "Vision", "Acceleration", "Agility", "Balance", "JumpingReach",
+        "NaturalFitness", "Pace", "Stamina", "Strength"
+    ];
+
+    /// <summary>Raises (or lowers) every attribute a step at a time until the rating reaches the target.</summary>
+    private static void Lift(Player p, int targetOverall)
+    {
+        int dir = targetOverall >= p.Overall100 ? 1 : -1;
+        for (int guard = 0; guard < 40 && (dir > 0 ? p.Overall100 < targetOverall : p.Overall100 > targetOverall); guard++)
+            foreach (var name in TrainedAttributes)
+                if (typeof(Player).GetProperty(name) is { } prop && prop.PropertyType == typeof(int))
+                    prop.SetValue(p, Math.Clamp((int)prop.GetValue(p)! + dir, 1, 20));
+    }
+
+    private static void LiftAll(Team t, int by)
+    {
+        foreach (var p in t.Players) Lift(p, Math.Clamp(p.Overall100 + by, 10, 99));
+    }
+
     /// <summary>The numbers the engine has to hit. Inert unless HM_ENGINE2D_CAL=1.</summary>
     [Fact]
     public void CalibrationReport()
@@ -878,6 +1131,10 @@ public class Engine2DTests(ITestOutputHelper output)
         var margins = new List<int>();
         var sides = new List<int>();
         var perMatch = new List<(int Goals, int Attacks, int Shots, int Fast, int Early)>();
+        var topShots = new List<int>();
+        var topShare = new List<double>();
+        var bands = new Dictionary<string, (int N, int Goals, int Saves)>();
+        double sevenSaves = 0;
 
         for (int i = 0; i < matches; i++)
         {
@@ -905,6 +1162,14 @@ public class Engine2DTests(ITestOutputHelper output)
             sides.Add(match.Score[0]); sides.Add(match.Score[1]);
             perMatch.Add((match.Score[0] + match.Score[1], match.Attacks.Count, match.Shots.Count,
                 match.FastThrowOffs, match.Shots.Count(x => x.AttackAge < 8f)));
+            foreach (int side in new[] { 0, 1 })
+            {
+                int teamId = side == 0 ? home.Id : away.Id;
+                var mine = match.Stats.Values.Where(x => x.TeamId == teamId).ToList();
+                int most = mine.Count == 0 ? 0 : mine.Max(x => x.Shots);
+                topShots.Add(most);
+                topShare.Add(most / (double)Math.Max(1, mine.Sum(x => x.Shots)));
+            }
             var ev = match.Events;
             shots += match.Shots.Count(s => !s.SevenMetre);
             saves += ev.Count(e => e.Kind == EventKind.Save);
@@ -912,6 +1177,14 @@ public class Engine2DTests(ITestOutputHelper output)
             blocks += ev.Count(e => e.Kind == EventKind.Block);
             sevens += ev.Count(e => e.Kind == EventKind.SevenMetreAwarded);
             sevenGoals += ev.Count(e => e.Kind == EventKind.SevenMetreGoal);
+            sevenSaves += ev.Count(e => e.Kind == EventKind.SevenMetreSaved);
+            foreach (var shot in match.Shots.Where(x => !x.SevenMetre && x.Distance <= 14f))
+            {
+                string band = shot.Distance < 7f ? "<7m" : shot.Distance < 9f ? "7-9m" : "9m+";
+                var bs = bands.GetValueOrDefault(band);
+                bands[band] = (bs.N + 1, bs.Goals + (shot.Outcome == ShotOutcome.Goal ? 1 : 0),
+                               bs.Saves + (shot.Outcome is ShotOutcome.Saved or ShotOutcome.SavedHeld ? 1 : 0));
+            }
             twoMin += ev.Count(e => e.Kind is EventKind.TwoMinutes or EventKind.RedCard);
             turnovers += ev.Count(e => e.Kind == EventKind.Turnover);
             interceptions += ev.Count(e => e.Kind == EventKind.Interception);
@@ -944,11 +1217,16 @@ public class Engine2DTests(ITestOutputHelper output)
         }
         var ms = margins.OrderBy(x => x).ToList();
         sb.AppendLine($"Margins              mean {ms.Average():F1}, p90 {ms[(int)(0.9 * (ms.Count - 1))]}, max {ms[^1]} | side≥40 {sides.Count(x => x >= 40) * 100.0 / sides.Count:F1}%, max side {sides.Max()}   (real: 6–7, p90 14–15, max ~25, side≥40 1–6%, max ~49)");
+        var ts = topShots.OrderBy(x => x).ToList();
+        sb.AppendLine($"Top shooter/team     {ts.Average():F1} shots (p90 {ts[(int)(0.9 * (ts.Count - 1))]}, max {ts[^1]}), share {topShare.Average():P0} (p90 {topShare.OrderBy(x => x).ElementAt((int)(0.9 * (topShare.Count - 1))):P0})   (real: about 25%, rarely past 40%)");
         sb.AppendLine($"Save rate            {saves / Math.Max(1, saves + goals - sevenGoals) * 100:F1}% of open-play shots on target");
         sb.AppendLine($"Match totals         sd {sd:F1}, 5th pct {sorted[sorted.Count / 20]}, 95th pct {sorted[sorted.Count * 19 / 20]}, max {sorted[^1]}, over 80: {totals.Count(x => x > 80) * 100.0 / totals.Count:F0}%");
         sb.AppendLine($"Open-play shots/team {perTeam(shots):F1}, saves {perTeam(saves):F1}, misses+posts {perTeam(misses):F1}, blocks {perTeam(blocks):F1}");
         sb.AppendLine($"Open-play shooting   {(goals - sevenGoals) / Math.Max(1, shots) * 100:F0}%");
-        sb.AppendLine($"7m/team              {perTeam(sevens):F2}, scored {sevenGoals / Math.Max(1, sevens) * 100:F0}%   (anchor 4.5, ~74%)");
+        sb.AppendLine($"7m/team              {perTeam(sevens):F2}, scored {sevenGoals / Math.Max(1, sevens) * 100:F0}%, saved {sevenSaves / Math.Max(1, sevens) * 100:F0}%   (real ~74% scored, ~20% saved)");
+        sb.AppendLine("Shooting by distance " + string.Join("   ", new[] { "<7m", "7-9m", "9m+" }.Where(bands.ContainsKey)
+            .Select(k => $"{k} {bands[k].Goals * 100.0 / bands[k].N:F0}% scored, {bands[k].Saves * 100.0 / bands[k].N:F0}% saved ({bands[k].N * 1.0 / matches / 2:F1}/team)"))
+            + "   (real: 6 m ~60–65%, 9 m ~38–42%)");
         sb.AppendLine($"2-min/team           {perTeam(twoMin):F2}   (anchor 3.7)");
         sb.AppendLine($"Turnovers/team       {perTeam(turnovers):F1} (+ interceptions {perTeam(interceptions):F1}), free throws {perTeam(freeThrows):F1}, passive {perTeam(passiveFt):F2}");
         sb.AppendLine($"Substitutions/team   {perTeam(subs):F1}");

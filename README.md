@@ -138,14 +138,15 @@ an AI coach that reads the score and the clock.
 
 The hard part was not making it move but making it agree with the rest of the game. Every other
 match in the world is still simulated by the statistical engine — a season is thousands of them —
-so a watched match and a simulated one have to produce the same handball. The physics engine is
-calibrated over hundreds of matches to the statistical one: about 62.6 goals a match against 62.9,
-seven-metres and suspensions per team within a few tenths, and the same home-points share at every
-gap in squad strength. It only matched that curve once each match had its own day form; without
-it, the stronger side won too reliably. The anchors are pinned by a test that fails when a tuning
-change drifts them.
+so a watched match and a simulated one have to produce the same handball. The physics engine was
+calibrated over hundreds of matches to the statistical one, then both were re-anchored to real
+women's handball: about 57 goals a match, nine-metre shots going in about two times in five,
+keepers saving a third of what reaches them, and the same home-points share at every gap in squad
+strength. It only matched that curve once each match had its own day form; without it, the
+stronger side won too reliably. The anchors are pinned by a test that fails when a tuning change
+drifts them.
 
-The engine's full source — about 7,000 lines, the simulation, the court renderer and its tests —
+The engine's full source — about 9,600 lines, the simulation, the court renderer and its tests —
 is in [`engine2d/`](engine2d/), with a reading guide.
 
 ## Performance
@@ -316,8 +317,13 @@ the English text itself as the key, so a string is translated where it is writte
 fails the build if any table is missing one or drops a placeholder. Club and competition names are
 never translated. The same release rebuilt the screens a manager sees most: a home screen built
 around the date and the next match, a season calendar, a tabbed match report with a graph of the
-score, and squad and contracts screens that no longer cut names short. Version history is in
-[CHANGELOG.md](CHANGELOG.md).
+score, and squad and contracts screens that no longer cut names short.
+
+4.5 puts every live match under its competition's own TV-style scoreboard, with half-time and
+full-time screens, and reworks the keepers: they dive for the ball, hold long shots to about two
+in five, and read seven-metres. Between the two, the game gained sponsors, league-level wages, a
+Finances screen with a season chart, a manager screen with a trophy cabinet, and 50 achievements.
+Version history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License & copyright
 

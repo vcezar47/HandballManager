@@ -33,6 +33,27 @@ public sealed record CourtTheme(string Surround, string Floor, string GoalArea, 
 /// <summary>How a watched match looks: whose competition it is, its crest in the centre circle, the court and the kits.</summary>
 public sealed record MatchPresentation(string Competition, string Logo, CourtTheme Theme, KitColours.MatchKits Kits)
 {
+    /// <summary>League, cup, supercup or European: decides the scoreboard's tag and trim.</summary>
+    public CompetitionKind Kind { get; init; } = CompetitionKind.League;
+
+    /// <summary>A cup or supercup fixture's stored round ("SemiFinal"), or null.</summary>
+    public string? Round { get; init; }
+
+    /// <summary>The scoreboard for this match, in the competition's colours.</summary>
+    public ScoreboardStyle Board => ScoreboardStyle.For(Competition, Kind, Round);
+
+    /// <summary>
+    /// The crest the scoreboard carries. The EHF boards show the emblem alone, without the
+    /// wordmark the centre-circle crest has; everything else uses the competition's crest.
+    /// </summary>
+    public string BoardCrest => Competition switch
+    {
+        LeagueService.ChampionsLeagueCompetition => "ehf_champions_league_crest.png",
+        LeagueService.EuropeanLeagueCompetition => "ehf_european_league_crest.png",
+        LeagueService.EuropeanCupCompetition => "ehf_european_cup_crest.png",
+        _ => Logo,
+    };
+
     /// <summary>
     /// Finds today's fixture between the two clubs and dresses the match for it. A European
     /// tie gets that competition's court; everything else the app's own, with the league's,
@@ -49,7 +70,11 @@ public sealed record MatchPresentation(string Competition, string Logo, CourtThe
         {
             bool european = LeagueService.IsEuropeanCompetition(cup.CompetitionName);
             string logo = european ? CompetitionAssets.LeagueLogo(cup.CompetitionName) : CompetitionAssets.CupLogo(cup.CompetitionName);
-            return new MatchPresentation(cup.CompetitionName, logo, CourtTheme.For(cup.CompetitionName), kits);
+            return new MatchPresentation(cup.CompetitionName, logo, CourtTheme.For(cup.CompetitionName), kits)
+            {
+                Kind = european ? CompetitionKind.European : CompetitionKind.Cup,
+                Round = cup.Round,
+            };
         }
 
         var supercup = await db.SupercupFixtures.AsNoTracking()
@@ -57,7 +82,11 @@ public sealed record MatchPresentation(string Competition, string Logo, CourtThe
         if (supercup != null)
         {
             string logo = CompetitionAssets.SupercupLogo(supercup.CompetitionName) ?? CompetitionAssets.LeagueLogo(supercup.CompetitionName);
-            return new MatchPresentation(supercup.CompetitionName, logo, CourtTheme.App, kits);
+            return new MatchPresentation(supercup.CompetitionName, logo, CourtTheme.App, kits)
+            {
+                Kind = CompetitionKind.Supercup,
+                Round = supercup.Round,
+            };
         }
 
         string league = home.CompetitionName;

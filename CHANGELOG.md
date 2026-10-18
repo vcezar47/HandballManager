@@ -2,6 +2,30 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 4.5.0 — October 2026 · Broadcast scoreboards and keepers who dive
+
+* **TV-style scoreboards** above every live match, in each competition's own style: four board
+  shapes, a palette for every league, cup and supercup, the EHF competitions in their own colours,
+  and town-based three-letter codes kept apart within a match
+* **A half-time and full-time screen**: the court dims and the competition's board rises with both
+  clubs' full names and the score held on the centre of the screen
+* **Keepers reworked.** A keeper now saves by getting to the ball, not by covering it standing, so
+  the time a long shot gives her counts: shots from nine metres go in about two times in five
+  (they went in more than half the time), and keepers stop a third of the shots on target. At a
+  seven-metre she reads the taker and goes early, right or wrong, and saves about one in five.
+  Every keeper is seen to dive
+* **Fewer two-minute suspensions**: about 2.6 a team, down from 3.4
+* **A new main menu** in the logo's crimson, with your last career a tap from CONTINUE
+* **The match report opens faster** after a live match: the rest of the day is filed from the
+  final whistle, behind the full-time screen
+* **2025/26 squads corrected** for Romania, Hungary, France and Denmark (new careers)
+* **Fixed**: the crowd could play on after leaving the app
+
+Between 4.1 and 4.5 the game also gained a redesigned manager screen with a trophy cabinet and
+career path, European objectives from the board, a tactics board, sponsors with their own logos,
+wages and ticket prices that follow each league's level, a Finances screen with a season chart,
+and 50 achievements with titles.
+
 ## 4.1.0 — October 2026 · Six languages and a new home screen
 
 * **The game in six languages**: English, French, German, Spanish, Romanian and Danish, chosen

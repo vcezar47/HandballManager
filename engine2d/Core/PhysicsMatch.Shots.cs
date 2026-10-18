@@ -44,6 +44,16 @@ public sealed partial class PhysicsMatch
         public bool Kempa { get; init; }
         /// <summary>Where the keeper is assumed to be — her real position for a real shot.</summary>
         public Vector2? Keeper { get; init; }
+        /// <summary>
+        /// The side a keeper went to early at a seven-metre, in the goal's w (−1 or 1), or 0 if
+        /// she stood. Settled once the throw is away: the taker picks her corner not knowing it.
+        /// </summary>
+        public int KeeperGuess { get; init; }
+        /// <summary>
+        /// The shot as the shooter weighs it up, deciding whether and where to shoot, rather than
+        /// as it really goes: she reads the keeper as slower than she is (<see cref="Tuning.KeeperLimbSpeedAsRead"/>).
+        /// </summary>
+        public bool AsRead { get; init; }
     }
 
     private static readonly float[] AimW = [-1.2f, -0.6f, 0f, 0.6f, 1.2f];
@@ -172,7 +182,7 @@ public sealed partial class PhysicsMatch
     /// </summary>
     private float EstimateXg(Agent s, Vector2 at, bool sevenMetre = false, Vector2? keeperAt = null)
     {
-        var plan = PlanShot(s, at, sevenMetre, keeperAt);
+        var plan = PlanShot(s, at, sevenMetre, keeperAt) with { AsRead = true };
         float best = 0f;
         // The four corners and the bottom middle: where the best option almost always is. A
         // coarser grid than the real shot uses, because this runs for every teammate at every
@@ -214,7 +224,17 @@ public sealed partial class PhysicsMatch
         float reachNeeded = MathF.Sqrt(lateral * lateral + dz * dz);
 
         var kp = k.Player;
-        float reaction = _t.KeeperReactionBase - _t.KeeperReactionSpan * k.Eff(kp.Reflexes) / 20f
+
+        // Gone early at a seven-metre: the right side and she is already on her way to it; the
+        // wrong one, or a ball down the middle she has left, and she is beaten.
+        float headStart = 0f, beaten = 1f;
+        if (plan.KeeperGuess != 0)
+        {
+            if (MathF.Sign(w) == plan.KeeperGuess && MathF.Abs(w) > 0.25f) headStart = _t.SevenMetreHeadStart;
+            else beaten = 0.15f;
+        }
+
+        float reaction = _t.KeeperReactionBase - _t.KeeperReactionSpan * k.Eff(kp.Reflexes) / 20f - headStart
                          + plan.Screen
                          + 0.04f * plan.Flair / 20f
                          + (plan.SevenMetre ? _t.SevenMetreFake : 0f)
@@ -223,10 +243,23 @@ public sealed partial class PhysicsMatch
                          + (k.Vel.Length() > 1.5f ? 0.05f : 0f);
         float arrive = t * MathF.Sqrt(len2) / plan.Speed;
         float reach = _t.KeeperReachBase + 0.35f * (k.HeightM - 1.60f) + _t.KeeperAerialSpan * k.Eff(kp.AerialReach) / 20f;
-        float limb = _t.KeeperLimbSpeed + _t.KeeperLimbSpeedSpan * k.Eff(kp.Agility) / 20f;
+        float limb = (plan.AsRead ? _t.KeeperLimbSpeedAsRead : _t.KeeperLimbSpeed) + _t.KeeperLimbSpeedSpan * k.Eff(kp.Agility) / 20f;
         float cover = reach + limb * MathF.Max(0f, arrive - reaction);
 
-        return Sigmoid((cover - reachNeeded) / edge);
+        return beaten * Sigmoid((cover - reachNeeded) / edge);
+    }
+
+    /// <summary>
+    /// Where a keeper goes at a seven-metre before the ball leaves the hand: a side she has read,
+    /// or nowhere. Her Anticipation reads the taker; the taker's Composure hides it.
+    /// </summary>
+    private int SevenMetreGuess(Agent taker, Agent keeper, float aimW)
+    {
+        if (Rand() >= _t.SevenMetreCommit) return 0;
+        float read = _t.SevenMetreReadBase + 0.30f * keeper.Eff(keeper.Player.Anticipation) / 20f
+                     - 0.20f * taker.Eff(taker.Player.Composure) / 20f;
+        int aimed = MathF.Abs(aimW) > 0.25f ? MathF.Sign(aimW) : (Rand() < 0.5f ? -1 : 1);
+        return Rand() < read ? aimed : -aimed;
     }
 
     /// <summary>
@@ -296,6 +329,7 @@ public sealed partial class PhysicsMatch
         stat.Shots++;
         if (_attack != null) { _attack.Shots++; if (_attack.FirstShotAt < 0) _attack.FirstShotAt = Clock - _attack.Start; }
         if (sevenMetre) stat.SevenMeterAttempts++;
+        else _openShots[s.Side]++;
 
         var outcome = ResolveShot(s, sevenMetre, out var plan, out var aim, out var blocker);
         LaunchShot(s, keeper, plan, outcome, aim.X, aim.Y, aim.Z, blocker, sevenMetre);
@@ -311,16 +345,22 @@ public sealed partial class PhysicsMatch
         // Choosing the corner. Her read of the keeper is only as good as her decisions.
         float noise = 0.05f * (1.2f - s.Eff(s.Player.Decisions) / 20f);
         float bestScore = float.MinValue, aimW = 0, aimZ = 1;
+        var judged = plan with { AsRead = true };
         foreach (var w in AimW)
             foreach (var z in AimZ)
             {
-                float v = AimValue(s, plan, w, z, sevenMetre) + noise * Gauss();
+                float v = AimValue(s, judged, w, z, sevenMetre) + noise * Gauss();
                 if (v > bestScore) { bestScore = v; aimW = w; aimZ = z; }
             }
 
         // Throwing it: the hand is never quite where the eye was.
         float tw = aimW + plan.SigmaW * Gauss();
         float tz = MathF.Max(0.05f, aimZ + plan.Sigma * Gauss());
+
+        // The keeper's read of a seven-metre, made as the taker winds up: settled after the
+        // corner is chosen, which the taker picked without knowing it.
+        if (sevenMetre && keeper != null)
+            plan = plan with { KeeperGuess = SevenMetreGuess(s, keeper, aimW) };
 
         ShotOutcome outcome;
         blocker = null;
@@ -350,12 +390,14 @@ public sealed partial class PhysicsMatch
     private void LaunchShot(Agent s, Agent? keeper, in ShotPlan plan, ShotOutcome outcome, float tw, float tz, float bestScore, Agent? blocker, bool sevenMetre)
     {
         var side = Sides[s.Side];
+        Vector2? dive = keeper == null || !keeper.OnCourt || outcome == ShotOutcome.Blocked ? null : Dive(s, keeper, plan, outcome, tw);
 
-        // The flight, for the eye. The result is known; it lands when the ball gets there.
+        // The flight, for the eye. The result is known; it lands when the ball gets there — on a
+        // save, where her dive takes her.
         Vector2 to = outcome switch
         {
             ShotOutcome.Blocked => blocker!.Pos,
-            ShotOutcome.Saved or ShotOutcome.SavedHeld => keeper!.Pos,
+            ShotOutcome.Saved or ShotOutcome.SavedHeld => dive ?? keeper!.Pos,
             ShotOutcome.Missed => World(side, -1.2f, tw * 1.4f),
             ShotOutcome.Post => World(side, 0f, MathF.Sign(tw) * Court.PostHalf),
             _ => World(side, -0.3f, tw),
@@ -376,6 +418,19 @@ public sealed partial class PhysicsMatch
         Ball.ShotBlocker = blocker;
         Ball.IsSevenMetre = sevenMetre;
         Ball.Pos = plan.Release;
+
+        if (dive is { } diveTo && keeper != null)
+        {
+            // She goes once she has reacted — at a seven-metre she has read, as the ball leaves
+            // the hand — and is at full stretch as it arrives.
+            float reaction = plan.KeeperGuess != 0 ? 0f
+                : MathF.Max(0.05f, _t.KeeperReactionBase - _t.KeeperReactionSpan * keeper.Eff(keeper.Player.Reflexes) / 20f + plan.Screen);
+            keeper.DiveFrom = keeper.Pos;
+            keeper.DiveTo = diveTo;
+            keeper.DiveUntil = Clock + Ball.Duration;
+            keeper.DiveStart = Clock + MathF.Min(reaction, Ball.Duration * 0.7f);
+        }
+
         var (ru, rw) = Frame(side, plan.Release);
         LastShot = new ShotRecord(Clock, s.Side, s.Id, plan.Release, tw, tz, outcome, sevenMetre)
         {
@@ -392,6 +447,25 @@ public sealed partial class PhysicsMatch
             GotBallBy = s.GotBallBy,
         };
         Shots.Add(LastShot);
+    }
+
+    /// <summary>
+    /// Where a keeper's dive at this shot ends. To the ball on a save; towards it and short on a
+    /// goal; a step on one that goes wide. At a seven-metre she has read, the side she read,
+    /// right or wrong. None for a keeper out of her goal — after a loose ball, say — who meets
+    /// the shot where she stands. Drawn only: the outcome was settled before.
+    /// </summary>
+    private Vector2? Dive(Agent s, Agent keeper, in ShotPlan plan, ShotOutcome outcome, float tw)
+    {
+        var side = Sides[s.Side];
+        var (ku, kw) = Frame(side, keeper.Pos);
+        if (ku > 4f || MathF.Abs(kw) > Court.PostHalf + 1f) return null;
+        bool saved = outcome is ShotOutcome.Saved or ShotOutcome.SavedHeld;
+        float wTo = !saved && plan.KeeperGuess != 0 ? plan.KeeperGuess * 1.1f : tw;
+        float share = saved || plan.KeeperGuess != 0 ? 1f : outcome == ShotOutcome.Goal ? 0.55f : 0.4f;
+        float w = kw + Math.Clamp((wTo - kw) * share, -1.6f, 1.6f);
+        w = Math.Clamp(w, -Court.PostHalf - 0.2f, Court.PostHalf + 0.2f);
+        return World(side, MathF.Max(0.25f, ku), w);
     }
 
     /// <summary>Every shot of the match, for the shot map.</summary>

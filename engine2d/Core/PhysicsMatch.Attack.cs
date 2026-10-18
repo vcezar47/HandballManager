@@ -90,7 +90,7 @@ public sealed partial class PhysicsMatch
         }
         else if (!c.IsKeeper && mouth < 12.5f)
         {
-            float xg = EstimateXg(c, c.Pos) * ShotAppetite(c);
+            float xg = EstimateXg(c, c.Pos) * ShotAppetite(c) * Usage(c);
             if (mouth > 8.5f)
             {
                 if (focus == AttackFocus.LongShots) xg += 0.07f;
@@ -116,7 +116,7 @@ public sealed partial class PhysicsMatch
             float length = Vector2.Distance(c.Pos, arrive);
             float flight = length / (_t.PassSpeedBase + _t.PassSpeedSpan * c.Eff(p.Passing) / 20f);
             float onward = tMouth < 12.5f
-                ? EstimateXg(t, arrive, keeperAt: KeeperWhenShooting(t, arrive, flight + t.DecisionInterval)) * ReceiveDiscount(t)
+                ? EstimateXg(t, arrive, keeperAt: KeeperWhenShooting(t, arrive, flight + t.DecisionInterval)) * ReceiveDiscount(t) * Usage(t)
                 : 0f;
             float value = MathF.Max(onward, keep * RoleKeepShare(t.Role, tMouth));
 
@@ -149,7 +149,7 @@ public sealed partial class PhysicsMatch
             var takeOff = World(s, 6.4f * MathF.Sin(0.55f), side * (Court.PostHalf + 6.4f * MathF.Cos(0.55f)));
             float space = LaneSpace(c, takeOff);
             float through = Sigmoid((space - 0.8f) / 0.35f);
-            float xgThere = EstimateXg(c, takeOff) * ShotAppetite(c);
+            float xgThere = EstimateXg(c, takeOff) * ShotAppetite(c) * Usage(c);
             float value = through * xgThere * 0.95f + (1f - through) * keep * 0.85f;
             if (focus == AttackFocus.Wings) value += 0.04f;
             Consider(value, 3, null, takeOff);
@@ -170,7 +170,7 @@ public sealed partial class PhysicsMatch
 
                 float space = LaneSpace(c, point);
                 float through = Sigmoid((space - 0.9f) / 0.35f) * (0.6f + 0.4f * DuelEdge(c));
-                float xgThere = Court.DistanceToGoalMouth(pu, pw) < 12.5f ? EstimateXg(c, point) : 0f;
+                float xgThere = Court.DistanceToGoalMouth(pu, pw) < 12.5f ? EstimateXg(c, point) * Usage(c) : 0f;
                 // Stopped is not free: the attack restarts from nine metres with the clock running,
                 // and a run into a set defender is how the ball gets stripped.
                 float value = through * xgThere * 0.92f + (1f - through) * keep * 0.8f + 0.02f * flair;
@@ -327,6 +327,28 @@ public sealed partial class PhysicsMatch
         return Math.Clamp(appetite, 0.8f, 1.3f);
     }
 
+    /// <summary>Open-play shots each side has taken, for <see cref="Usage"/>.</summary>
+    private readonly int[] _openShots = new int[2];
+
+    /// <summary>
+    /// How much of her pull on the ball a player keeps, given how much of her side's shooting she
+    /// has already done: 1 up to a fair share, falling past it to <see cref="Tuning.UsageFloor"/>.
+    /// </summary>
+    /// <remarks>
+    /// Read wherever a choice is valued by the chance a player would get — her own shot, her
+    /// drive, a pass to her — so a side that has fed one player all night starts to look for
+    /// somebody else, as a defence that has keyed on her makes it. A shot at an open net is
+    /// not touched: nobody passes up an empty goal to share the ball round.
+    /// </remarks>
+    private float Usage(Agent a)
+    {
+        if (_t.UsageSlope <= 0f) return 1f;
+        int mine = Stats.TryGetValue(a.Id, out var st) ? st.Shots - st.SevenMeterAttempts : 0;
+        float share = (mine + _t.UsagePrior * _t.UsageFreeShare) / (_openShots[a.Side] + _t.UsagePrior);
+        float excess = share - _t.UsageFreeShare;
+        return excess <= 0f ? 1f : MathF.Max(_t.UsageFloor, 1f - _t.UsageSlope * excess);
+    }
+
     /// <summary>How much of an attack's worth a player keeps in her hands in that part of the court.</summary>
     private static float RoleKeepShare(string role, float mouth)
         => mouth > 14f ? 0.9f : role switch
@@ -433,6 +455,21 @@ public sealed partial class PhysicsMatch
     // ── Off the ball ───────────────────────────────────────────────────────────
 
     /// <summary>
+    /// The 3:3 an attack sets up in, before the ball bends it: metres out from the goal line and
+    /// metres across, the attack's left positive. Public for the tactics board, which draws it.
+    /// </summary>
+    public static (float U, float W) AttackHome(string role) => role switch
+    {
+        "LW" => (1.2f, 8.6f),
+        "RW" => (1.2f, -8.6f),
+        "LB" => (9.9f, 4.6f),
+        "RB" => (9.9f, -4.6f),
+        "CB" => (10.6f, 0f),
+        "Pivot" => (6.4f, 0f),
+        _ => (10f, 0f),
+    };
+
+    /// <summary>
     /// Where a player of the side in possession wants to be, in its attacking frame. The 3:3
     /// shape every club plays from, bent by where the ball is, whether the attack is still
     /// breaking and what the restart rules allow.
@@ -440,17 +477,7 @@ public sealed partial class PhysicsMatch
     private (float U, float W) AttackSlot(TeamSide s, Agent a, bool forThrowOff = false)
     {
         var ball = Frame(s, Ball.Pos);
-        (float u, float w) = a.Role switch
-        {
-            "LW" => (1.2f, 8.6f),
-            "RW" => (1.2f, -8.6f),
-            "LB" => (9.9f, 4.6f),
-            "RB" => (9.9f, -4.6f),
-            "CB" => (10.6f, 0f),
-            "Pivot" => (6.4f, 0f),
-            "GK" => (Court.Length - 3.5f, 0f),
-            _ => (10f, 0f),
-        };
+        (float u, float w) = a.Role == "GK" ? (Court.Length - 3.5f, 0f) : AttackHome(a.Role);
         if (a.Role == ExtraRole)
         {
             // The seventh plays as a second pivot, on the other side of the first.

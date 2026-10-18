@@ -188,7 +188,6 @@ public sealed partial class PhysicsMatch
                 {
                     _lastPasser = thrower;
                     _lastReceiver = r;
-                    _lastReceiveAt = Clock;
                     // A pivot catches it with her back to goal and has to turn first.
                     GiveBall(r, newAttack: false, lookDelay: r.DecisionInterval * 0.6f + (r.Role == "Pivot" ? 0.3f : 0f));
                     r.GotBallBy = "pass";
@@ -240,7 +239,7 @@ public sealed partial class PhysicsMatch
 
     private void GiveBall(Agent a, bool newAttack, float lookDelay)
     {
-        foreach (var x in Agents) if (x.JumpUntil > 0f) { x.JumpUntil = 0f; x.Airborne = false; }
+        foreach (var x in Agents) { if (x.JumpUntil > 0f) { x.JumpUntil = 0f; x.Airborne = false; } x.DiveUntil = 0f; }
         if (newAttack || Possession != a.Side)
         {
             // A rebound gathered by the defence is a save or a block doing its job, not a turnover.
@@ -352,6 +351,8 @@ public sealed partial class PhysicsMatch
         var keeper = Ball.ShotKeeper;
         bool seven = Ball.IsSevenMetre;
         Ball.IsSevenMetre = false;
+        // The dive is over where it ended: a parry comes off her there, and she gets up from it.
+        if (keeper != null) { keeper.DiveUntil = 0f; keeper.Vel = Vector2.Zero; }
 
         // A shot on goal wipes the referee's passive-play warning.
         PassiveWarned = false;
@@ -365,8 +366,10 @@ public sealed partial class PhysicsMatch
                 var st = EnsureStat(shooter);
                 st.Goals++;
                 if (seven) st.SevenMeterGoals++;
+                // An assist is the pass she scored straight off: received from a team-mate and
+                // shot within the window, as a stat sheet would credit it.
                 if (!seven && _lastReceiver == shooter && _lastPasser != null && _lastPasser.Side == a
-                    && Clock - _lastReceiveAt < 4f)
+                    && LastShot is { GotBallBy: "pass" } shot && shot.HeldFor <= _t.AssistWindow)
                     EnsureStat(_lastPasser).Assists++;
                 if (keeper != null) EnsureStat(keeper).GoalsAgainst++;
                 Emit(seven ? EventKind.SevenMetreGoal : EventKind.Goal, a, shooter, seven ? keeper : _lastPasser);

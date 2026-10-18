@@ -18,9 +18,29 @@ public sealed class Tuning
     public float KeeperReactionBase = 0.332f;
     public float KeeperReactionSpan = 0.26f;
     /// <summary>Reach from the body without moving, metres, before height and AerialReach.</summary>
-    public float KeeperReachBase = 0.28f;
+    /// <remarks>
+    /// 0.28 until 2026-10-13. Sharing the ball round (<see cref="UsageSlope"/>) moved shots from
+    /// each side's best finisher to its weaker ones and took 57.7 goals a match to 52.0; 0.25
+    /// gives them back (55.9 over 150 matches) without undoing the spread it fixed. 0.15 since
+    /// 2026-10-18, with <see cref="KeeperLimbSpeed"/> 1.32 → 3.3: the save moved from what she
+    /// covers standing to what she gets to, so the long shot became hers and the close one
+    /// stayed the shooter's. 150 matches: 55.7 goals; nine metres 54% → 40%, under seven 71%;
+    /// saves 22% → 33% of shots on target.
+    /// </remarks>
+    public float KeeperReachBase = 0.15f;
     /// <summary>How fast a keeper can get a limb across once she has reacted, m/s, before Agility.</summary>
-    public float KeeperLimbSpeed = 1.32f;
+    /// <remarks>
+    /// 1.32 until 2026-10-18, when a back scored from nine metres more than half the time (real:
+    /// about two in five). Speed only tells with time to use it, so this is what makes the long
+    /// shot the keeper's: from the six metres the ball is there before she has moved.
+    /// </remarks>
+    public float KeeperLimbSpeed = 3.3f;
+    /// <summary>
+    /// The same speed as shooters judge it when choosing to shoot. Kept at the old 1.32 when the
+    /// real one went up: judged by the real one they simply stopped shooting from distance, kept
+    /// only the sure things, and those still went in half the time. Backs back themselves.
+    /// </summary>
+    public float KeeperLimbSpeedAsRead = 1.32f;
     /// <summary>Reach an AerialReach of 20 adds over one of 0, metres.</summary>
     public float KeeperAerialSpan = 0.4f;
     public float KeeperLimbSpeedSpan = 1.8f;
@@ -30,6 +50,17 @@ public sealed class Tuning
     public float ScreenDelay = 0.025f;
     /// <summary>The taker's dummy at a seven-metre: extra reaction time the keeper loses to it, seconds.</summary>
     public float SevenMetreFake = 0.02f;
+    /// <summary>
+    /// At a seven-metre the ball is in the net a quarter of a second after it leaves the hand,
+    /// no more than a keeper's reaction, so one who waits for it saves only what is thrown at her
+    /// — 8% of them, against a real fifth. Real keepers read the taker and go early. This is how
+    /// often she commits to a side rather than stand.
+    /// </summary>
+    public float SevenMetreCommit = 0.6f;
+    /// <summary>The chance her read is the right side, before her Anticipation and the taker's Composure.</summary>
+    public float SevenMetreReadBase = 0.30f;
+    /// <summary>The start a keeper who has read the right side has on the ball, seconds.</summary>
+    public float SevenMetreHeadStart = 0.18f;
     /// <summary>Reaction a keeper loses to a wing's hang time in the air, seconds, at full Flair.</summary>
     public float WingHangTime = 0.20f;
     /// <summary>Per decision of a back with a Kempa partner, the chance the play is even on.</summary>
@@ -89,7 +120,11 @@ public sealed class Tuning
     public float StealChance = 0.02f;
     public float OffensiveFoulChance = 0.02f;
     /// <summary>Of the stops, the share that earn two minutes, at neutral aggression.</summary>
-    public float SuspensionShare = 0.0375f;
+    /// <remarks>
+    /// 0.0375 until 2026-10-18, which gave 3.4 a team a match with the AI coaches' own settings:
+    /// a tester found the game stopping for two minutes far too often.
+    /// </remarks>
+    public float SuspensionShare = 0.03f;
     /// <summary>
     /// How the defensive instruction moves two-minute suspensions on its own, on top of how
     /// often a defender gets in a foul. Without it an aggressive defence ended attacks earlier,
@@ -125,6 +160,39 @@ public sealed class Tuning
     public float EasingOffMax = 0.12f;
     /// <summary>Of the stops on a clear chance, the share given as a seven-metre throw.</summary>
     public float SevenMetreShare = 1.0f;
+
+    // ── Sharing the ball ───────────────────────────────────────────────────────
+    /// <summary>
+    /// The share of a side's open-play shots one player can take before the attack starts to
+    /// look elsewhere. A real top scorer takes about a quarter of her side's shots.
+    /// </summary>
+    /// <remarks>
+    /// Without this every option was valued by the chance it made and nothing else, so every
+    /// possession found the side's best finisher: 34% of a team's shots on average and 47% for a
+    /// standout back, who took 46 shots and scored 34 in one match (reported from a 2028 save,
+    /// 29–49). A defence keys on a player who is doing that, and a team shares the ball.
+    /// </remarks>
+    public float UsageFreeShare = 0.22f;
+    /// <summary>How fast her pull on the ball falls past <see cref="UsageFreeShare"/>, per unit of share.</summary>
+    public float UsageSlope = 2f;
+    /// <summary>The least of her pull that is left, however much she has shot.</summary>
+    public float UsageFloor = 0.55f;
+    /// <summary>Imaginary shots at a fair share, so the first few of a match decide nothing.</summary>
+    public float UsagePrior = 8f;
+
+    // ── The stat sheet ─────────────────────────────────────────────────────────
+    /// <summary>
+    /// The longest a scorer can hold a team-mate's pass before shooting and still have it counted
+    /// as an assist, in seconds.
+    /// </summary>
+    /// <remarks>
+    /// Real scorers credit the pass that made the goal, not every pass before one: about two goals
+    /// in five carry an assist on a real stat sheet. The old rule (a pass received within 4 s of
+    /// the shot landing) credited 78% of all goals, so a centre back could be given nine assists
+    /// in a match and the ratings were reading from inflated lines. Held for under 0.85 s is
+    /// about 43% (measured over 60 matches, 2026-10-16).
+    /// </remarks>
+    public float AssistWindow = 0.85f;
 
     /// <summary>How much of a gap a set defender closes while an attacker drives at it, metres.</summary>
     public float LaneClosing = 0.6f;

@@ -92,6 +92,14 @@ public sealed class Agent
     public Vector2 JumpFrom, JumpTo;
     public float JumpStart;
 
+    /// <summary>
+    /// A keeper's dive at a shot, for the eye: from where she stood towards where the ball goes,
+    /// starting once she has reacted (at the release, at a seven-metre she has read) and done as
+    /// it arrives. Zero when not diving. The outcome is settled before; this only shows it.
+    /// </summary>
+    public float DiveUntil, DiveStart;
+    public Vector2 DiveFrom, DiveTo;
+
     /// <summary>The spot she is getting open to, held for a moment rather than re-picked every tick.</summary>
     public float OpenDu, OpenDw, OpenUntil;
 

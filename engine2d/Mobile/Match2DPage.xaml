@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:HandballManager.Mobile"
              xmlns:local="clr-namespace:HandballManager.Mobile"
              xmlns:m2d="clr-namespace:HandballManager.Mobile.Match2D"
              xmlns:e2d="clr-namespace:HandballManager.Engine2D;assembly=HandballManager.Core"
@@ -86,43 +87,19 @@
          over the court rather than squeezing it. The grid runs edge to edge and the side panels
          touch the screen's edges; only their contents, and the scoreboard, keep clear of the
          display cut-out — sized in code, since only the device knows where it is. -->
-    <Grid x:Name="Root" RowDefinitions="32,*,30" ColumnDefinitions="144,*,144" Padding="0" SafeAreaEdges="None">
+    <Grid x:Name="Root" RowDefinitions="Auto,*,30" ColumnDefinitions="144,*,144" Padding="0" SafeAreaEdges="None">
 
-        <!-- ── Scoreboard ── -->
-        <Grid Grid.Row="0" Grid.ColumnSpan="3" x:Name="Scoreboard" ColumnDefinitions="Auto,*,Auto,Auto,Auto,*,Auto" ColumnSpacing="8" Margin="4,0">
-            <Border Grid.Column="0" BackgroundColor="#2A3350" StrokeThickness="0" StrokeShape="RoundRectangle 8"
-                    Padding="10,0" HeightRequest="28" VerticalOptions="Center">
-                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                    <Label Text="{Binding ClockText}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" VerticalOptions="Center" />
-                    <Label Text="{Binding PhaseText}" TextColor="#AAB3CC" FontSize="10" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
-
-            <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
-                <Label Text="{Binding HomeTeamName}" TextColor="White" FontSize="13" LineBreakMode="TailTruncation"
-                       MaximumWidthRequest="170" VerticalOptions="Center" />
-                <Image Source="{Binding HomeTeamLogo, Converter={StaticResource TeamLogo}}" HeightRequest="22" WidthRequest="22" Aspect="AspectFit" />
+        <!-- ── Top bar: sound and text view, the scoreboard, tactics ──
+             The board is the competition's own (ScoreboardView, built in code), always one row
+             and always in the middle; the buttons sit either side of it. The row is as tall as
+             the board: a broadcast board hangs its clock beneath its bar. -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="3" x:Name="Scoreboard" ColumnDefinitions="*,Auto,*" ColumnSpacing="8" Margin="4,2">
+            <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Start" VerticalOptions="Start" Margin="0,2,0,0">
+                <m2d:Chip x:Name="SoundChip" Text="{l:T 'SOUND'}" />
+                <m2d:Chip x:Name="ViewChip" Text="{l:T 'TEXT VIEW'}" />
             </HorizontalStackLayout>
-            <BoxView Grid.Column="2" x:Name="HomeStripe" WidthRequest="4" HeightRequest="22" CornerRadius="2" VerticalOptions="Center" />
-            <Border Grid.Column="3" BackgroundColor="#101628" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="12,0" HeightRequest="30" VerticalOptions="Center">
-                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="18" VerticalOptions="Center">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{Binding HomeScore}" />
-                            <Span Text="  –  " />
-                            <Span Text="{Binding AwayScore}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-            </Border>
-            <BoxView Grid.Column="4" x:Name="AwayStripe" WidthRequest="4" HeightRequest="22" CornerRadius="2" VerticalOptions="Center" />
-            <HorizontalStackLayout Grid.Column="5" Spacing="6" HorizontalOptions="Start" VerticalOptions="Center">
-                <Image Source="{Binding AwayTeamLogo, Converter={StaticResource TeamLogo}}" HeightRequest="22" WidthRequest="22" Aspect="AspectFit" />
-                <Label Text="{Binding AwayTeamName}" TextColor="White" FontSize="13" LineBreakMode="TailTruncation"
-                       MaximumWidthRequest="170" VerticalOptions="Center" />
-            </HorizontalStackLayout>
-
-            <m2d:Chip Grid.Column="6" x:Name="MenuChip" Text="TACTICS" />
+            <ContentView Grid.Column="1" x:Name="BoardHost" VerticalOptions="Start" />
+            <m2d:Chip Grid.Column="2" x:Name="MenuChip" Text="{l:T 'TACTICS'}" HorizontalOptions="End" VerticalOptions="Start" Margin="0,2,0,0" />
         </Grid>
 
         <!-- ── The court: floor, crest, players ── -->
@@ -173,11 +150,7 @@
                        LineBreakMode="TailTruncation" />
             </Border>
 
-            <Label Text="{Binding HomeShortHanded}" TextColor="#FF8A80" FontSize="11" FontFamily="OpenSansSemibold"
-                   HorizontalOptions="Start" VerticalOptions="Start" Margin="6,6,0,0" InputTransparent="True" />
-            <Label Text="{Binding AwayShortHanded}" TextColor="#FF8A80" FontSize="11" FontFamily="OpenSansSemibold"
-                   HorizontalOptions="End" VerticalOptions="Start" Margin="0,6,6,0" InputTransparent="True" />
-            <Label IsVisible="{Binding PassiveWarning}" Text="✋ PASSIVE" TextColor="#FFD54F" FontSize="10" FontFamily="OpenSansSemibold"
+            <Label IsVisible="{Binding PassiveWarning}" Text="{l:T '✋ PASSIVE'}" TextColor="#FFD54F" FontSize="10" FontFamily="OpenSansSemibold"
                    HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,2" InputTransparent="True" />
             <Label x:Name="FastForward" Text="▶▶" TextColor="#AAFFFFFF" FontSize="11" FontFamily="OpenSansSemibold" IsVisible="False"
                    HorizontalOptions="End" VerticalOptions="End" Margin="0,0,8,2" InputTransparent="True" />
@@ -207,8 +180,8 @@
                 <Grid RowDefinitions="Auto,Auto,*" RowSpacing="6">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                            <Label Text="TACTICS" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" CharacterSpacing="2" />
-                            <Label Text="Changes apply from the next attack" TextColor="#8892B0" FontSize="9" />
+                            <Label Text="{l:T 'TACTICS'}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="13" CharacterSpacing="2" />
+                            <Label Text="{l:T 'Changes apply from the next attack'}" TextColor="#8892B0" FontSize="9" />
                         </VerticalStackLayout>
                         <m2d:Chip Grid.Column="1" x:Name="CloseDrawerChip" Text="✕" WidthRequest="28" Padding="0" />
                     </Grid>
@@ -227,9 +200,7 @@
                 <HorizontalStackLayout x:Name="SpeedBar" Spacing="2" />
             </Border>
             <m2d:Chip x:Name="TimeoutChip" Text="{Binding TimeoutText}" />
-            <m2d:Chip x:Name="SkipChip" Text="SKIP ▸▸" />
-            <m2d:Chip x:Name="ViewChip" Text="TEXT VIEW" />
-            <m2d:Chip x:Name="SoundChip" Text="SOUND" />
+            <m2d:Chip x:Name="SkipChip" Text="{l:T 'SKIP ▸▸'}" />
         </HorizontalStackLayout>
 
         <!-- ── Who takes the seven-metre, or who faces it ──
@@ -277,50 +248,19 @@
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                     <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-                        <Label Text="Tap a player — or leave it to the usual choice." TextColor="#8892B0" FontSize="11" VerticalOptions="Center" />
-                        <m2d:Chip Grid.Column="1" x:Name="UsualTakerChip" Text="USUAL TAKER" IsSelected="True" HeightRequest="32" />
+                        <Label Text="{l:T 'Tap a player — or leave it to the usual choice.'}" TextColor="#8892B0" FontSize="11" VerticalOptions="Center" />
+                        <m2d:Chip Grid.Column="1" x:Name="UsualTakerChip" Text="{l:T 'USUAL TAKER'}" IsSelected="True" HeightRequest="32" />
                     </Grid>
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- ── Half-time, full time, and the skip ── -->
-        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsHalfTime}">
-            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
-                <Label Text="HALF-TIME" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" HorizontalTextAlignment="Center" />
-                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="32" HorizontalTextAlignment="Center">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{Binding HomeScore}" />
-                            <Span Text=" – " />
-                            <Span Text="{Binding AwayScore}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <m2d:Chip x:Name="SecondHalfChip" Text="SECOND HALF" IsSelected="True" HorizontalOptions="Center" HeightRequest="34" />
-            </VerticalStackLayout>
-        </Grid>
-
-        <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsFinished}">
-            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
-                <Label Text="{Binding PhaseText}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="18" HorizontalTextAlignment="Center" />
-                <Label TextColor="#FFD54F" FontFamily="OpenSansSemibold" FontSize="32" HorizontalTextAlignment="Center">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{Binding HomeScore}" />
-                            <Span Text=" – " />
-                            <Span Text="{Binding AwayScore}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <m2d:Chip x:Name="ContinueChip" Text="CONTINUE" IsSelected="True" HorizontalOptions="Center" HeightRequest="34" />
-            </VerticalStackLayout>
-        </Grid>
-
+        <!-- ── The break screen (half-time, extra time, full time) is BreakOverlay, added in code
+             above everything but the skip. Then the skip. ── -->
         <Grid Grid.RowSpan="3" Grid.ColumnSpan="3" BackgroundColor="#CC0A0F1E" IsVisible="{Binding IsSkipping}">
             <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
                 <ActivityIndicator IsRunning="{Binding IsSkipping}" Color="White" />
-                <Label Text="Playing out the rest of the match…" TextColor="White" FontSize="13" />
+                <Label Text="{l:T 'Playing out the rest of the match…'}" TextColor="White" FontSize="13" />
             </VerticalStackLayout>
         </Grid>
     </Grid>

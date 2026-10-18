@@ -93,14 +93,30 @@ public sealed partial class PhysicsMatch
 
     private float StepOutLimit(TeamSide s, bool advancedSlot)
     {
-        float limit = s.Tactics.Aggression switch
-        {
-            DefensiveAggression.Contain => 8.0f,
-            DefensiveAggression.Aggressive => 10.6f,
-            _ => 9.3f,
-        };
+        float limit = StepOutDistance(s.Tactics.Aggression);
         return advancedSlot ? limit + 1.8f : limit;
     }
+
+    /// <summary>How far from goal a defender will step out to meet the ball, by aggression.</summary>
+    public static float StepOutDistance(DefensiveAggression aggression) => aggression switch
+    {
+        DefensiveAggression.Contain => 8.0f,
+        DefensiveAggression.Aggressive => 10.6f,
+        _ => 9.3f,
+    };
+
+    /// <summary>
+    /// A full defence's shape for a system, from the attack's left to its right — the shape the
+    /// engine plays, which the tactics board draws so the picture and the match cannot differ.
+    /// Man-marking is the five-man wall; the marker is wherever their best player goes.
+    /// </summary>
+    public static IReadOnlyList<(float U, float W)> DefenceFormation(DefensiveSystem system) => system switch
+    {
+        DefensiveSystem.FiveOne => FiveOne,
+        DefensiveSystem.ThreeTwoOne => ThreeTwoOne,
+        DefensiveSystem.ManMarking => FiveZero,
+        _ => SixZero
+    };
 
     private void PlanDefence(TeamSide s)
     {

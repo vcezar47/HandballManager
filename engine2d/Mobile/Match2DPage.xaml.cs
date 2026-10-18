@@ -1,3 +1,4 @@
+using HandballManager.Localization;
 using HandballManager.Engine2D;
 using HandballManager.Models;
 
@@ -13,10 +14,37 @@ public enum Switch { Off, On }
 /// The match on the 2D court. Landscape only for as long as it is open — the rest of the game
 /// is a portrait app, and a handball court is twice as long as it is wide.
 /// </summary>
-public partial class Match2DPage : ContentPage
+/// <remarks>
+/// Full-bleed, so <see cref="Session.WideScreenGutters"/> leaves it alone. A phone in landscape is
+/// wide enough to count as a "wide screen" to it (about 760dp against its 700dp threshold), and it
+/// was padding this page in to a 640dp reading column: the ~60dp of plain background outside both
+/// side panels that the court kept losing, and that no change to the cut-out handling could reach.
+/// </remarks>
+public partial class Match2DPage : ContentPage, Session.IFullBleedPage
 {
     private readonly Match2DViewModel _vm;
     private readonly PlayersDrawable _players;
+    private readonly ScoreboardView _board;
+    private readonly BreakOverlay _break;
+
+    /// <summary>
+    /// Raises the break screen for whichever break the match is at, with the way on that suits it,
+    /// or takes it down once play resumes.
+    /// </summary>
+    private void UpdateBreak()
+    {
+        if (_vm.IsHalfTime)
+            _ = _break.ShowAsync(_vm, _vm.BreakCaption, BreakOverlay.ContinueFor(halfTime: true),
+                () => _vm.ContinueSecondHalfCommand.Execute(null));
+        else if (_vm.IsExtraTimeBreak)
+            _ = _break.ShowAsync(_vm, _vm.BreakCaption, BreakOverlay.ContinueFor(halfTime: false),
+                () => _vm.ContinueExtraTimeCommand.Execute(null));
+        else if (_vm.IsFinished)
+            _ = _break.ShowAsync(_vm, _vm.BreakCaption, BreakOverlay.ContinueFor(halfTime: false),
+                () => _vm.FinishCommand.Execute(null));
+        else
+            _break.Hide();
+    }
     private readonly List<Chip> _speeds = [];
     private int _selectedCourtPlayer;
 
@@ -32,8 +60,8 @@ public partial class Match2DPage : ContentPage
         BackgroundImageSource = null;
         BackgroundColor = Color.FromArgb(theme.Surround);
         Root.BackgroundColor = Color.FromArgb(theme.Surround);
-        HomeStripe.Color = Color.FromArgb(vm.Look.Kits.Home.Shirt);
-        AwayStripe.Color = Color.FromArgb(vm.Look.Kits.Away.Shirt);
+        _board = new ScoreboardView(vm);
+        BoardHost.Content = _board;
         CourtLayer.Drawable = new CourtDrawable(theme);
         _players = new PlayersDrawable(vm);
         PlayersLayer.Drawable = _players;
@@ -45,7 +73,7 @@ public partial class Match2DPage : ContentPage
         _vm.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName is nameof(Match2DViewModel.IsChoosingKeeper))
-                UsualTakerChip.Text = _vm.IsChoosingKeeper ? "KEEP HER IN GOAL" : "USUAL TAKER";
+                UsualTakerChip.Text = _vm.IsChoosingKeeper ? Loc.T("KEEP HER IN GOAL") : Loc.T("USUAL TAKER");
             if (e.PropertyName is nameof(Match2DViewModel.IsPaused))
             {
                 PauseChip.Text = _vm.IsPaused ? "▶" : "❚❚";
@@ -54,7 +82,16 @@ public partial class Match2DPage : ContentPage
             // The match changes its own speed for a time-out; the chips follow it.
             if (e.PropertyName is nameof(Match2DViewModel.Speed)) PaintSpeed();
             if (e.PropertyName is nameof(Match2DViewModel.TimeoutRequested)) TimeoutChip.IsSelected = _vm.TimeoutRequested;
+            if (e.PropertyName is nameof(Match2DViewModel.IsHalfTime) or nameof(Match2DViewModel.IsFinished)
+                or nameof(Match2DViewModel.IsExtraTimeBreak) or nameof(Match2DViewModel.BreakCaption))
+                MainThread.BeginInvokeOnMainThread(UpdateBreak);
         };
+
+        // The break screen sits over everything but the skip's own cover, which is the last child,
+        // and is only in the page while a break lasts.
+        _break = new BreakOverlay(Root);
+        Grid.SetRowSpan(_break, 3);
+        Grid.SetColumnSpan(_break, 3);
 
         // The controls.
         PauseChip.Tapped += (_, _) => _vm.TogglePauseCommand.Execute(null);
@@ -73,8 +110,6 @@ public partial class Match2DPage : ContentPage
         MenuChip.Tapped += (_, _) => ToggleDrawer();
         CloseDrawerChip.Tapped += (_, _) => ToggleDrawer();
         UsualTakerChip.Tapped += (_, _) => _vm.ChooseTaker(0);
-        SecondHalfChip.Tapped += (_, _) => _vm.ContinueSecondHalfCommand.Execute(null);
-        ContinueChip.Tapped += (_, _) => _vm.FinishCommand.Execute(null);
 
         foreach (var header in new[] { HomeHeader, AwayHeader })
         {
@@ -92,6 +127,7 @@ public partial class Match2DPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        if (_handedBack) return;
 #if ANDROID
         if (Platform.CurrentActivity is { } activity)
         {
@@ -223,6 +259,43 @@ public partial class Match2DPage : ContentPage
     {
         base.OnDisappearing();
         _vm.Frame -= OnFrame;
+        _board.Detach();
+        _break.Hide();
+        if (!_handedBack) RestoreScreen();
+    }
+
+    private bool _handedBack;
+
+    /// <summary>
+    /// The match is over and the report is about to go up over this page: the phone goes back to
+    /// portrait with its bars, and nothing here turns it again. Called by the session rather than
+    /// left to <see cref="OnDisappearing"/>: with the report pushed over the match instead of the
+    /// match popped, the page could be shown again behind the ad and the report came up still in
+    /// landscape.
+    /// </summary>
+    public void HandBackScreen()
+    {
+        if (_handedBack) return;
+        _handedBack = true;
+        // The court, the benches and the board laid out again in portrait for the moment before
+        // the report covers them looked like a fault, so they go — but not to an empty screen:
+        // the report can be seconds away, and a blank one read as the game having stopped.
+        var spinner = new ActivityIndicator { IsRunning = true, HorizontalOptions = LayoutOptions.Center };
+        spinner.SetDynamicResource(ActivityIndicator.ColorProperty, "Accent");
+        var caption = new Label { Text = Loc.T("Writing the match report…"), FontSize = 13, HorizontalOptions = LayoutOptions.Center };
+        caption.SetDynamicResource(Label.TextColorProperty, "TextMuted");
+        Content = new VerticalStackLayout
+        {
+            Spacing = 12,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            Children = { spinner, caption },
+        };
+        RestoreScreen();
+    }
+
+    private static void RestoreScreen()
+    {
 #if ANDROID
         if (Platform.CurrentActivity is { } activity)
         {
@@ -238,7 +311,7 @@ public partial class Match2DPage : ContentPage
     private void OnFrame()
     {
         PlayersLayer.Invalidate();
-        FastForward.Text = _vm.IsReplayingMoment ? "● KEY MOMENT" : "▶▶ FAST";
+        FastForward.Text = _vm.IsReplayingMoment ? Loc.T("● KEY MOMENT") : Loc.T("▶▶ FAST");
     }
 
     /// <summary>The crest sits in the throw-off area, wherever the court ends up on screen.</summary>
@@ -269,7 +342,7 @@ public partial class Match2DPage : ContentPage
 
     private void PaintSound()
     {
-        SoundChip.Text = _vm.IsSoundOn ? "🔊 SOUND" : "🔇 SOUND";
+        SoundChip.Text = _vm.IsSoundOn ? Loc.T("🔊 SOUND") : Loc.T("🔇 SOUND");
         SoundChip.IsSelected = _vm.IsSoundOn;
     }
 
@@ -278,7 +351,7 @@ public partial class Match2DPage : ContentPage
         bool text = !TextView.IsVisible;
         TextView.IsVisible = text;
         CourtLayer.IsVisible = PlayersLayer.IsVisible = CentreLogo.IsVisible = !text;
-        ViewChip.Text = text ? "COURT VIEW" : "TEXT VIEW";
+        ViewChip.Text = text ? Loc.T("COURT VIEW") : Loc.T("TEXT VIEW");
         ViewChip.IsSelected = text;
     }
 
@@ -329,7 +402,7 @@ public partial class Match2DPage : ContentPage
         }
 
         if (!_vm.Substitute(off.Id, on.Id))
-            await DisplayAlert("Substitution", "Not now — she has the ball, or a keeper can only replace a keeper.", "OK");
+            await DisplayAlert(Loc.T("Substitution"), Loc.T("Not now — she has the ball, or a keeper can only replace a keeper."), Loc.T("OK"));
         PlayersLayer.Invalidate();
     }
 
@@ -344,23 +417,23 @@ public partial class Match2DPage : ContentPage
 
     private void BuildTacticsPanel()
     {
-        AddRow("TEMPO", [("Counter", AttackTempo.Counter), ("Balanced", AttackTempo.Balanced), ("Controlled", AttackTempo.Controlled)],
+        AddRow(Loc.T("TEMPO"), [(Loc.T("Counter"), AttackTempo.Counter), (Loc.T("Balanced"), AttackTempo.Balanced), (Loc.T("Controlled"), AttackTempo.Controlled)],
             () => _vm.Tempo, v => _vm.Tempo = v);
-        AddRow("ATTACK THROUGH", [("Balanced", AttackFocus.Balanced), ("Wings", AttackFocus.Wings), ("Long shots", AttackFocus.LongShots),
-                ("Pivot", AttackFocus.Pivot), ("Playmaker", AttackFocus.Playmaker)],
+        AddRow(Loc.T("ATTACK THROUGH"), [(Loc.T("Balanced"), AttackFocus.Balanced), (Loc.T("Wings"), AttackFocus.Wings), (Loc.T("Long shots"), AttackFocus.LongShots),
+                (Loc.T("Pivot"), AttackFocus.Pivot), (Loc.T("Playmaker"), AttackFocus.Playmaker)],
             () => _vm.Focus, v => _vm.Focus = v);
         AddRow("DEFENCE", [("6-0", DefensiveSystem.SixZero), ("5-1", DefensiveSystem.FiveOne), ("3-2-1", DefensiveSystem.ThreeTwoOne),
-                ("Man-mark", DefensiveSystem.ManMarking)],
+                (Loc.T("Man-mark"), DefensiveSystem.ManMarking)],
             () => _vm.DefenceSystem, v => _vm.DefenceSystem = v);
-        AddRow("AGGRESSION", [("Contain", DefensiveAggression.Contain), ("Normal", DefensiveAggression.Normal), ("Aggressive", DefensiveAggression.Aggressive)],
+        AddRow(Loc.T("AGGRESSION"), [(Loc.T("Contain"), DefensiveAggression.Contain), (Loc.T("Normal"), DefensiveAggression.Normal), (Loc.T("Aggressive"), DefensiveAggression.Aggressive)],
             () => _vm.Aggression, v => _vm.Aggression = v);
-        AddRow("7TH PLAYER", [("Keeper in goal", SeventhPlayer.Off), ("7 v 6 in attack", SeventhPlayer.On)],
+        AddRow(Loc.T("7TH PLAYER"), [(Loc.T("Keeper in goal"), SeventhPlayer.Off), (Loc.T("7 v 6 in attack"), SeventhPlayer.On)],
             () => _vm.EmptyGoal ? SeventhPlayer.On : SeventhPlayer.Off, v => _vm.EmptyGoal = v == SeventhPlayer.On);
-        AddRow("PLAY FOR TIME", [("No", Switch.Off), ("Run the clock down", Switch.On)],
+        AddRow(Loc.T("PLAY FOR TIME"), [(Loc.T("No"), Switch.Off), (Loc.T("Run the clock down"), Switch.On)],
             () => _vm.PlayForTime ? Switch.On : Switch.Off, v => _vm.PlayForTime = v == Switch.On);
-        AddRow("SEVEN METRES", [("Ask me", Switch.On), ("Leave it to them", Switch.Off)],
+        AddRow(Loc.T("SEVEN METRES"), [(Loc.T("Ask me"), Switch.On), (Loc.T("Leave it to them"), Switch.Off)],
             () => _vm.AsksForSevenMetres ? Switch.On : Switch.Off, v => _vm.AsksForSevenMetres = v == Switch.On);
-        AddRow("SUBSTITUTIONS", [("Rotate tired players", Switch.On), ("Only mine", Switch.Off)],
+        AddRow(Loc.T("SUBSTITUTIONS"), [(Loc.T("Rotate tired players"), Switch.On), (Loc.T("Only mine"), Switch.Off)],
             () => _vm.AutoSubstitutions ? Switch.On : Switch.Off, v => _vm.AutoSubstitutions = v == Switch.On);
     }
 

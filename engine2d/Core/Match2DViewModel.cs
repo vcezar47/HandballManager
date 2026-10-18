@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandballManager.Localization;
 using HandballManager.Models;
 using HandballManager.Services;
 using HandballManager.ViewModels;
@@ -39,6 +40,13 @@ public sealed record SevenMetreCandidate(int Id, string Name, int Number, string
 public partial class Match2DViewModel : BaseViewModel
 {
     private readonly Action<IPlayedMatch> _onFinished;
+
+    /// <summary>
+    /// Raised once, the moment the match is over: the result is final from here, so the host can
+    /// start filing it while the player is still looking at the full-time screen.
+    /// </summary>
+    public event Action<IPlayedMatch>? ReachedFullTime;
+    private bool _fullTimeRaised;
     private readonly IFrameTicker _ticker;
     private readonly Stopwatch _clock = new();
     private readonly Random _commentaryRng = new();
@@ -93,6 +101,29 @@ public partial class Match2DViewModel : BaseViewModel
 
     public string HomeTeamName => Match.Sides[0].Team.Name;
     public string AwayTeamName => Match.Sides[1].Team.Name;
+
+    /// <summary>The three-letter codes the scoreboard shows, kept apart if both clubs share a town.</summary>
+    public (string Home, string Away) TeamCodes { get; private set; }
+
+    // ── For the scoreboard ──
+    /// <summary>"0:47" while the home side is a player short, the longest suspension still running; empty otherwise.</summary>
+    [ObservableProperty] private string _homeSuspension = "";
+    [ObservableProperty] private string _awaySuspension = "";
+    /// <summary>Whether a side has its keeper off for an extra court player right now.</summary>
+    [ObservableProperty] private bool _homeEmptyGoal;
+    [ObservableProperty] private bool _awayEmptyGoal;
+    /// <summary>"1st", "2nd", "HT", "ET", "FT" beside the clock.</summary>
+    [ObservableProperty] private string _halfText = "";
+
+    /// <summary>
+    /// The break between the end of normal time and extra time: the match stops for it, as it
+    /// does at half-time, so the full-time board can come up and the manager can draw breath.
+    /// </summary>
+    [ObservableProperty] private bool _isExtraTimeBreak;
+    private bool _extraTimeBreak;
+
+    /// <summary>What the break board says where its clock would be: HALF TIME, FULL TIME, PENALTIES 4–3.</summary>
+    [ObservableProperty] private string _breakCaption = "";
     public string HomeTeamLogo => Match.Sides[0].Team.LogoPath;
     public string AwayTeamLogo => Match.Sides[1].Team.LogoPath;
 
@@ -129,8 +160,6 @@ public partial class Match2DViewModel : BaseViewModel
     private bool _timeoutRequested;
 
     public string TimeoutText => TimeoutRequested ? "TIME-OUT · WAITING" : $"TIME-OUT · {TimeoutsLeft}";
-    [ObservableProperty] private string _homeShortHanded = "";
-    [ObservableProperty] private string _awayShortHanded = "";
     [ObservableProperty] private bool _passiveWarning;
 
     [ObservableProperty] private bool _isChoosingTaker;
@@ -168,6 +197,7 @@ public partial class Match2DViewModel : BaseViewModel
         Match = match;
         Look = look;
         UserSide = userSide;
+        TeamCodes = Engine2D.TeamCodes.ForMatch(match.Sides[0].Team.Name, match.Sides[1].Team.Name);
         _onFinished = onFinished;
         _ticker = ticker;
 
@@ -203,7 +233,7 @@ public partial class Match2DViewModel : BaseViewModel
         _lastFrame = now;
         KeepCrowdGoing(now);
         if (IsPaused || IsSkipping || IsChoosingTaker) return;
-        if ((IsHalfTime || IsFinished) && !_replaying) return;
+        if ((IsHalfTime || IsFinished || _extraTimeBreak) && !_replaying) return;
         _goalSoundThisFrame = false;
 
         if (_replaying) PlayBack(real);
@@ -251,6 +281,7 @@ public partial class Match2DViewModel : BaseViewModel
             }
             if (Match.AwaitingChoice) { OpenTakerChoice(); _accumulator = 0; break; }
             if (Match.IsHalfTime || Match.IsFinished) { _accumulator = 0; break; }
+            if (EnteredExtraTime(before)) { _accumulator = 0; break; }
         }
         From = At(_newest - 1);
         To = At(_newest);
@@ -270,11 +301,12 @@ public partial class Match2DViewModel : BaseViewModel
         {
             _replayAcc -= PhysicsMatch.Dt;
             _cursor++;
-            while (_newest < _cursor + 1 && !Match.IsHalfTime && !Match.IsFinished && !Match.AwaitingChoice)
+            while (_newest < _cursor + 1 && !Match.IsHalfTime && !Match.IsFinished && !Match.AwaitingChoice && !_extraTimeBreak)
             {
                 int before = Match.Events.Count;
                 Match.Tick();
                 Record();
+                EnteredExtraTime(before);
                 if (Match.Events.Skip(before).Any(e => IsKeyMoment(e.Kind))) _replayEnd = Math.Max(_replayEnd, _newest + (Speed >= 32 ? 15 : 30));
             }
         }
@@ -287,7 +319,7 @@ public partial class Match2DViewModel : BaseViewModel
         Alpha = (float)(_replayAcc / PhysicsMatch.Dt);
         DrainEvents(From.Time);
 
-        bool caughtUp = _cursor + 1 >= _newest && (Match.IsHalfTime || Match.IsFinished || Match.AwaitingChoice);
+        bool caughtUp = _cursor + 1 >= _newest && (Match.IsHalfTime || Match.IsFinished || Match.AwaitingChoice || _extraTimeBreak);
         if (_cursor >= _replayEnd || caughtUp)
         {
             // Back to live: the court jumps to now in the same step as the feed does.
@@ -302,6 +334,25 @@ public partial class Match2DViewModel : BaseViewModel
 
     /// <summary>Raised after every frame the match moved, for the court to redraw.</summary>
     public event Action? Frame;
+
+    /// <summary>Whether the ticks since <paramref name="eventsBefore"/> took the match into extra time; if so, it stops for the break.</summary>
+    private bool EnteredExtraTime(int eventsBefore)
+    {
+        if (_extraTimeBreak) return true;
+        for (int i = eventsBefore; i < Match.Events.Count; i++)
+            if (Match.Events[i].Kind == EventKind.ExtraTime) { _extraTimeBreak = true; return true; }
+        return false;
+    }
+
+    /// <summary>Extra time, after its break.</summary>
+    [RelayCommand]
+    private void ContinueExtraTime()
+    {
+        if (!_extraTimeBreak) return;
+        _extraTimeBreak = false;
+        IsExtraTimeBreak = false;
+        _lastFrame = _now();
+    }
 
     /// <summary>Feeds the commentary up to what the court is showing — never ahead of it.</summary>
     private void DrainEvents(float upTo)
@@ -359,11 +410,46 @@ public partial class Match2DViewModel : BaseViewModel
         };
         IsHalfTime = Match.IsHalfTime && !_replaying;
         IsFinished = Match.IsFinished && !_replaying;
+        if (Match.IsFinished && !_fullTimeRaised)
+        {
+            _fullTimeRaised = true;
+            ReachedFullTime?.Invoke(Match);
+        }
         TimeoutsLeft = Match.Sides[UserSide].TimeoutsLeft;
         TimeoutRequested = Match.IsTimeoutQueued(UserSide);
         PassiveWarning = Match.PassiveWarned;
-        HomeShortHanded = ShortHanded(0);
-        AwayShortHanded = ShortHanded(1);
+        HomeSuspension = SuspensionClock(0);
+        AwaySuspension = SuspensionClock(1);
+        HomeEmptyGoal = Match.HasExtraAttacker(0);
+        AwayEmptyGoal = Match.HasExtraAttacker(1);
+        HalfText = ScoreboardStyle.HalfLabel(Match.Period, Match.IsHalfTime, Match.IsFinished,
+            Match.WentToShootout, Match.ShootoutScore[0], Match.ShootoutScore[1]);
+        IsExtraTimeBreak = _extraTimeBreak && !_replaying;
+        BreakCaption = Match.IsHalfTime ? Loc.T("HALF TIME")
+            : _extraTimeBreak ? Loc.T("EXTRA TIME")
+            : !Match.IsFinished ? ""
+            : Match.WentToShootout ? Loc.F("PENALTIES {0}–{1}", Match.ShootoutScore[0], Match.ShootoutScore[1])
+            : Match.Period > 2 ? Loc.T("AFTER EXTRA TIME")
+            : Loc.T("FULL TIME");
+    }
+
+    /// <summary>
+    /// The longest suspension a side is serving, as "m:ss", or empty. With two players off at
+    /// once it says so ("−2 1:12"): the board's timer is the only place that shows it now.
+    /// </summary>
+    private string SuspensionClock(int side)
+    {
+        float left = 0;
+        int count = 0;
+        foreach (var a in Match.Sides[side].Squad)
+        {
+            if (a.SuspendedUntil <= Match.GameTime) continue;
+            count++;
+            left = MathF.Max(left, a.SuspendedUntil - Match.GameTime);
+        }
+        if (left <= 0) return "";
+        string clock = $"{(int)left / 60}:{(int)left % 60:00}";
+        return count > 1 ? $"−{count} {clock}" : clock;
     }
 
     /// <summary>The colour an event is written in, in the feed and on the court.</summary>
@@ -478,18 +564,9 @@ public partial class Match2DViewModel : BaseViewModel
         int margin = Match.Score[a.Side] - Match.Score[1 - a.Side];
         // Whoever has faced shots is in goal, as the saved report reads it.
         string? position = stat.Saves > 0 || stat.GoalsAgainst > 0 ? "GK" : a.Player.Position;
-        return (true, MatchRating.For(position, stat, margin));
+        return (true, MatchRating.For(position, stat, margin, MatchRating.Scale.Physics2D));
     }
 
-    /// <summary>"6 v 7 · 1:24" while a side is a player down, the time left on the longest suspension.</summary>
-    private string ShortHanded(int side)
-    {
-        var s = Match.Sides[side];
-        float left = 0;
-        foreach (var a in s.Squad) if (a.SuspendedUntil > Match.GameTime) left = MathF.Max(left, a.SuspendedUntil - Match.GameTime);
-        if (left <= 0) return "";
-        return $"−{s.Squad.Count(a => a.SuspendedUntil > Match.GameTime)}  {(int)left / 60}:{(int)left % 60:00}";
-    }
 
     public void RefreshSquadLists()
     {

@@ -141,7 +141,6 @@ public sealed partial class PhysicsMatch : IPlayedMatch
 
     /// <summary>The last completed pass, for crediting assists.</summary>
     private Agent? _lastPasser, _lastReceiver;
-    private float _lastReceiveAt;
 
     private int _firstThrowOffSide;
 
@@ -451,6 +450,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
 
     // ── What the season needs back ─────────────────────────────────────────────
 
+    MatchRating.Scale IPlayedMatch.RatingScale => MatchRating.Scale.Physics2D;
     Team IPlayedMatch.HomeTeam => Sides[0].Team;
     Team IPlayedMatch.AwayTeam => Sides[1].Team;
     int IPlayedMatch.HomeScore => Score[0];
@@ -522,7 +522,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
         _restartTaker = taker;
         _restartReadyAt = Clock + delay;
 
-        foreach (var x in Agents) if (x.JumpUntil > 0f) { x.JumpUntil = 0f; x.Airborne = false; }
+        foreach (var x in Agents) { if (x.JumpUntil > 0f) { x.JumpUntil = 0f; x.Airborne = false; } x.DiveUntil = 0f; }
         Ball.State = BallState.Dead;
         Ball.Holder = taker;
         Ball.Pos = _restartSpot;

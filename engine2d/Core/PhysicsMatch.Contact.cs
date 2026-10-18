@@ -38,6 +38,15 @@ public sealed partial class PhysicsMatch
                 a.Pos = next;
                 continue;
             }
+            if (a.DiveUntil > 0f)
+            {
+                float t = Math.Clamp((Clock - a.DiveStart) / MathF.Max(0.05f, a.DiveUntil - a.DiveStart), 0f, 1f);
+                // Fast off the mark and slowing into the stretch, as a dive is.
+                var next = Vector2.Lerp(a.DiveFrom, a.DiveTo, 1f - (1f - t) * (1f - t));
+                a.Vel = (next - a.Pos) / Dt;
+                a.Pos = next;
+                continue;
+            }
             if (a.StunnedUntil > Clock)
             {
                 a.Vel *= 0.5f;
