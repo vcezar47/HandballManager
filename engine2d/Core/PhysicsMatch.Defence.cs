@@ -171,7 +171,7 @@ public sealed partial class PhysicsMatch
             {
                 if (slotOf[i] < 0 || list[i].StunnedUntil > Clock) continue;
                 var slotPos = World(attacking, su[slotOf[i]], sw[slotOf[i]]);
-                float d = Vector2.Distance(slotPos, focus);
+                float d = Vec.Dist(slotPos, focus);
                 if (d < best) { best = d; presser = i; }
             }
         }
@@ -199,7 +199,7 @@ public sealed partial class PhysicsMatch
             for (int i = 0; i < list.Count; i++)
             {
                 if (i == presser || slotOf[i] < 0 || su[slotOf[i]] > 7.5f || list[i].StunnedUntil > Clock) continue;
-                float d = Vector2.Distance(list[i].Pos, focus);
+                float d = Vec.Dist(list[i].Pos, focus);
                 if (d < best) { best = d; helper = i; }
             }
         }
@@ -260,7 +260,7 @@ public sealed partial class PhysicsMatch
                 if (pivot != null && i == pivotMarker)
                     target = GoalSide(attacking, pivot.Pos, 0.45f);
 
-                float far = Vector2.Distance(d.Pos, target);
+                float far = Vec.Dist(d.Pos, target);
                 speed = far > 5f ? d.MaxSpeed : 2.2f + 2.4f * intensity;
             }
 
@@ -296,7 +296,7 @@ public sealed partial class PhysicsMatch
         for (int i = 0; i < list.Count; i++)
         {
             if (i == presser || i == helper || slotOf[i] < 0 || su[slotOf[i]] > 7.5f) continue;
-            float d = Vector2.Distance(World(attacking, su[slotOf[i]], sw[slotOf[i]]), pivot.Pos);
+            float d = Vec.Dist(World(attacking, su[slotOf[i]], sw[slotOf[i]]), pivot.Pos);
             if (d < bestD) { bestD = d; best = i; }
         }
         return best;
@@ -307,8 +307,8 @@ public sealed partial class PhysicsMatch
     {
         var goal = World(attacking, 0f, 0f);
         var d = goal - p;
-        if (d.LengthSquared() < 0.01f) return p;
-        return p + Vector2.Normalize(d) * gap;
+        if (Vec.LenSq(d) < 0.01f) return p;
+        return p + Vec.Norm(d) * gap;
     }
 
     // ── The keeper ─────────────────────────────────────────────────────────────
@@ -356,7 +356,7 @@ public sealed partial class PhysicsMatch
         k.Target = KeeperSpot(s, Ball.Pos, depth, k.Wobble);
         k.DesiredSpeed = 4f;
         // Coming on for a seven-metre, or back into an empty goal for one: she runs.
-        if (Phase == MatchPhase.Restart && Restart == RestartKind.SevenMetre && Vector2.Distance(k.Pos, k.Target) > 2f)
+        if (Phase == MatchPhase.Restart && Restart == RestartKind.SevenMetre && Vec.Dist(k.Pos, k.Target) > 2f)
             k.DesiredSpeed = k.MaxSpeed;
     }
 
@@ -385,7 +385,7 @@ public sealed partial class PhysicsMatch
         float d2 = MathF.Sqrt(bu * bu + (bw + Court.PostHalf) * (bw + Court.PostHalf));
         float xw = Court.PostHalf - Court.GoalWidth * d1 / (d1 + d2);
         var toBall = new Vector2(bu, bw - xw);
-        float len = toBall.Length();
+        float len = Vec.Len(toBall);
         if (len > 0.01f) toBall /= len;
         float ku = toBall.X * depth, kw = xw + toBall.Y * depth + wobble;
         return World(attacking, MathF.Max(0.2f, ku), Math.Clamp(kw, -2.5f, 2.5f));
@@ -405,7 +405,7 @@ public sealed partial class PhysicsMatch
         var spot = KeeperSpot(defending, at, KeeperDepth(k));
         var gap = spot - k.Pos;
         float reach = k.MaxSpeed * 0.8f * seconds;
-        float d = gap.Length();
+        float d = Vec.Len(gap);
         return d <= reach || d < 0.01f ? spot : k.Pos + gap / d * reach;
     }
 
@@ -423,7 +423,7 @@ public sealed partial class PhysicsMatch
             foreach (var a in s.Court)
             {
                 if (a.IsKeeper) continue;
-                float d = Vector2.DistanceSquared(a.Pos, aim);
+                float d = Vec.DistSq(a.Pos, aim);
                 if (d < f) { second = first; sc = f; first = a; f = d; }
                 else if (d < sc) { second = a; sc = d; }
             }
@@ -480,7 +480,7 @@ public sealed partial class PhysicsMatch
         int queue = s.Changes.FindIndex(c => c.Entering == a);
         var target = queue >= 0 ? WaitingSpot(s, queue) : BenchPoint(s, BenchSlot(s, a));
         float speed = queue >= 0 ? 2.4f : 1.6f;
-        float d = Vector2.Distance(a.Pos, target);
+        float d = Vec.Dist(a.Pos, target);
 
         // The ends change at half-time and the benches with them: nobody parades across the court.
         bool otherEnd = (a.Pos.X - Court.CentreX) * (target.X - Court.CentreX) < 0f;

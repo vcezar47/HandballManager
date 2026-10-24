@@ -3,10 +3,12 @@
 A women's handball management simulation for Android, live on Google Play. Twenty-three
 countries' leagues and three European competitions run inside one world model — every club in
 every country plays its own season, whether or not the player ever looks at it — and the
-player's own matches are played live by an agent-based 2D match engine.
+player's own matches are played live by an agent-based 2D match engine. Since 5.0 there is an
+online side too: a weekly challenge and a monthly country battle, where every score is the
+server's own replay of the player's career.
 
 Built solo, end to end: the world simulation, the 2D match engine, persistence, the front ends,
-the test suite, the data collection, and the store release.
+the server, the test suite, the data collection, and the store release.
 
 [**Google Play**](https://play.google.com/store/apps/details?id=com.handballmanager.mobile) ·
 [Releases (APK / Windows)](../../releases) ·
@@ -53,6 +55,8 @@ the test suite, the data collection, and the store release.
 | Mobile | .NET MAUI (Android, API 24+) |
 | Desktop | WPF (Windows) — no longer updated; the model layer is shared |
 | Persistence | EF Core 9 over SQLite, `SQLitePCLRaw` bundled for Android |
+| Server | ASP.NET Core over one SQLite file, Google sign-in; Caddy and systemd on an Oracle Cloud VM |
+| Play services | Google Play Games achievements, AdMob, Play Billing |
 | UI pattern | MVVM, `CommunityToolkit.Mvvm` source generators |
 | Localisation | Six languages; English text is the key into embedded JSON tables, held complete by a test |
 | Tests | xUnit |
@@ -61,12 +65,14 @@ the test suite, the data collection, and the store release.
 
 | Project | Lines | Files | What it is |
 |---|---:|---:|---|
-| `HandballManager.Core` | 67,100 | 206 | Simulation, the 2D match engine, persistence, and **every view model**. References no UI framework. |
+| `HandballManager.Core` | 77,100 | 249 | Simulation, the 2D match engine, persistence, the replay checks, and **every view model**. References no UI framework. |
 | `HandballManager` | 14,300 | 91 | WPF desktop head — views only, no longer updated |
-| `HandballManager.Mobile` | 17,900 | 154 | .NET MAUI head — views, the 2D court renderer, session plumbing, Android packaging |
-| `HandballManager.Tests` | 17,800 | 71 | xUnit; about 1,500 test cases, many of them full-season integration runs |
+| `HandballManager.Mobile` | 27,000 | 207 | .NET MAUI head — views, the 2D court renderer, session plumbing, Android packaging |
+| `HandballManager.Server` | 2,300 | 12 | Accounts, profiles, the challenge and battle APIs, and the workers that replay what phones upload |
+| `HandballManager.Tests` | 22,100 | 88 | xUnit; about 1,500 test cases, many of them full-season integration runs |
+| `HandballManager.Server.Tests` | 800 | 5 | The server's 17 tests, three of them driving the app's own client against it |
 
-51 services and 30 tables in Core. Putting the view models there rather than in either
+51 services and 31 tables in Core. Putting the view models there rather than in either
 front end is the decision the whole project rests on: both heads bind to the same
 `HomeViewModel`, so a feature is wired once instead of twice, and the desktop app became a mobile
 port without the model layer being touched. The trade-offs are in
@@ -146,8 +152,44 @@ strength. It only matched that curve once each match had its own day form; witho
 stronger side won too reliably. The anchors are pinned by a test that fails when a tuning change
 drifts them.
 
-The engine's full source — about 9,600 lines, the simulation, the court renderer and its tests —
+The engine's full source — about 10,100 lines, the simulation, the court renderer and its tests —
 is in [`engine2d/`](engine2d/), with a reading guide.
+
+## Online: a score is a replay
+
+5.0 adds two competitions between players. In the Weekly Challenge everyone takes the same club
+from the same starting world to the same deadline, with three attempts; in the Country Battle a
+career at a club of the player's nation earns it EHF coefficient points, month by month. A
+leaderboard is only worth something if a score cannot be typed in, so the phone never reports
+one. It uploads the log of every decision it made, and the server plays the career again from
+the same world and the same seed. The score is the replay's; the phone's own figure is a preview.
+
+That needs the game to be deterministic across machines, which it was not:
+
+- **Every die from one seed.** Each service used to keep its own clock-seeded `Random`. They all
+  draw from `GameRng` now, with a stream per purpose and per game day, so one extra roll anywhere
+  (a screen that draws a number, an extra scouting report) cannot shift the dice anywhere else,
+  and a run resumed after the app was closed picks up the same day's streams.
+- **The same bits on every device.** A determinism probe, a fixed piece of work hashed to short
+  codes, showed an Android phone and a Windows PC playing the same game statistically but not bit
+  for bit. `MathF`'s sine, cosine, exponential, logarithm and arctangent call the platform's C
+  library, which differs in the last bit, and `Vector2.Lerp` rounded differently from a plain
+  blend on 42% of inputs on one PC. The 2D engine is chaotic, so one last-bit difference becomes a
+  different match. The simulation now uses `DetMath`, built from nothing but `+ - * /`, `Floor`,
+  `Sqrt` and `ScaleB`, and `Vec`, which writes vector arithmetic out one operation at a time; a
+  test pins the probe's hash.
+- **Bench decisions as data.** Everything the manager does during a live match goes through one
+  method, `PhysicsMatch.Apply`, which stamps it with the tick it happened on. The same setup, seed
+  and inputs play the same match again, frame for frame.
+
+Replays run in child processes, because the game keeps static state, and the server builds each
+week's world itself; phones download it and check its SHA-256. A battle career lasts months, so
+it is checked a stretch at a time, from a checkpoint at each reopening of the app. It also outlives
+app updates: every opening records the version of the rules it played by (`GameLogic.Version`),
+and the deploy script keeps a copy of the server for each version, so an update that changes the
+simulation does not reject careers started before it. A disputed run can be replayed on demand
+with a list of findings — most of them, in testing, turned out to be a phone's saves failing, not
+cheating.
 
 ## Performance
 
@@ -172,6 +214,10 @@ and storing less match detail for other countries' games (~7%, inside run-to-run
 cost is deciding what happened, not writing it down). Full write-up:
 [Making a career fast](docs/performance.md).
 
+5.0 halved a plain day again, from 1.18 s to 0.60 s headless: the end-of-day cleanup ran ten full
+change-tracker scans where one does, the AI market saved after every transfer, the injury pass
+scanned twice for nothing, and facility completions were saved every day.
+
 ## Testing
 
 About 1,500 xUnit test cases, deliberately weighted towards integration:
@@ -192,6 +238,10 @@ About 1,500 xUnit test cases, deliberately weighted towards integration:
 - **Engine tests** play the 2D engine headless: determinism for a seed, knockouts that always
   produce a winner, the calibration anchors, and the match screen's view model at 32× — the court
   never shows a result before it happens.
+- **Replay tests** play a challenge run and a battle career through Home as a player taps them,
+  replay the logs, and compare the two saves table by table, row by row; a forged log has to be
+  caught, and a third run on another seed has to come out different, or the comparison is not
+  seeing anything.
 
 The regression tests added for the bugs players reported against 3.4 were each run with their fix
 switched off first, to see them fail, before being kept.
@@ -323,6 +373,13 @@ score, and squad and contracts screens that no longer cut names short.
 full-time screens, and reworks the keepers: they dive for the ball, hold long shots to about two
 in five, and read seven-metres. Between the two, the game gained sponsors, league-level wages, a
 Finances screen with a season chart, a manager screen with a trophy cabinet, and 50 achievements.
+
+5.0 takes the game online, as an option: it still plays fully offline. A Google sign-in gives a
+manager profile with a username, picture, nationality, achievement title and a showcase season,
+and every season now ends with a card to save or share. The Weekly Challenge runs Monday to
+Saturday, the same club and scenario for everyone, with Sunday for the results; the Country
+Battle turns a career's European results into points for the player's nation. All 50
+achievements are on Google Play Games, and days simulate about twice as fast.
 Version history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License & copyright

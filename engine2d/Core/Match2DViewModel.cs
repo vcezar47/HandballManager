@@ -203,9 +203,10 @@ public partial class Match2DViewModel : BaseViewModel
 
         var t = match.Sides[userSide].Tactics;
         _asksForSevenMetres = preferences?.AskForSevenMetres ?? true;
-        match.AskForSevenMetreTaker = _asksForSevenMetres;
         _autoSubstitutions = preferences?.AutoSubstitutions ?? true;
-        match.UserAutoSubstitutions = _autoSubstitutions;
+        // Through Apply, like everything else from the bench, so a replay of the match has them.
+        match.Apply(new AskForSevenMetresInput(_asksForSevenMetres));
+        match.Apply(new AutoSubstitutionsInput(_autoSubstitutions));
         _emptyGoal = t.UseEmptyGoal;
         _playForTime = t.PlayForTime;
         _tempo = t.Tempo;
@@ -612,8 +613,8 @@ public partial class Match2DViewModel : BaseViewModel
         {
             if (_ads != null) await _ads.ShowIfReadyAsync();
             // Seconds of real time went by behind the ad: the match may have been left.
-            if (_finishing || !Match.IsHalfTime) return;
-            Match.StartSecondHalf();
+            if (_finishing || IsSkipping || !Match.IsHalfTime) return;
+            Match.Apply(new SecondHalfInput());
             Record();
             IsHalfTime = false;
             _lastFrame = _now();
@@ -632,7 +633,8 @@ public partial class Match2DViewModel : BaseViewModel
 
     partial void OnAsksForSevenMetresChanged(bool value)
     {
-        Match.AskForSevenMetreTaker = value;
+        // Not while SKIP plays the rest out on another thread: the match is no longer listening.
+        if (!IsSkipping) Match.Apply(new AskForSevenMetresInput(value));
         if (_preferences != null) _preferences.AskForSevenMetres = value;
     }
 
@@ -641,7 +643,7 @@ public partial class Match2DViewModel : BaseViewModel
 
     partial void OnAutoSubstitutionsChanged(bool value)
     {
-        Match.UserAutoSubstitutions = value;
+        if (!IsSkipping) Match.Apply(new AutoSubstitutionsInput(value));
         if (_preferences != null) _preferences.AutoSubstitutions = value;
     }
 
@@ -659,7 +661,7 @@ public partial class Match2DViewModel : BaseViewModel
     private void CallTimeout()
     {
         if (IsFinished || IsHalfTime || IsSkipping) return;
-        bool asked = Match.ToggleTimeoutRequest(UserSide);
+        bool asked = Match.Apply(new TimeoutInput());
         if (asked)
         {
             SlowForTimeout();
@@ -690,11 +692,8 @@ public partial class Match2DViewModel : BaseViewModel
     /// <summary>Sends the chosen player to the zone and the chosen substitute on when she is off.</summary>
     public bool Substitute(int outgoingId, int incomingId)
     {
-        var side = Match.Sides[UserSide];
-        var off = side.Squad.FirstOrDefault(a => a.Id == outgoingId);
-        var on = side.Squad.FirstOrDefault(a => a.Id == incomingId);
-        if (off == null || on == null) return false;
-        bool ok = Match.RequestSubstitution(UserSide, off, on);
+        if (IsSkipping) return false;
+        bool ok = Match.Apply(new SubstituteInput(outgoingId, incomingId));
         if (ok) { RefreshSquadLists(); RebuildRosters(); }
         return ok;
     }
@@ -755,16 +754,13 @@ public partial class Match2DViewModel : BaseViewModel
     public void ChooseTaker(int playerId)
     {
         if (!IsChoosingTaker) return;
-        if (Match.AwaitingKeeper)
+        bool keeper = Match.AwaitingKeeper;
+        // 0 is the usual one: the match names her the way the panel lists her, first.
+        Match.Apply(new SevenMetreInput(playerId));
+        if (keeper)
         {
-            Match.ChooseSevenMetreKeeper(playerId);
             RefreshSquadLists();
             RebuildRosters();
-        }
-        else
-        {
-            int id = playerId != 0 ? playerId : TakerChoices.FirstOrDefault()?.Id ?? 0;
-            Match.ChooseSevenMetreTaker(id);
         }
         IsChoosingTaker = false;
         _lastFrame = _now();
@@ -820,15 +816,8 @@ public partial class Match2DViewModel : BaseViewModel
 
     private void PushTactics()
     {
-        var current = Match.Sides[UserSide].Tactics;
-        var t = current.Clone();
-        t.Tempo = Tempo;
-        t.Focus = Focus;
-        t.System = DefenceSystem;
-        t.Aggression = Aggression;
-        t.UseEmptyGoal = EmptyGoal;
-        t.PlayForTime = PlayForTime;
-        Match.SetTactics(UserSide, t);
+        if (IsSkipping) return;
+        Match.Apply(new TacticsInput(Tempo, Focus, DefenceSystem, Aggression, EmptyGoal, PlayForTime));
     }
 
     /// <summary>Plays the rest of the match without drawing it, off the UI thread.</summary>
@@ -838,9 +827,8 @@ public partial class Match2DViewModel : BaseViewModel
         if (IsSkipping || IsFinished) return;
         IsSkipping = true;
         if (IsChoosingTaker) ChooseTaker(0);
-        Match.AskForSevenMetreTaker = false;
         _replaying = false;
-        await Task.Run(() => Match.RunToEnd());
+        await Task.Run(() => Match.Apply(new RunToEndInput()));
         Record();
         From = To = At(_newest);
         DrainEvents(Match.Clock);

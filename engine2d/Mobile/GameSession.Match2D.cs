@@ -25,7 +25,7 @@ public sealed partial class GameSession
         if (look == null) return false;
 
         int userSide = engine.HomeTeam.IsPlayerTeam ? 0 : 1;
-        var match = new PhysicsMatch(SetupFor(engine), seed: Environment.TickCount);
+        var match = UserMatchFlow.Build2D(engine);
         Match2DVM = new Match2DViewModel(match, look, userSide, OnWatchedMatchEnded, new DispatcherFrameTicker(),
             audio: MatchAudio.Shared, ads: InterstitialAds.Shared, preferences: MatchPreferences.Shared);
 
@@ -54,12 +54,9 @@ public sealed partial class GameSession
         _instantSimming = true;
         try
         {
-            // The squad screen's classic run to full time hurt the real players, and its result
-            // is about to be replaced. Kept, those flags were never filed and never cleared.
-            engine.DiscardInjuries();
-
-            var match = new PhysicsMatch(SetupFor(engine), seed: Environment.TickCount);
-            await Task.Run(match.RunToEnd);
+            // The squad screen's classic run to full time hurt the real players; their flags are
+            // undone before the 2D match plays it again for real (UserMatchFlow.PlayInstant2D).
+            var match = await Task.Run(() => UserMatchFlow.PlayInstant2D(engine));
             OnWatchedMatchEnded(match);
         }
         finally
@@ -69,16 +66,4 @@ public sealed partial class GameSession
     }
 
     private bool _instantSimming;
-
-    /// <summary>Both line-ups, the tactics, the crowd and the knockout flag, as the squad screen set them.</summary>
-    private static MatchSetup SetupFor(LiveMatchEngine engine) => new(
-        engine.HomeTeam, engine.AwayTeam,
-        // Kick-off sheets, not the live ones: INSTANT SIM hands over an engine that has already
-        // played to full time, by when the AI side may have pulled its keeper and an injured or
-        // sent-off player has left an empty slot. For an unplayed engine the two are the same.
-        engine.KickOffHomeSquad, engine.KickOffAwaySquad,
-        engine.KickOffHomeTactics.Clone(), engine.KickOffAwayTactics.Clone(),
-        engine.HomeAdvantage, engine.IsKnockout,
-        VenueName: engine.VenueName, Attendance: engine.Attendance,
-        UserSide: engine.HomeTeam.IsPlayerTeam ? 0 : 1);
 }

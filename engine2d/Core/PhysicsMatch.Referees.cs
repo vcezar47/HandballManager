@@ -43,7 +43,7 @@ public sealed partial class PhysicsMatch
             // Change of possession: whoever is nearer the new attack's goal takes the goal line.
             _refereedAttackSide = Possession;
             var goal = new Vector2(s.AttackGoalX, Court.CentreY);
-            bool firstNearer = Vector2.Distance(Referees[0].Pos, goal) < Vector2.Distance(Referees[1].Pos, goal);
+            bool firstNearer = Vec.Dist(Referees[0].Pos, goal) < Vec.Dist(Referees[1].Pos, goal);
             Referees[0].OnGoalLine = firstNearer;
             Referees[1].OnGoalLine = !firstNearer;
         }
@@ -55,7 +55,7 @@ public sealed partial class PhysicsMatch
                 : new Vector2(Math.Clamp(Ball.Pos.X - s.Dir * 6.5f, 2f, Court.Length - 2f), Court.Width - 3.5f);
 
             var d = target - r.Pos;
-            float len = d.Length();
+            float len = Vec.Len(d);
             float step = MathF.Min(len, 6.5f * Dt);
             if (len > 0.01f) r.Pos += d / len * step;
         }

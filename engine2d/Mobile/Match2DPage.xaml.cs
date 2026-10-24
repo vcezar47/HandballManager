@@ -1,6 +1,7 @@
 using HandballManager.Localization;
 using HandballManager.Engine2D;
 using HandballManager.Models;
+using HandballManager.Mobile.Infrastructure;
 
 namespace HandballManager.Mobile.Match2D;
 
@@ -402,7 +403,7 @@ public partial class Match2DPage : ContentPage, Session.IFullBleedPage
         }
 
         if (!_vm.Substitute(off.Id, on.Id))
-            await DisplayAlert(Loc.T("Substitution"), Loc.T("Not now — she has the ball, or a keeper can only replace a keeper."), Loc.T("OK"));
+            await this.ThemedAlertAsync(Loc.T("Substitution"), Loc.T("Not now — she has the ball, or a keeper can only replace a keeper."), Loc.T("OK"));
         PlayersLayer.Invalidate();
     }
 

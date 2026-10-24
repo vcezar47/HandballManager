@@ -1,5 +1,6 @@
 using System.Numerics;
 using HandballManager.Models;
+using HandballManager.Helpers;
 
 namespace HandballManager.Engine2D;
 
@@ -113,7 +114,7 @@ public sealed partial class PhysicsMatch
             var arrive = t.Pos + t.Vel * 0.4f;
             var (tu, tw) = Frame(s, arrive);
             float tMouth = Court.DistanceToGoalMouth(tu, tw);
-            float length = Vector2.Distance(c.Pos, arrive);
+            float length = Vec.Dist(c.Pos, arrive);
             float flight = length / (_t.PassSpeedBase + _t.PassSpeedSpan * c.Eff(p.Passing) / 20f);
             float onward = tMouth < 12.5f
                 ? EstimateXg(t, arrive, keeperAt: KeeperWhenShooting(t, arrive, flight + t.DecisionInterval)) * ReceiveDiscount(t) * Usage(t)
@@ -146,7 +147,7 @@ public sealed partial class PhysicsMatch
         if (c.Role is "LW" or "RW" && MathF.Abs(w) > 5f && u < 4f)
         {
             float side = MathF.Sign(w);
-            var takeOff = World(s, 6.4f * MathF.Sin(0.55f), side * (Court.PostHalf + 6.4f * MathF.Cos(0.55f)));
+            var takeOff = World(s, 6.4f * DetMath.Sin(0.55f), side * (Court.PostHalf + 6.4f * DetMath.Cos(0.55f)));
             float space = LaneSpace(c, takeOff);
             float through = Sigmoid((space - 0.8f) / 0.35f);
             float xgThere = EstimateXg(c, takeOff) * ShotAppetite(c) * Usage(c);
@@ -161,8 +162,8 @@ public sealed partial class PhysicsMatch
             for (int k = -1; k <= 1; k++)
             {
                 var toGoal = World(s, 0f, Math.Clamp(w * 0.5f, -1.5f, 1.5f)) - c.Pos;
-                if (toGoal.LengthSquared() < 0.01f) continue;
-                var dir = Rotate(Vector2.Normalize(toGoal), k * 0.45f);
+                if (Vec.LenSq(toGoal) < 0.01f) continue;
+                var dir = Rotate(Vec.Norm(toGoal), k * 0.45f);
                 var point = c.Pos + dir * 2.4f;
                 var (pu, pw) = Frame(s, point);
                 (pu, pw) = Court.PushOutTo(pu, pw, Court.GoalAreaRadius + 0.2f);
@@ -239,7 +240,7 @@ public sealed partial class PhysicsMatch
             // noise belongs to her read of this possession, so it is the same every time she
             // looks at the same option — only a sliver of it is fresh.
             int key = Mix(c.ReadSeed, kind, target?.Id ?? 0, (int)(point.X * 2), (int)(point.Y * 2));
-            float g = 0.85f * Gumbel(key) + 0.15f * -MathF.Log(-MathF.Log(MathF.Max(1e-6f, Rand())));
+            float g = 0.85f * Gumbel(key) + 0.15f * -DetMath.Log(-DetMath.Log(MathF.Max(1e-6f, Rand())));
             float v = value + temperature * g;
             if (Trace != null) _options.Add((kind, target?.Role ?? "", value, v));
             if (v <= bestValue) return;
@@ -275,7 +276,7 @@ public sealed partial class PhysicsMatch
     private void StartShot(Agent c)
     {
         var plan = PlanShot(c, c.Pos, sevenMetre: false);
-        float d = Vector2.Distance(plan.Release, c.Pos);
+        float d = Vec.Dist(plan.Release, c.Pos);
         if (d < 0.4f || GoalIsOpen(Sides[c.Side]))
         {
             TakeShot(c, sevenMetre: false);
@@ -306,7 +307,7 @@ public sealed partial class PhysicsMatch
         uint h = (uint)key * 2654435761u;
         h ^= h >> 15; h *= 2246822519u; h ^= h >> 13;
         float u = ((h & 0xFFFFFF) + 0.5f) / 16777216f;
-        return -MathF.Log(-MathF.Log(u));
+        return -DetMath.Log(-DetMath.Log(u));
     }
 
     /// <summary>
@@ -367,9 +368,9 @@ public sealed partial class PhysicsMatch
     {
         var p = from.Player;
         float speed = _t.PassSpeedBase + _t.PassSpeedSpan * from.Eff(p.Passing) / 20f;
-        var target = to.Pos + to.Vel * (Vector2.Distance(from.Pos, to.Pos) / speed);
+        var target = to.Pos + to.Vel * (Vec.Dist(from.Pos, to.Pos) / speed);
         var d = target - from.Pos;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         if (len2 < 0.01f) return 0.95f;
         float len = MathF.Sqrt(len2);
 
@@ -378,13 +379,13 @@ public sealed partial class PhysicsMatch
         float risk = 0f;
         foreach (var def in Opp(Sides[from.Side]).Court)
         {
-            float t = Math.Clamp(Vector2.Dot(def.Pos - from.Pos, d) / len2, 0f, 1f);
+            float t = Math.Clamp(Vec.Dot(def.Pos - from.Pos, d) / len2, 0f, 1f);
             if (t < 0.12f) continue;
             var point = from.Pos + d * t;
             float ballTime = t * len / speed;
             float read = _t.InterceptRead - 0.18f * def.Eff(def.Player.Anticipation) / 20f;
             float legs = def.MaxSpeed * _t.InterceptLegs * MathF.Max(0f, ballTime - read);
-            float gap = Vector2.Distance(def.Pos, point) - _t.InterceptReach + misread * Gauss();
+            float gap = Vec.Dist(def.Pos, point) - _t.InterceptReach + misread * Gauss();
             float margin = legs - gap;
             // A defender who gets there does not always come away with it — but the pass is lost
             // either way more often than not, as the ball runs loose among her team-mates.
@@ -408,7 +409,7 @@ public sealed partial class PhysicsMatch
         var s = Sides[passer.Side];
         for (int i = 1; i < 8; i++)
         {
-            var (u, w) = Frame(s, Vector2.Lerp(a, b, i / 8f));
+            var (u, w) = Frame(s, Vec.Lerp(a, b, i / 8f));
             if (Court.InGoalArea(u, w)) return true;
         }
         return false;
@@ -418,15 +419,15 @@ public sealed partial class PhysicsMatch
     private float LaneSpace(Agent c, Vector2 point)
     {
         var d = point - c.Pos;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         float space = 4f;
         foreach (var def in Opp(Sides[c.Side]).Court)
         {
             if (def.IsKeeper || def.StunnedUntil > Clock) continue;
-            float t = Math.Clamp(Vector2.Dot(def.Pos - c.Pos, d) / MathF.Max(len2, 0.01f), 0f, 1.3f);
+            float t = Math.Clamp(Vec.Dot(def.Pos - c.Pos, d) / MathF.Max(len2, 0.01f), 0f, 1.3f);
             // They will not stand still while she runs at them: in the half-second the drive
             // takes, a set defender closes most of a metre of it.
-            float dist = Vector2.Distance(def.Pos, c.Pos + d * t) - (def.Vel.Length() < 2.5f ? _t.LaneClosing : 0f);
+            float dist = Vec.Dist(def.Pos, c.Pos + d * t) - (Vec.Len(def.Vel) < 2.5f ? _t.LaneClosing : 0f);
             space = MathF.Min(space, dist);
         }
         return space;
@@ -439,7 +440,7 @@ public sealed partial class PhysicsMatch
         float def = 0f; int n = 0;
         foreach (var d in Opp(Sides[c.Side]).Court)
         {
-            if (d.IsKeeper || Vector2.Distance(d.Pos, c.Pos) > 3f) continue;
+            if (d.IsKeeper || Vec.Dist(d.Pos, c.Pos) > 3f) continue;
             def += DefenderDuelPower(d); n++;
         }
         if (n == 0) return 1f;
@@ -448,7 +449,7 @@ public sealed partial class PhysicsMatch
 
     private static Vector2 Rotate(Vector2 v, float a)
     {
-        float c = MathF.Cos(a), s = MathF.Sin(a);
+        float c = DetMath.Cos(a), s = DetMath.Sin(a);
         return new Vector2(v.X * c - v.Y * s, v.X * s + v.Y * c);
     }
 
@@ -568,7 +569,7 @@ public sealed partial class PhysicsMatch
         foreach (var t in s.Court)
         {
             if (t == carrier || t.IsKeeper || t.Role is "LW" or "RW") continue;
-            float d = Vector2.DistanceSquared(t.Pos, carrier.Pos);
+            float d = Vec.DistSq(t.Pos, carrier.Pos);
             if (d < best) { best = d; _outlet = t; }
         }
         return _outlet;
@@ -603,13 +604,13 @@ public sealed partial class PhysicsMatch
             var (pu, pw) = Court.PushOutTo(cu, cw, Court.GoalAreaRadius + 0.1f);
             var spot = World(s, pu, pw);
             var d = spot - from;
-            float len2 = MathF.Max(d.LengthSquared(), 0.01f);
+            float len2 = MathF.Max(Vec.LenSq(d), 0.01f);
             float clear = 2f;
             foreach (var def in Opp(s).Court)
             {
                 if (def.IsKeeper) continue;
-                float t = Math.Clamp(Vector2.Dot(def.Pos - from, d) / len2, 0.12f, 1f);
-                clear = MathF.Min(clear, Vector2.Distance(def.Pos, from + d * t));
+                float t = Math.Clamp(Vec.Dot(def.Pos - from, d) / len2, 0.12f, 1f);
+                clear = MathF.Min(clear, Vec.Dist(def.Pos, from + d * t));
             }
             float score = clear - 0.25f * MathF.Sqrt(du * du + dw * dw);
             if (du == a.OpenDu && dw == a.OpenDw) heldScore = score;
@@ -732,7 +733,7 @@ public sealed partial class PhysicsMatch
 
             var (u, w) = AttackSlot(s, a);
             a.Target = Court.Clamp(World(s, u, w));
-            float far = Vector2.Distance(a.Pos, a.Target);
+            float far = Vec.Dist(a.Pos, a.Target);
             a.DesiredSpeed = far > 6f ? a.MaxSpeed * (0.75f + 0.25f * intensity)
                            : far > 1.5f ? 1.8f + 2.4f * intensity
                            : 0.9f + 1.2f * intensity;

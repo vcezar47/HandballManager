@@ -48,7 +48,7 @@ public sealed partial class PhysicsMatch
             if (keeper == null) return;
             var zone = SubPoint(s);
             var off = s.Court.Where(a => !a.IsKeeper && a != Ball.Holder)
-                .OrderBy(a => Vector2.DistanceSquared(a.Pos, zone)).FirstOrDefault();
+                .OrderBy(a => Vec.DistSq(a.Pos, zone)).FirstOrDefault();
             if (off == null) return;
             keeper.Role = "GK";
             if (StartSwap(s, off, keeper) && off != extra)

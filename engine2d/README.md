@@ -1,7 +1,7 @@
 # The 2D match engine
 
-The engine that plays a manager's own matches in Handball Manager 4.5, published as it ships.
-About 9,600 lines of C#: the simulation in [`Core/`](Core/), the court renderer and match screen
+The engine that plays a manager's own matches in Handball Manager 5.0, published as it ships.
+About 10,100 lines of C#: the simulation in [`Core/`](Core/), the court renderer and match screen
 in [`Mobile/`](Mobile/), and the tests that hold it to the rest of the game in [`Tests/`](Tests/).
 
 > **Source-visible, not open source.** This folder is here to be read. It is not licensed for
@@ -40,6 +40,8 @@ minutes for a late arm — comes out of geometry and attributes meeting on the c
 | [`PhysicsMatch.Ball.cs`](Core/PhysicsMatch.Ball.cs) | Flight, passes, catches, interceptions, goals |
 | [`PhysicsMatch.Contact.cs`](Core/PhysicsMatch.Contact.cs) | Movement, collisions, duels and fouls |
 | [`PhysicsMatch.Coach.cs`](Core/PhysicsMatch.Coach.cs) | The AI bench |
+| [`PhysicsMatch.Inputs.cs`](Core/PhysicsMatch.Inputs.cs), [`MatchInput.cs`](Core/MatchInput.cs) | The one way in for the bench: every decision, stamped with the tick it was made on, so a match can be played again from its inputs |
+| [`Vec.cs`](Core/Vec.cs), [`DetMath.cs`](Core/DetMath.cs) | Vector arithmetic and the transcendental functions, written so every device computes the same bits |
 | [`Tuning.cs`](Core/Tuning.cs) | Every physical constant the engine is calibrated with, as an instance so a calibration run can try a variant beside the default |
 | [`Match2DViewModel.cs`](Core/Match2DViewModel.cs) | The match screen: speeds, the replay of key moments at 16× and 32×, the feed, the bench controls |
 | [`CourtView.cs`](Mobile/CourtView.cs), [`PlayersDrawable.cs`](Mobile/PlayersDrawable.cs) | The court and the players, drawn with `Microsoft.Maui.Graphics`, interpolated between ticks |
@@ -94,8 +96,17 @@ reads the taker and goes early, right or wrong.
   pulled its keeper, so it played all sixty minutes with an empty goal: 71–35, with the other
   keeper scoring ten. The engine was fine; its input was wrong. Starting sheets are now
   snapshotted at kick-off, and the AI bench ignores any standing order to empty its goal.
-- **Determinism.** A seed reproduces a match exactly (`TheSameSeedPlaysTheSameMatch`), which is
-  what makes the calibration runs and every regression above reproducible.
+- **Determinism, on one machine and then on all of them.** A seed reproduces a match exactly
+  (`TheSameSeedPlaysTheSameMatch`), which is what makes the calibration runs and every regression
+  above reproducible. 5.0 needed more: the server replays a Weekly Challenge run to check its
+  score, so a phone and a Linux server have to agree to the bit. They did not. `MathF`'s sine,
+  cosine, exponential, logarithm and arctangent call the platform's C library, which differs in
+  the last bit, and `Vector2`'s helpers may use fused multiply-adds (`Vector2.Lerp` rounded
+  differently from a plain blend on 42% of inputs on one PC). The engine is chaotic, so one
+  last-bit difference grows into a different match. It now goes through `DetMath`, built from
+  `+ - * /`, `Floor`, `Sqrt` and `ScaleB` alone, and `Vec`; `DetMathTests` checks them against the
+  system functions and pins their bits. The bench's decisions are recorded through
+  `PhysicsMatch.Apply`, so setup, seed and inputs play the same match again, frame for frame.
 
 ## Tools
 

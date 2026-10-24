@@ -1,5 +1,6 @@
 using System.Numerics;
 using HandballManager.Models;
+using HandballManager.Helpers;
 
 namespace HandballManager.Engine2D;
 
@@ -33,20 +34,20 @@ public sealed partial class PhysicsMatch
         Vector2 target = to.Pos;
         for (int i = 0; i < 2; i++)
         {
-            float tt = Vector2.Distance(from.Pos, target) / speed;
+            float tt = Vec.Dist(from.Pos, target) / speed;
             target = to.Pos + to.Vel * tt;
         }
         var (tu, tw) = Frame(side, target);
         (tu, tw) = Court.PushOutTo(tu, tw, Court.GoalAreaRadius + 0.05f);
         target = Court.Clamp(World(side, tu, tw), 0.3f);
 
-        float d = Vector2.Distance(from.Pos, target);
+        float d = Vec.Dist(from.Pos, target);
         float sigma = _t.PassErrorBase
                       + _t.PassErrorPerMetre * d * MathF.Max(0.3f, 1.3f - from.Eff(p.Passing) / 20f)
                       + 0.3f * Pressure(from, from.Pos)
                       + 0.1f * from.Fatigue;
         target += new Vector2(Gauss(), Gauss()) * sigma;
-        d = Vector2.Distance(from.Pos, target);
+        d = Vec.Dist(from.Pos, target);
 
         Ball.State = BallState.Pass;
         Ball.Holder = null;
@@ -73,7 +74,7 @@ public sealed partial class PhysicsMatch
     {
         Ball.Interceptor = null;
         var d = target - Ball.From;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         if (len2 < 0.01f) return;
         float len = MathF.Sqrt(len2);
 
@@ -81,14 +82,14 @@ public sealed partial class PhysicsMatch
         foreach (var def in Opp(Sides[from.Side]).Court)
         {
             if (def.StunnedUntil > Clock) continue;
-            float t = Math.Clamp(Vector2.Dot(def.Pos - Ball.From, d) / len2, 0f, 1f);
+            float t = Math.Clamp(Vec.Dot(def.Pos - Ball.From, d) / len2, 0f, 1f);
             if (t < 0.12f) continue;
             var point = Ball.From + d * t;
             float ballTime = t * len / speed;
             float read = _t.InterceptRead - 0.18f * def.Eff(def.Player.Anticipation) / 20f;
             float legs = def.MaxSpeed * _t.InterceptLegs * MathF.Max(0f, ballTime - read);
             float reach = def.IsKeeper ? _t.InterceptReach + 0.6f : _t.InterceptReach;
-            float gap = Vector2.Distance(def.Pos, point) - reach;
+            float gap = Vec.Dist(def.Pos, point) - reach;
             if (gap > legs || t >= bestT) continue;
 
             bestT = t;
@@ -112,22 +113,22 @@ public sealed partial class PhysicsMatch
 
             case BallState.Pass when Ball.IsKempa:
                 Ball.Elapsed += Dt;
-                Ball.Pos = Vector2.Lerp(Ball.From, Ball.To, Ball.Progress);
-                Ball.Height = Ball.FromHeight + (Ball.ToHeight - Ball.FromHeight) * Ball.Progress + 2.2f * MathF.Sin(MathF.PI * Ball.Progress);
+                Ball.Pos = Vec.Lerp(Ball.From, Ball.To, Ball.Progress);
+                Ball.Height = Ball.FromHeight + (Ball.ToHeight - Ball.FromHeight) * Ball.Progress + 2.2f * DetMath.Sin(MathF.PI * Ball.Progress);
                 if (Ball.Progress >= 1f) LandKempa();
                 break;
 
             case BallState.Pass:
                 Ball.Elapsed += Dt;
-                Ball.Pos = Vector2.Lerp(Ball.From, Ball.To, Ball.Progress);
-                Ball.Height = 1.3f + 0.6f * MathF.Sin(MathF.PI * Ball.Progress) * MathF.Min(1f, Ball.Duration);
+                Ball.Pos = Vec.Lerp(Ball.From, Ball.To, Ball.Progress);
+                Ball.Height = 1.3f + 0.6f * DetMath.Sin(MathF.PI * Ball.Progress) * MathF.Min(1f, Ball.Duration);
                 if (Ball.Interceptor != null && Ball.Progress >= Ball.InterceptAt) { ResolveInterception(); break; }
                 if (Ball.Progress >= 1f) ResolveCatch();
                 break;
 
             case BallState.Shot:
                 Ball.Elapsed += Dt;
-                Ball.Pos = Vector2.Lerp(Ball.From, Ball.To, Ball.Progress);
+                Ball.Pos = Vec.Lerp(Ball.From, Ball.To, Ball.Progress);
                 Ball.Height = Ball.FromHeight + (Ball.ToHeight - Ball.FromHeight) * Ball.Progress;
                 if (Ball.Progress >= 1f) LandShot();
                 break;
@@ -154,7 +155,7 @@ public sealed partial class PhysicsMatch
         {
             // A hand to it, not a catch: it spins off somewhere.
             float angle = Rand() * MathF.Tau;
-            MakeLoose(Ball.Pos, new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * (3f + 3f * Rand()));
+            MakeLoose(Ball.Pos, new Vector2(DetMath.Cos(angle), DetMath.Sin(angle)) * (3f + 3f * Rand()));
             Ball.LastTouch = def;
         }
     }
@@ -165,7 +166,7 @@ public sealed partial class PhysicsMatch
         var thrower = Ball.Thrower;
         if (r != null && r.OnCourt)
         {
-            float dist = Vector2.Distance(r.Pos, Ball.To);
+            float dist = Vec.Dist(r.Pos, Ball.To);
 
             // A defender on her at the moment it arrives gets a hand in: the pivot's whole
             // difficulty, and a wing's when her defender has stayed tight.
@@ -173,7 +174,7 @@ public sealed partial class PhysicsMatch
             if (contester != null && Rand() < ContestChance(contester, r, Ball.To))
             {
                 float angle = Rand() * MathF.Tau;
-                MakeLoose(Ball.To, new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * 2.5f);
+                MakeLoose(Ball.To, new Vector2(DetMath.Cos(angle), DetMath.Sin(angle)) * 2.5f);
                 Ball.LastTouch = contester;
                 TurnoverCauses["contested " + r.Role] = TurnoverCauses.GetValueOrDefault("contested " + r.Role) + 1;
                 return;
@@ -197,10 +198,10 @@ public sealed partial class PhysicsMatch
         }
 
         // Dropped, or thrown where nobody was.
-        TurnoverCauses[r != null && r.OnCourt && Vector2.Distance(r.Pos, Ball.To) < 1.2f ? "dropped" : "bad pass"] =
-            TurnoverCauses.GetValueOrDefault(r != null && r.OnCourt && Vector2.Distance(r.Pos, Ball.To) < 1.2f ? "dropped" : "bad pass") + 1;
+        TurnoverCauses[r != null && r.OnCourt && Vec.Dist(r.Pos, Ball.To) < 1.2f ? "dropped" : "bad pass"] =
+            TurnoverCauses.GetValueOrDefault(r != null && r.OnCourt && Vec.Dist(r.Pos, Ball.To) < 1.2f ? "dropped" : "bad pass") + 1;
         var dir = Ball.To - Ball.From;
-        if (dir.LengthSquared() > 0.01f) dir = Vector2.Normalize(dir);
+        if (Vec.LenSq(dir) > 0.01f) dir = Vec.Norm(dir);
         MakeLoose(Ball.To, dir * 2.5f);
         if (r != null) Ball.LastTouch = r;
     }
@@ -219,7 +220,7 @@ public sealed partial class PhysicsMatch
             if (d.IsKeeper || d.StunnedUntil > Clock) continue;
             // She only starts closing once she has read where it is going.
             float closing = MathF.Min(0.6f, MathF.Max(0f, lead - 0.35f));
-            float dist = MathF.Max(0f, Vector2.Distance(d.Pos, at) - d.MaxSpeed * 0.5f * closing);
+            float dist = MathF.Max(0f, Vec.Dist(d.Pos, at) - d.MaxSpeed * 0.5f * closing);
             if (dist < nearest) { nearest = dist; best = d; }
         }
         _contestDistance = nearest;
@@ -285,12 +286,12 @@ public sealed partial class PhysicsMatch
             var (u, w) = Frame(Opp(s), Ball.Pos);
             if (!Court.InGoalArea(u, w)) continue;
             // Not her own deflection on its way out: she has to be able to get to it first.
-            if (s.Keeper != null && Vector2.Distance(s.Keeper.Pos, Ball.Pos) < 0.7f && Ball.Vel.Length() < 3f)
+            if (s.Keeper != null && Vec.Dist(s.Keeper.Pos, Ball.Pos) < 0.7f && Vec.Len(Ball.Vel) < 3f)
             {
                 GiveBall(s.Keeper, newAttack: Possession != s.Index, lookDelay: 0.35f);
                 return;
             }
-            if (Ball.Vel.Length() < 0.6f) { AwardGoalThrow(s.Index); return; }
+            if (Vec.Len(Ball.Vel) < 0.6f) { AwardGoalThrow(s.Index); return; }
             return;
         }
 
@@ -299,7 +300,7 @@ public sealed partial class PhysicsMatch
         foreach (var a in Agents)
         {
             if (a.State != AgentState.OnCourt || a.StunnedUntil > Clock) continue;
-            float d = Vector2.Distance(a.Pos, Ball.Pos);
+            float d = Vec.Dist(a.Pos, Ball.Pos);
             if (d < best) { best = d; nearest = a; }
         }
         if (nearest == null) return;
@@ -338,7 +339,7 @@ public sealed partial class PhysicsMatch
     private void AwardThrowIn(int side, Vector2 spot)
     {
         var taker = Sides[side].Court.Where(a => !a.IsKeeper)
-            .OrderBy(a => Vector2.DistanceSquared(a.Pos, spot)).FirstOrDefault();
+            .OrderBy(a => Vec.DistSq(a.Pos, spot)).FirstOrDefault();
         if (taker == null) return;
         BeginRestart(RestartKind.ThrowIn, side, spot, taker, 1.0f, newAttack: Possession != side);
     }
@@ -426,7 +427,7 @@ public sealed partial class PhysicsMatch
         float speed;
         if (z > _t.TipOverHeight && Rand() < 0.8f)
         {
-            dir = Vector2.Normalize(new Vector2(outX, sideways * (0.1f + 0.4f * Rand())));
+            dir = Vec.Norm(new Vector2(outX, sideways * (0.1f + 0.4f * Rand())));
             speed = 5f + 3f * Rand();
             MakeLoose(keeper.Pos, dir * speed);
             Ball.Height = 2.4f;
@@ -435,7 +436,7 @@ public sealed partial class PhysicsMatch
         {
             // Swept aside: out over the line beside the goal, or across the court towards the
             // side line — how far is how hard she got to it.
-            dir = Vector2.Normalize(new Vector2(outX * (Rand() * 1.0f - 0.45f), sideways));
+            dir = Vec.Norm(new Vector2(outX * (Rand() * 1.0f - 0.45f), sideways));
             speed = 6f + 6f * Rand();
             MakeLoose(keeper.Pos + dir * 0.6f, dir * speed);
         }
@@ -459,10 +460,10 @@ public sealed partial class PhysicsMatch
         float sideW = (Rand() < 0.5f ? -1f : 1f) * (Court.PostHalf + 1f + 4f * Rand());
         var target = new Vector2(lineX + (attackers.Dir > 0 ? 0.5f : -0.5f), Court.CentreY + sideW);
         var dir = target - blocker.Pos;
-        if (dir.LengthSquared() < 0.01f) dir = new Vector2(attackers.Dir, 0f);
-        float dist = dir.Length();
+        if (Vec.LenSq(dir) < 0.01f) dir = new Vector2(attackers.Dir, 0f);
+        float dist = Vec.Len(dir);
         // Fast enough to reach the line through the floor's drag, which takes about 1.25 m per m/s.
-        MakeLoose(blocker.Pos, Vector2.Normalize(dir) * (dist / 1.1f + 1f));
+        MakeLoose(blocker.Pos, Vec.Norm(dir) * (dist / 1.1f + 1f));
         Ball.LastTouch = blocker;
         _looseAfterShot = true;
     }
@@ -474,8 +475,8 @@ public sealed partial class PhysicsMatch
         float away = attackers.Dir < 0 ? 0f : MathF.PI;
         float angle = away + (Rand() - 0.5f) * 2.2f;
         float speed = minSpeed + (maxSpeed - minSpeed) * Rand();
-        var start = at + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * 0.5f;
-        MakeLoose(Court.Clamp(start, 0.2f), new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * speed);
+        var start = at + new Vector2(DetMath.Cos(angle), DetMath.Sin(angle)) * 0.5f;
+        MakeLoose(Court.Clamp(start, 0.2f), new Vector2(DetMath.Cos(angle), DetMath.Sin(angle)) * speed);
         Ball.LastTouch = touched;
         _looseAfterShot = true;
     }

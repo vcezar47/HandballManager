@@ -1,4 +1,5 @@
 using System.Numerics;
+using HandballManager.Helpers;
 
 namespace HandballManager.Engine2D;
 
@@ -79,7 +80,7 @@ public sealed partial class PhysicsMatch
         {
             float mouthW = Math.Clamp(w, -Court.PostHalf, Court.PostHalf);
             var toMouth = new Vector2(-u, mouthW - w);
-            float dist = toMouth.Length();
+            float dist = Vec.Len(toMouth);
             bool wing = MathF.Abs(w) > 4.5f && u < 6f;
             wingShot = wing;
 
@@ -96,8 +97,8 @@ public sealed partial class PhysicsMatch
                 float squeeze = 1f - 0.4f * Pressure(s, at);
                 float angle = (30f + 20f * jr) * squeeze * MathF.PI / 180f;
                 float reach = 5.6f - 0.8f * jr;
-                float idealU = reach * MathF.Sin(angle);
-                float idealW = MathF.Sign(w) * (Court.PostHalf + reach * MathF.Cos(angle));
+                float idealU = reach * DetMath.Sin(angle);
+                float idealW = MathF.Sign(w) * (Court.PostHalf + reach * DetMath.Cos(angle));
 
                 // She can only get there from where she is: a stride and a flight, not a teleport.
                 // Stuck deep in the corner, the angle stays as bad as the corner is.
@@ -122,7 +123,7 @@ public sealed partial class PhysicsMatch
                 : 1.95f + 0.45f * s.Eff(p.JumpingReach) / 20f + (s.HeightM - 1.75f) * 0.9f;
         }
 
-        float d = Vector2.Distance(release, World(side, 0f, 0f));
+        float d = Vec.Dist(release, World(side, 0f, 0f));
         float skill = sevenMetre
             ? 0.6f * s.Eff(p.SevenMeterTaking) + 0.4f * s.Eff(p.Composure)
             : d > 8f ? 0.5f * s.Eff(p.Finishing) + 0.5f * s.Eff(p.LongThrows)
@@ -148,13 +149,13 @@ public sealed partial class PhysicsMatch
         if (!sevenMetre)
         {
             var toGoalDir = World(side, 0f, 0f) - at;
-            float forward = toGoalDir.LengthSquared() > 0.01f ? MathF.Max(0f, Vector2.Dot(s.Vel, Vector2.Normalize(toGoalDir))) : 0f;
+            float forward = Vec.LenSq(toGoalDir) > 0.01f ? MathF.Max(0f, Vec.Dot(s.Vel, Vec.Norm(toGoalDir))) : 0f;
             speed += _t.RunUpTransfer * forward;
             z += 0.05f * MathF.Min(forward, 4f);
         }
 
         var toGoal = World(side, 0f, 0f) - release;
-        float sinAngle = toGoal.LengthSquared() > 0.01f ? MathF.Abs(Frame(side, release).U) / toGoal.Length() : 1f;
+        float sinAngle = Vec.LenSq(toGoal) > 0.01f ? MathF.Abs(Frame(side, release).U) / Vec.Len(toGoal) : 1f;
         float sigmaW = sigma / MathF.Max(_t.MinShotAngleSine, sinAngle);
 
         var keeper = Opp(side).Keeper;
@@ -171,7 +172,7 @@ public sealed partial class PhysicsMatch
         foreach (var d in Opp(Sides[s.Side]).Court)
         {
             if (d.IsKeeper) continue;
-            nearest = MathF.Min(nearest, Vector2.Distance(d.Pos, at));
+            nearest = MathF.Min(nearest, Vec.Dist(d.Pos, at));
         }
         return Math.Clamp((1.6f - nearest) / 1.2f, 0f, 1f);
     }
@@ -213,11 +214,11 @@ public sealed partial class PhysicsMatch
         var kPos = plan.Keeper ?? k.Pos;
         var target = World(side, 0f, w);
         var d = target - plan.Release;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         if (len2 < 0.01f) return 0f;
-        float t = Math.Clamp(Vector2.Dot(kPos - plan.Release, d) / len2, 0f, 1f);
+        float t = Math.Clamp(Vec.Dot(kPos - plan.Release, d) / len2, 0f, 1f);
         var closest = plan.Release + d * t;
-        float lateral = Vector2.Distance(kPos, closest);
+        float lateral = Vec.Dist(kPos, closest);
         float zAt = plan.ReleaseZ + t * (z - plan.ReleaseZ);
         float centre = 0.85f + (k.HeightM - 1.75f) * 0.5f;
         float dz = 0.8f * (zAt - centre);
@@ -240,7 +241,7 @@ public sealed partial class PhysicsMatch
                          + (plan.SevenMetre ? _t.SevenMetreFake : 0f)
                          + (plan.Wing ? _t.WingHangTime * (0.6f + 0.4f * plan.Flair / 20f) : 0f)
                          + (plan.Kempa ? _t.KempaSurprise : 0f)
-                         + (k.Vel.Length() > 1.5f ? 0.05f : 0f);
+                         + (Vec.Len(k.Vel) > 1.5f ? 0.05f : 0f);
         float arrive = t * MathF.Sqrt(len2) / plan.Speed;
         float reach = _t.KeeperReachBase + 0.35f * (k.HeightM - 1.60f) + _t.KeeperAerialSpan * k.Eff(kp.AerialReach) / 20f;
         float limb = (plan.AsRead ? _t.KeeperLimbSpeedAsRead : _t.KeeperLimbSpeed) + _t.KeeperLimbSpeedSpan * k.Eff(kp.Agility) / 20f;
@@ -270,15 +271,15 @@ public sealed partial class PhysicsMatch
     private float Screening(Vector2 release, Vector2 keeper, Agent shooter)
     {
         var d = keeper - release;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         if (len2 < 4f) return 0f;
         float hidden = 0f;
         foreach (var a in Agents)
         {
             if (a == shooter || !a.OnCourt || a.IsKeeper) continue;
-            float t = Vector2.Dot(a.Pos - release, d) / len2;
+            float t = Vec.Dot(a.Pos - release, d) / len2;
             if (t < 0.1f || t > 0.9f) continue;
-            float off = Vector2.Distance(a.Pos, release + d * t);
+            float off = Vec.Dist(a.Pos, release + d * t);
             if (off < 0.8f) hidden += _t.ScreenDelay * (1f - off / 0.8f);
         }
         return MathF.Min(hidden, _t.ScreenDelay * 2.5f);
@@ -291,7 +292,7 @@ public sealed partial class PhysicsMatch
         var side = Sides[s.Side];
         var target = World(side, 0f, w);
         var d = target - plan.Release;
-        float len = d.Length();
+        float len = Vec.Len(d);
         if (len < 3f) return 0f;
 
         // A shot from the line is gone before an arm can come across; blocks are a nine-metre
@@ -302,17 +303,17 @@ public sealed partial class PhysicsMatch
         foreach (var def in Opp(side).Court)
         {
             if (def.IsKeeper || def.StunnedUntil > Clock) continue;
-            float t = Vector2.Dot(def.Pos - plan.Release, d) / (len * len);
+            float t = Vec.Dot(def.Pos - plan.Release, d) / (len * len);
             float along = t * len;
             if (along < 0.3f || along > len - 2.5f) continue;
-            float lateral = Vector2.Distance(def.Pos, plan.Release + d * t);
+            float lateral = Vec.Dist(def.Pos, plan.Release + d * t);
             if (lateral >= _t.BlockWidth) continue;
 
             float zAt = plan.ReleaseZ + t * (z - plan.ReleaseZ);
             float armsUp = def.HeightM * 1.27f + 0.15f + 0.35f * def.Eff(def.Player.JumpingReach) / 20f;
             if (zAt > armsUp) continue;
 
-            float set = def.Vel.Length() > 3f ? 0.5f : 1f;
+            float set = Vec.Len(def.Vel) > 3f ? 0.5f : 1f;
             float read = 0.7f + 0.3f * def.Eff(def.Player.Anticipation) / 20f;
             float bp = _t.BlockChance * set * read * closeness * MathF.Sqrt(1f - lateral / _t.BlockWidth);
             miss *= 1f - bp;
@@ -412,7 +413,7 @@ public sealed partial class PhysicsMatch
         Ball.FromHeight = plan.ReleaseZ;
         Ball.ToHeight = outcome == ShotOutcome.Blocked ? plan.ReleaseZ : tz;
         Ball.Elapsed = 0f;
-        Ball.Duration = MathF.Max(0.12f, Vector2.Distance(plan.Release, to) / plan.Speed);
+        Ball.Duration = MathF.Max(0.12f, Vec.Dist(plan.Release, to) / plan.Speed);
         Ball.PendingShot = outcome;
         Ball.ShotKeeper = keeper;
         Ball.ShotBlocker = blocker;
@@ -477,7 +478,7 @@ public sealed partial class PhysicsMatch
     {
         float t = 1f / (1f + 0.3275911f * MathF.Abs(x) / MathF.Sqrt(2f));
         float y = 1f - ((((1.061405429f * t - 1.453152027f) * t + 1.421413741f) * t - 0.284496736f) * t + 0.254829592f)
-                  * t * MathF.Exp(-x * x / 2f);
+                  * t * DetMath.Exp(-x * x / 2f);
         return x >= 0 ? 0.5f * (1f + y) : 0.5f * (1f - y);
     }
 }

@@ -33,7 +33,7 @@ public sealed partial class PhysicsMatch
             if (a.JumpUntil > 0f)
             {
                 float t = Math.Clamp((Clock - a.JumpStart) / MathF.Max(0.05f, a.JumpUntil - a.JumpStart), 0f, 1f);
-                var next = Vector2.Lerp(a.JumpFrom, a.JumpTo, t);
+                var next = Vec.Lerp(a.JumpFrom, a.JumpTo, t);
                 a.Vel = (next - a.Pos) / Dt;
                 a.Pos = next;
                 continue;
@@ -42,7 +42,7 @@ public sealed partial class PhysicsMatch
             {
                 float t = Math.Clamp((Clock - a.DiveStart) / MathF.Max(0.05f, a.DiveUntil - a.DiveStart), 0f, 1f);
                 // Fast off the mark and slowing into the stretch, as a dive is.
-                var next = Vector2.Lerp(a.DiveFrom, a.DiveTo, 1f - (1f - t) * (1f - t));
+                var next = Vec.Lerp(a.DiveFrom, a.DiveTo, 1f - (1f - t) * (1f - t));
                 a.Vel = (next - a.Pos) / Dt;
                 a.Pos = next;
                 continue;
@@ -55,7 +55,7 @@ public sealed partial class PhysicsMatch
             }
 
             var toTarget = a.Target - a.Pos;
-            float dist = toTarget.Length();
+            float dist = Vec.Len(toTarget);
             Vector2 desired = Vector2.Zero;
             if (dist > 0.05f)
             {
@@ -65,9 +65,9 @@ public sealed partial class PhysicsMatch
             }
 
             var dv = desired - a.Vel;
-            bool braking = Vector2.Dot(desired, a.Vel) < a.Vel.LengthSquared() * 0.5f;
+            bool braking = Vec.Dot(desired, a.Vel) < Vec.LenSq(a.Vel) * 0.5f;
             float maxDv = (braking ? a.Turning : a.Acceleration) * Dt;
-            float dvLen = dv.Length();
+            float dvLen = Vec.Len(dv);
             if (dvLen > maxDv) dv *= maxDv / dvLen;
             a.Vel += dv;
             a.Pos += a.Vel * Dt;
@@ -83,7 +83,7 @@ public sealed partial class PhysicsMatch
                 var b = _moving[j];
                 if (!b.OnCourt) continue;
                 var d = b.Pos - a.Pos;
-                float len2 = d.LengthSquared();
+                float len2 = Vec.LenSq(d);
                 const float min = 0.55f;
                 if (len2 >= min * min || len2 < 1e-6f) continue;
                 float len = MathF.Sqrt(len2);
@@ -142,7 +142,7 @@ public sealed partial class PhysicsMatch
         foreach (var o in Opp(Sides[c.Side]).Court)
         {
             if (o.IsKeeper || o.StunnedUntil > Clock) continue;
-            float dist = Vector2.Distance(o.Pos, c.Pos);
+            float dist = Vec.Dist(o.Pos, c.Pos);
             if (dist < nearest) { nearest = dist; d = o; }
         }
         if (d == null) { _contactClock = 0; return; }
@@ -154,8 +154,8 @@ public sealed partial class PhysicsMatch
         var attack = Sides[c.Side];
         var defence = Sides[d.Side];
         var toGoal = World(attack, 0f, 0f) - c.Pos;
-        float momentum = toGoal.LengthSquared() > 0.01f
-            ? Math.Clamp(Vector2.Dot(c.Vel, Vector2.Normalize(toGoal)) / 5f, 0f, 1f)
+        float momentum = Vec.LenSq(toGoal) > 0.01f
+            ? Math.Clamp(Vec.Dot(c.Vel, Vec.Norm(toGoal)) / 5f, 0f, 1f)
             : 0f;
 
         // A back standing on the ball with a defender in her face is pressure, not a duel. It is
@@ -207,9 +207,9 @@ public sealed partial class PhysicsMatch
             d.StunnedUntil = Clock + 0.5f + 0.4f * edge;
             _brokeThrough = c;
             _brokeThroughAt = Clock;
-            if (toGoal.LengthSquared() > 0.01f)
+            if (Vec.LenSq(toGoal) > 0.01f)
             {
-                var (u, w) = Frame(attack, c.Pos + Vector2.Normalize(toGoal) * 2.2f);
+                var (u, w) = Frame(attack, c.Pos + Vec.Norm(toGoal) * 2.2f);
                 (u, w) = Court.PushOutTo(u, w, Court.GoalAreaRadius + 0.2f);
                 c.Target = World(attack, u, w);
                 c.DesiredSpeed = c.MaxSpeed;
@@ -260,13 +260,13 @@ public sealed partial class PhysicsMatch
 
         var goal = World(attack, 0f, 0f);
         var d = goal - c.Pos;
-        float len2 = d.LengthSquared();
+        float len2 = Vec.LenSq(d);
         foreach (var o in Opp(attack).Court)
         {
             if (o.IsKeeper || o == exclude || o.StunnedUntil > Clock) continue;
-            float t = Vector2.Dot(o.Pos - c.Pos, d) / MathF.Max(len2, 0.01f);
+            float t = Vec.Dot(o.Pos - c.Pos, d) / MathF.Max(len2, 0.01f);
             if (t <= 0f || t >= 1f) continue;
-            if (Vector2.Distance(o.Pos, c.Pos + d * t) < 1.1f) return false;
+            if (Vec.Dist(o.Pos, c.Pos + d * t) < 1.1f) return false;
         }
         return true;
     }

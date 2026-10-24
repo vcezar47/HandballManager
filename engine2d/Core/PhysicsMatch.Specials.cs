@@ -83,8 +83,8 @@ public sealed partial class PhysicsMatch
     private bool GoalManned(Agent? k)
     {
         bool set = k is { State: AgentState.OnCourt, IsKeeper: true }
-                   && Vector2.Distance(k.Pos, KeeperSpot(Opp(Sides[_restartSide]), _restartSpot, 1.0f)) < 0.8f
-                   && k.Vel.Length() < 1.2f;
+                   && Vec.Dist(k.Pos, KeeperSpot(Opp(Sides[_restartSide]), _restartSpot, 1.0f)) < 0.8f
+                   && Vec.Len(k.Vel) < 1.2f;
         if (!set) { _keeperSetSince = -1f; return false; }
         if (_keeperSetSince < 0f) _keeperSetSince = Clock;
         return Clock - _keeperSetSince >= 1.0f;
@@ -182,7 +182,7 @@ public sealed partial class PhysicsMatch
         Ball.FromHeight = 1.8f;
         Ball.ToHeight = 2.6f;
         Ball.Elapsed = 0f;
-        Ball.Duration = MathF.Max(0.6f, Vector2.Distance(passer.Pos, to) / 10f);
+        Ball.Duration = MathF.Max(0.6f, Vec.Dist(passer.Pos, to) / 10f);
         Ball.Interceptor = null;
         Ball.IsKempa = true;
         passer.Intent = "pass";

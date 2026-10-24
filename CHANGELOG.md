@@ -2,6 +2,33 @@
 
 Dated update history. Downloadable builds are on the [Releases](../../releases) page.
 
+## 5.0.0 — October 2026 · Online: the Weekly Challenge and the Country Battle
+
+* **An online profile**, if you want one: sign in with Google for a username, a picture, your
+  nationality, an achievement title and a showcase season others can open. The game still plays
+  fully offline
+* **Season cards**: every season ends with a card — the record, the honours, the furthest cup and
+  European runs, the board's grade and the best seven drawn on court — to save or share. The
+  profile's Seasons archive keeps them all
+* **The Weekly Challenge**: the same club, the same scenario and the same calendar for everyone,
+  Monday to Saturday. Three attempts, your best counts, and every run is replayed by the server
+  before it reaches the leaderboard. Sunday is results day, with a countdown to the next week
+* **The Country Battle**: pick your nation once, then a career at one of its clubs earns EHF
+  coefficient points for it in Europe. Points count by the month, with tables of countries and of
+  managers, and every career is checked by the server as it goes
+* **All 50 achievements on Google Play Games**, unlocked there as you earn them
+* **Days simulate about twice as fast**
+* **Signing a player asks what role she is promised**, as renewals do, and it moves her wage; a
+  first-choice player turns down a role two steps below what she expects
+* **Winter transfer money**: as each window opens, what the club holds beyond the rest of the
+  season's wages goes into its transfer budget
+* **European group draws keep compatriots apart** wherever the numbers allow, as the EHF's do
+* **Fairer board grades**: a title the board expected, the cup and Europe now count
+* **Flags for every nationality**
+* **Fixed**: a cup the club won before the career began could appear in the manager's trophy
+  cabinet
+* **Privacy policy** rewritten for the online account, with a page for deleting it without the app
+
 ## 4.5.0 — October 2026 · Broadcast scoreboards and keepers who dive
 
 * **TV-style scoreboards** above every live match, in each competition's own style: four board

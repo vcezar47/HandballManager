@@ -1,6 +1,7 @@
 using System.Numerics;
 using HandballManager.Models;
 using HandballManager.Services;
+using HandballManager.Helpers;
 
 namespace HandballManager.Engine2D;
 
@@ -276,6 +277,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
     public void Tick()
     {
         if (Phase is MatchPhase.HalfTime or MatchPhase.FullTime) return;
+        Steps++;
 
         foreach (var a in Agents) a.PrevPos = a.Pos;
         Ball.PrevPos = Ball.Pos;
@@ -651,15 +653,15 @@ public sealed partial class PhysicsMatch : IPlayedMatch
                 _throwOffStage = ThrowOffStage.BallToCentre;
                 Ball.From = _retriever?.Pos ?? Ball.Pos;
                 Ball.Elapsed = 0f;
-                Ball.Duration = MathF.Max(0.4f, Vector2.Distance(Ball.From, taker.Pos) / 15f);
+                Ball.Duration = MathF.Max(0.4f, Vec.Dist(Ball.From, taker.Pos) / 15f);
                 return true;
 
             case ThrowOffStage.BallToCentre:
                 // The throw out: no one contests it, it is dead until the whistle.
                 Ball.Elapsed += Dt;
                 float t = Ball.Progress;
-                Ball.Pos = Vector2.Lerp(Ball.From, taker.Pos, t);
-                Ball.Height = 1.2f + 1.5f * MathF.Sin(MathF.PI * t);
+                Ball.Pos = Vec.Lerp(Ball.From, taker.Pos, t);
+                Ball.Height = 1.2f + 1.5f * DetMath.Sin(MathF.PI * t);
                 if (t < 1f) return true;
 
                 _throwOffStage = ThrowOffStage.Ready;
@@ -687,7 +689,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
             // She was sent off or substituted while the throw was being set up.
             var side = Sides[_restartSide];
             taker = side.Court.Where(a => !a.IsKeeper || Restart == RestartKind.GoalThrow)
-                .OrderBy(a => Vector2.DistanceSquared(a.Pos, _restartSpot)).FirstOrDefault();
+                .OrderBy(a => Vec.DistSq(a.Pos, _restartSpot)).FirstOrDefault();
             if (taker == null) return;
             _restartTaker = taker;
             Ball.Holder = taker;
@@ -703,7 +705,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
         }
         Ball.Pos = Ball.Holder == taker && Restart == RestartKind.ThrowOff ? taker.Pos : _restartSpot;
 
-        bool inPlace = Vector2.Distance(taker.Pos, _restartSpot) < (Restart == RestartKind.ThrowOff && FastThrowOff ? 2f : 0.6f);
+        bool inPlace = Vec.Dist(taker.Pos, _restartSpot) < (Restart == RestartKind.ThrowOff && FastThrowOff ? 2f : 0.6f);
         if (AwaitingTaker || AwaitingKeeper) return;
 
         // Nothing may hold a restart for ever. If the taker cannot get to her spot — it is
@@ -754,7 +756,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
                     var (u, w) = Frame(Opp(s), a.Pos);
                     if (u > 4f || MathF.Abs(w) > 3.5f) return false;
                 }
-                else if (Vector2.Distance(a.Pos, a.Target) > 3f) return false;
+                else if (Vec.Dist(a.Pos, a.Target) > 3f) return false;
             }
         }
         return true;
@@ -767,7 +769,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
         var (u, w) = Frame(s, where);
         (u, w) = Court.PushOutTo(u, w, Court.FreeThrowRadius);
         var spot = World(s, u, w);
-        taker ??= s.Court.Where(a => !a.IsKeeper).OrderBy(a => Vector2.DistanceSquared(a.Pos, spot)).FirstOrDefault();
+        taker ??= s.Court.Where(a => !a.IsKeeper).OrderBy(a => Vec.DistSq(a.Pos, spot)).FirstOrDefault();
         if (taker == null) return;
         BeginRestart(RestartKind.FreeThrow, side, spot, taker, 0.8f + (float)_rng.NextDouble() * 1.2f, newAttack: false);
     }
@@ -782,7 +784,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
             // The keeper is off for a seventh attacker: a court player takes it, and she may not
             // stand in the goal area — so from just outside it. Handing her a spot inside the
             // area left her at the line for the rest of the match, with the clock running.
-            keeper = s.Court.OrderBy(a => Vector2.DistanceSquared(a.Pos, World(Opp(s), 0f, 0f))).FirstOrDefault();
+            keeper = s.Court.OrderBy(a => Vec.DistSq(a.Pos, World(Opp(s), 0f, 0f))).FirstOrDefault();
             spot = World(Opp(s), Court.GoalAreaRadius + 0.3f, 0f);
         }
         if (keeper == null) return;
@@ -876,9 +878,9 @@ public sealed partial class PhysicsMatch : IPlayedMatch
             {
                 float angle = MathF.PI * 2f * k / Math.Max(1, group.Count);
                 var a = group[k];
-                a.Target = centre + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * HuddleRadius;
+                a.Target = centre + new Vector2(DetMath.Cos(angle), DetMath.Sin(angle)) * HuddleRadius;
                 a.DesiredSpeed = 4.2f;
-                if (Vector2.Distance(a.Pos, a.Target) > 0.7f) gathered = false;
+                if (Vec.Dist(a.Pos, a.Target) > 0.7f) gathered = false;
             }
         }
         MoveAgents();
@@ -1012,7 +1014,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
                 var leaving = change.Leaving;
                 leaving.Target = point;
                 leaving.DesiredSpeed = leaving.MaxSpeed * 0.9f;
-                if (Vector2.Distance(leaving.Pos, point) > 0.8f) continue;
+                if (Vec.Dist(leaving.Pos, point) > 0.8f) continue;
 
                 s.Changes.RemoveAt(i--);
                 var incoming = change.Entering;
@@ -1028,7 +1030,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
                 if (!change.KeepsRoles) incoming.Role = leaving.Role;
                 if (leaving.Role == ExtraRole) leaving.Role = leaving.Player.Position;
                 // On from the line where she was waiting; straight from the bench if she had not got there yet.
-                incoming.Pos = Vector2.Distance(incoming.Pos, point) < 3f ? incoming.Pos : point;
+                incoming.Pos = Vec.Dist(incoming.Pos, point) < 3f ? incoming.Pos : point;
                 incoming.Vel = Vector2.Zero;
                 bool swap = change.KeepsRoles || incoming.Role == ExtraRole || incoming.IsKeeperByTrade && incoming.Role == "GK" && !leaving.IsKeeperByTrade;
                 s.RefreshCourt();
@@ -1087,7 +1089,7 @@ public sealed partial class PhysicsMatch : IPlayedMatch
         {
             if (a.OnCourt)
             {
-                float speed2 = a.Vel.LengthSquared();
+                float speed2 = Vec.LenSq(a.Vel);
                 // Stamina 5 drains at 1.25×, 12 at 0.9×, 20 at half: a real difference over an hour.
                 float stamina = 1.5f - a.Player.Stamina / 20f;
                 float drain = (_t.DrainIdle + _t.DrainPerSpeedSquared * speed2) * stamina;
@@ -1123,10 +1125,10 @@ public sealed partial class PhysicsMatch : IPlayedMatch
     private float Gauss()
     {
         double u1 = 1.0 - _rng.NextDouble(), u2 = _rng.NextDouble();
-        return (float)(Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2 * Math.PI * u2));
+        return (float)(Math.Sqrt(-2.0 * DetMath.Log(u1)) * DetMath.Cos(2 * Math.PI * u2));
     }
 
-    private static float Sigmoid(float x) => 1f / (1f + MathF.Exp(-x));
+    private static float Sigmoid(float x) => 1f / (1f + DetMath.Exp(-x));
 }
 
 public sealed class AttackRecord
